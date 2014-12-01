@@ -1,0 +1,86 @@
+#ifndef __PLOTTER_H__
+#define __PLOTTER_H__
+
+#include <TApplication.h>
+#include <TROOT.h>
+#include <TStyle.h>
+#include <TCanvas.h>
+#include <TGraphErrors.h>
+#include <TH2.h>
+#include <TF1.h>
+#include <TFile.h>
+  
+#include "Clusterizer.h"
+#include "Calibrator.h"
+#include "Fitter.h"
+
+class Plotter
+{
+ public :
+   Plotter(bool quiet, int module_type=0       ) ;
+  ~Plotter(void                    )  ;
+  
+   void fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double noise = -1);
+   void fillHitPlots(EventMaker::hitMapDef& hitMap);
+   void fitPlots(double voltage = 0);
+   void writePlots(std::string rootFileName, bool bunch);
+   void setCuts(int colRowCuts[4]);
+   void setCuts(int minCol = -1, int minRow = -1, int maxCol = -1, int maxRow= -1);
+   void setModuleType(int module_type);
+   bool isEmpty(){return empty_;}
+   void showGraph(std::vector<double> correction_factor,unsigned int fit_function = 1);
+   
+  
+ private:
+   
+   void quadEncode(const int chip, int &col, int &row);
+   void deletePlots();
+   
+   std::stringstream  ss_;
+   bool isQuad_;
+   bool quiet_;
+   bool empty_;
+   double v_;
+   int minColCut_;
+   int minRowCut_;
+   int maxColCut_;
+   int maxRowCut_;
+   
+   //single plots
+   std::map<int, TH1I*> clusterToT_, two_hitToT_, one_hitToT_, clusterSize_, clusterSizeRow_, clusterSizeCol_;
+   std::map<int, TH1D*> clusterCharge_,clusterCharge_cs1_,clusterCharge_cs2_;
+   std::map<int, TH1I*> totMax_, totMin_;
+   std::map<int, TH2I*> hitMap_, clusterMap_cs1_, clusterMap_cs2_;
+   std::map<int, TH2D*> clusterMeanTotMap_cs1_, clusterTotMap_cs1_, clusterTotMap_cs2_;
+   TH2I *clusterMap_cs1_all_;  
+   TH2I *clusterMap_cs2_all_;      
+   TH2D *clusterTotMap_cs1_all_;    
+   TH2D *clusterTotMap_cs2_all_;   
+   TH2D *clusterMeanTotMap_cs1_all_;
+   TH2I *hitMap_all_            ;
+   TH1I *clusterToT_all_    	;   
+   TH1I *one_hitToT_all_	;   
+   TH1I *two_hitToT_all_	;   
+   TH1I *totMax_all_ 	   	;
+   TH1I *totMin_all_ 	   	;
+   TH1I *clusterSize_all_	;
+   TH1I *clusterSizeRow_all_    ;
+   TH1I *clusterSizeCol_all_    ;
+   TH1D *clusterCharge_all_     ;
+   TH1D *clusterCharge_cs1_all_ ; 
+   TH1D *clusterCharge_cs2_all_ ;
+   
+   //batch vectors
+   //std::vector<TGraphErrors*> graphs;
+   std::map<int, std::map<double,Fitter::fitResultDef> > ToT_all_;
+   std::map<int, std::map<double,Fitter::fitResultDef> > ToT_cs1_;
+   std::map<int, std::map<double,Fitter::fitResultDef> > ToT_cs2_;
+   std::map<double,Fitter::fitResultDef> ToT_mod_all_;
+   std::map<double,Fitter::fitResultDef> ToT_mod_cs1_;
+   std::map<double,Fitter::fitResultDef> ToT_mod_cs2_;
+   
+   
+   Fitter *theFitter;
+} ;
+
+#endif
