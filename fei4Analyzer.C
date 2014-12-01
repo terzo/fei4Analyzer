@@ -1,3 +1,11 @@
+/****************************************************************************
+** Author: Stefano Terzo
+**
+** Max-Planck-instiut fuer Physik (Werner-Heisenberg-Institut)
+** Foehringer Ring 6, D-80805 Muenchen, Germany
+**
+****************************************************************************/
+
 #include <stdio.h> 
 #include <stdlib.h>
 #include <iostream>
