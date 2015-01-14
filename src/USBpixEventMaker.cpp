@@ -8,10 +8,11 @@
 
 #include "USBpixEventMaker.h"
 
-USBpixEventMaker::USBpixEventMaker(bool quiet, bool readTimeStamp)
+USBpixEventMaker::USBpixEventMaker(bool quiet, bool readTimeStamp, bool design25)
 {
   quiet_ = quiet;
   readTimeStamp_ = readTimeStamp;
+  design25_ = design25;
   std::cout << "USBPix version!FE-I4" << "\n";
 }
 
@@ -198,6 +199,20 @@ EventMaker::hitMapDef USBpixEventMaker::makeEvents(std::string infilename, std::
 	  			  aHit.row = rowData-1 ;
 	  			  aHit.bcid= nev;
 	  			  aHit.l1id= lvl1;
+				  if(design25_)
+				  {
+				    if (aHit.col % 2!=0)
+				    {
+				      aHit.row *= 2;
+				      aHit.row++;
+				      aHit.col = (aHit.col-1)/2;
+				    }
+				    else 
+				    {
+				      aHit.row *= 2;
+				      aHit.col = aHit.col/2;
+				    }
+				  }
 	  			  ss_.str("");
 	  			  //ss_ << bxid << oldl1id;
 	  			  ss_ <<  nev;
@@ -215,6 +230,20 @@ EventMaker::hitMapDef USBpixEventMaker::makeEvents(std::string infilename, std::
 	  			  aHit.row = rowData ;
 	  			  aHit.bcid= nev;//bcid;
 	  			  aHit.l1id= lvl1;
+				  if(design25_)
+				  {
+				    if (aHit.col % 2!=0)
+				    {
+				      aHit.row *= 2;
+				      aHit.row++;
+				      aHit.col = (aHit.col-1)/2;
+				    }
+				    else 
+				    {
+				      aHit.row *= 2;
+				      aHit.col = aHit.col/2;
+				    }
+				  }
 	  			  ss_.str("");
 	  			  //ss_ << bxid << oldl1id;
 	  			  ss_ <<  nev;

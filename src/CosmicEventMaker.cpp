@@ -8,10 +8,11 @@
 
 #include "CosmicEventMaker.h"
 
-CosmicEventMaker::CosmicEventMaker(bool quiet, bool readTimeStamp)
+CosmicEventMaker::CosmicEventMaker(bool quiet, bool readTimeStamp, bool design25)
 {
   quiet_ = quiet;
   readTimeStamp_ = readTimeStamp;
+  design25_ = design25;
   std::cout << "Cosmic GUI converter!FE-I4" << "\n";
 }
 

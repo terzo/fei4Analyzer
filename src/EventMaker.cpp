@@ -8,9 +8,10 @@
 
 #include "EventMaker.h"
 
-EventMaker::EventMaker(bool quiet, bool readTimeStamp)
+EventMaker::EventMaker(bool quiet, bool readTimeStamp, bool design25)
 {
   quiet_ = quiet;
+  design25_= design25;
   readTimeStamp_ = readTimeStamp;
 }
 

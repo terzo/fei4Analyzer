@@ -49,6 +49,7 @@ int main(int argc, char **argv)
   unsigned int fitFunction = 1;
   int maxevents = -1;
   bool dofit = true;
+  bool design25=false;
   
   if (argc > 1) 
   {
@@ -56,11 +57,6 @@ int main(int argc, char **argv)
      {
        option = argv[i];
        if (option[0] != '-') break;
-       if (option.length() == 1) 
-       {
-  	  outfilename = "-";
-  	  break;
-       }
        switch (option[1]) 
        {
          case 'h':
@@ -115,7 +111,12 @@ int main(int argc, char **argv)
   	 {
   	   string_to_number(argv[++i], noise);
   	   break;
-  	 } 
+  	 }
+	 case '2':
+	 {
+	   design25=true;
+	   break;
+	 }
 	 case 'g': 
   	 {
 	   option = argv[i+1];
@@ -201,10 +202,11 @@ int main(int argc, char **argv)
           
      std::string extension = infilename[i].substr(infilename[i].find_last_of(".") + 1); 
      if ( extension == "dat")
-     		theEventMaker = new CosmicEventMaker(quiet, readTimeStamp); 
+     		theEventMaker = new CosmicEventMaker(quiet, readTimeStamp, design25); 
      else      
-     		theEventMaker = new USBpixEventMaker(quiet, readTimeStamp);
+     		theEventMaker = new USBpixEventMaker(quiet, readTimeStamp, design25);
      	
+     //if(design25) theEventMaker->setDesign25();
      EventMaker::hitMapDef hitMap = theEventMaker->makeEvents(infilename[i], outfilename, lv1diff, maxevents);
   
      delete theEventMaker;

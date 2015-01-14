@@ -42,12 +42,13 @@ class EventMaker
    typedef std::map<int , std::map<int, hitsDef>     >    hitMapDef     ;
  
  
-   EventMaker(bool quiet =  false, bool readTimeStamp = false)  ;
+   EventMaker(bool quiet =  false, bool readTimeStamp = false, bool design25 = false)  ;
    virtual ~EventMaker(void                    ) {;}
   
    virtual hitMapDef makeEvents(std::string infilename, std::string outfilename = "", int lv1diff = 1, int nevt = -1) = 0;
    void setQuiet(bool quiet) {quiet_=quiet;}
    void setReadTimeStamp(bool readTimeStamp){readTimeStamp_=readTimeStamp;}
+   void setDesign25(void){design25_=true;}
    
  protected:
  
@@ -57,7 +58,7 @@ class EventMaker
  
    std::stringstream  ss_;
    bool quiet_;
-   
+   bool design25_;
    bool readTimeStamp_   ;
  
 } ;

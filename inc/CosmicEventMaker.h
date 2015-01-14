@@ -29,7 +29,7 @@ class CosmicEventMaker : public EventMaker
 {
  public :
  
-   CosmicEventMaker(bool quiet =  false, bool readTimeStamp = false)  ;
+   CosmicEventMaker(bool quiet =  false, bool readTimeStamp = false, bool design25 = false)  ;
   ~CosmicEventMaker(void                    ) {;}
   
    hitMapDef makeEvents(std::string infilename, std::string outfilename = "", int lv1diff = 1, int nevt = -1);
@@ -44,7 +44,7 @@ class CosmicEventMaker : public EventMaker
  
    std::stringstream  ss_;
    bool quiet_;
-   
+   bool design25_;
    bool readTimeStamp_   ;
  
 } ;

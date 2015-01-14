@@ -78,6 +78,8 @@ class Plotter
    TH1D *clusterCharge_cs1_all_ ; 
    TH1D *clusterCharge_cs2_all_ ;
    
+   bool design25_;
+   
    //batch vectors
    //std::vector<TGraphErrors*> graphs;
    std::map<int, std::map<double,Fitter::fitResultDef> > ToT_all_;

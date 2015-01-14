@@ -39,18 +39,19 @@ class USBpixEventMaker : public EventMaker
 {
  public :
  
-   USBpixEventMaker(bool quiet =  false, bool readTimeStamp = false)  ;
+   USBpixEventMaker(bool quiet =  false, bool readTimeStamp = false, bool design25=false)  ;
   ~USBpixEventMaker(void                    ) {;}
   
    hitMapDef makeEvents(std::string infilename, std::string outfilename = "", int lv1diff = 1, int nevt = -1);
    void setQuiet(bool quiet) {quiet_=quiet;}
    void setReadTimeStamp(bool readTimeStamp){readTimeStamp_=readTimeStamp;}
+   void setDesign25(void){design25_=true;}
    
  private:
     
    std::stringstream  ss_;
    bool quiet_;
-   
+   bool design25_;
    bool readTimeStamp_   ;
  
 } ;

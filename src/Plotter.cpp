@@ -14,6 +14,7 @@ Plotter::Plotter(bool quiet, int module_type)
     theFitter = new Fitter(quiet);
     quiet_ = quiet;
     empty_ = true;
+    design25_= true;
     v_=0;
     minColCut_ = -1;
     minRowCut_ = -1;
@@ -85,6 +86,14 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
     {
       if(clusterToT_.count((*chip).first)==0)
       {
+        int cols = 80;
+	int rows = 336;
+	if(design25_)
+	{
+	  cols /=2;
+	  rows *=2;
+	}
+      
         std::cout << "Making new histograms for chip: " << (*chip).first << std::endl;
         std::stringstream ss;
         ss.str("");
@@ -113,19 +122,19 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
  	clusterSizeCol_[(*chip).first]= new TH1I(ss.str().c_str(),"Cluster Size Distribution Cols",11,0.5,10.5);
 	ss.str("");
  	ss << "chip"<< (*chip).first << "_clusterMap_cs1";
- 	clusterMap_cs1_[(*chip).first]= new TH2I(ss.str().c_str(),"Cluster Map CS1",80,0,80,336,0,336);
+ 	clusterMap_cs1_[(*chip).first]= new TH2I(ss.str().c_str(),"Cluster Map CS1",cols,0,cols,rows,0,rows);
 	ss.str("");
  	ss << "chip"<< (*chip).first << "_clusterMap_cs2";
- 	clusterMap_cs2_[(*chip).first]= new TH2I(ss.str().c_str(),"Cluster Map CS2",80,0,80,336,0,336);
+ 	clusterMap_cs2_[(*chip).first]= new TH2I(ss.str().c_str(),"Cluster Map CS2",cols,0,cols,rows,0,rows);
 	ss.str("");
         ss << "chip"<< (*chip).first << "_clusterTotMap_cs1";
- 	clusterTotMap_cs1_[(*chip).first]= new TH2D(ss.str().c_str(),"Cluster Tot Map CS1",80,0,80,336,0,336);
+ 	clusterTotMap_cs1_[(*chip).first]= new TH2D(ss.str().c_str(),"Cluster Tot Map CS1",cols,0,cols,rows,0,rows);
 	ss.str("");
         ss << "chip"<< (*chip).first << "_clusterTotMap_cs2";
- 	clusterTotMap_cs2_[(*chip).first]= new TH2D(ss.str().c_str(),"Cluster Tot Map CS2",80,0,80,336,0,336);
+ 	clusterTotMap_cs2_[(*chip).first]= new TH2D(ss.str().c_str(),"Cluster Tot Map CS2",cols,0,cols,rows,0,rows);
         ss.str("");
         ss << "chip"<< (*chip).first << "_clusterMeanTotMap_cs1";
- 	clusterMeanTotMap_cs1_[(*chip).first]= new TH2D(ss.str().c_str(),"Cluster Mean Tot Map CS1",80,0,80,336,0,336);
+ 	clusterMeanTotMap_cs1_[(*chip).first]= new TH2D(ss.str().c_str(),"Cluster Mean Tot Map CS1",cols,0,cols,rows,0,rows);
 	ss.str("");
         ss << "chip"<< (*chip).first << "_Qdist";
  	clusterCharge_[(*chip).first] = new TH1D(ss.str().c_str(),"Charge Distribution",100,0,100	) ;
@@ -300,7 +309,14 @@ void Plotter::fillHitPlots(EventMaker::hitMapDef& hitMap)
         std::cout << "Making new histograms for chip: " << (*chip).first << std::endl;
  	ss_.str("");
 	ss_ << "chip"<< (*chip).first << "_HitMap";
- 	hitMap_[(*chip).first]= new TH2I(ss_.str().c_str(), ss_.str().c_str(),80,0,80,336,0,336);
+	int rows = 336;
+	int cols = 80;
+	if(design25_)
+	{
+	   rows *=2;
+	   cols /=2;
+	}
+ 	hitMap_[(*chip).first]= new TH2I(ss_.str().c_str(), ss_.str().c_str(),cols,0,cols,rows,0,rows);
       }
  
       for(unsigned int h=0; h<(*chip).second.size(); h++)
