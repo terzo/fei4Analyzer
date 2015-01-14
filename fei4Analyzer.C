@@ -105,6 +105,7 @@ int main(int argc, char **argv)
   	 case 'x': 
   	 {
   	   string_to_number(argv[++i], module_type);
+	   if (module_type == 25) design25 = true;
   	   break;
   	 } 
 	 case 'n': 
@@ -112,11 +113,6 @@ int main(int argc, char **argv)
   	   string_to_number(argv[++i], noise);
   	   break;
   	 }
-	 case '2':
-	 {
-	   design25=true;
-	   break;
-	 }
 	 case 'g': 
   	 {
 	   option = argv[i+1];

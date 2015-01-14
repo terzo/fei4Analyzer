@@ -14,7 +14,6 @@ Plotter::Plotter(bool quiet, int module_type)
     theFitter = new Fitter(quiet);
     quiet_ = quiet;
     empty_ = true;
-    design25_= true;
     v_=0;
     minColCut_ = -1;
     minRowCut_ = -1;
@@ -373,6 +372,13 @@ void Plotter::setModuleType(int module_type)
 	   isQuad_=true ;
 	}
 	else isQuad_=false;
+	
+	if(module_type == 25)
+	{
+	   std::cout << "FE-I4 with 500x25um arrangment analysis" << std::endl;
+	   design25_ = true;
+	}
+	else design25_ = false;
 }
 //=========================FIT HISTOS=========================================
 void Plotter::fitPlots(double voltage)
