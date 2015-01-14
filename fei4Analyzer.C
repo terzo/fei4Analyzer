@@ -61,19 +61,36 @@ int main(int argc, char **argv)
        {
          case 'h':
 	 {
+	   std::cout << "-i filename.[raw,dat]\t\t:" << "input file[s]: .raw for USBpix files and .dat for CosmicGui binary files" << "\n";
+	   std::cout << "-v\t \t \t \t:" << "verbosity: debug mode" << "\n";
+	   std::cout << "-r filename[.root]\t\t:" << "define the ROOT output file name[s]: if not set or #input<#output the output_filename[s] = input_filename[s].root" << "\n";
+	   std::cout << "-o filename[.txt]\t\t:" << "writes out a txt log file compatible with the Timepix reconstruction software (CosmicGUI binary data only)" << "\n";
+	   std::cout << "-n [0..1]\t\t\t:" << "specify the hit frequency for noise suppression (no noise suppression by default)" << "\n";
+	   std::cout << "-g [0..9999]\t\t\t:" << "correct the charge in the temporary output plots by the specified factor" << "\n";
+	   std::cout << "-0\t \t \t \t:" << "doen't perform langaus fits (faster)" << "\n";
+	   std::cout << "-x [4,25]\t\t\t:" << "define module type: 4 = quad module; 25 = 500x50um FE-I4 pitch arrangement" << "\n";
+	   std::cout << "-t\t \t \t \t:" << "read timestaps (for ComsicGUI test beam applications only)" << "\n";
+	   std::cout << "-f [1,2]\t\t\t:" << "select the fit function for ToT plots: 1->landau MP (default); 2->langaus MPV;" << "\n";
+	   std::cout << "-m [0..inf]\t\t\t:" << "merge consecutive triggers" << "\n";
+	   std::cout << "-l [0..16]\t\t\t:" << "maximum lvl1 difference for clustering" << "\n";
+	   std::cout << "-c minCol minRow maxCol maxRow\t:" << "define square cuts in pixel coordinates for the analysis" << "\n";
+	   std::cout << "-e [0..inf]\t\t\t:" << "maximum number of event to process (default process all events)" << "\n";
+	   std::cout << "-s [0..inf]\t\t\t:" << "skip the first n events (NOT IMPLEMENTED)" << "\n";
+	   std::cout << "-b [0..inf]\t\t\t:" << "I forgot what was that intended for... (NOT IMPLEMENTED)" << "\n";
+	   std::cout <<  std::endl;
 	   std::cout << "STControl quad module analysis example:" << std::endl;
-	   std::cout << "     fei4Analyzer -x 4 -r root_outputfile.root -i stcontrol_rawfile.raw -l 2" << std::endl;	   
-	   std::cout << "Cosmic gui SCM analysis example:" << std::cout;
-	   std::cout << "     fei4Analyzer -t -r root_outputfile.root -i cosmic_rawfile.dat -l 2" << std::endl;
+	   std::cout << "\tfei4Analyzer -x 4 -r root_outputfile.root -i stcontrol_rawfile.raw -l 2" << std::endl;	   
+	   std::cout << "CosmicGUI SCM analysis example:" << std::endl;
+	   std::cout << "\tfei4Analyzer -t -r root_outputfile.root -i cosmic_rawfile.dat -l 2" << std::endl;
 	   return 0;
 	 }
   	 case 'i': 
   	 {
 	   option = argv[i+1];
-	   while( i<(argc-2) && option[0]!='-')
+	   while( option[0]!='-' && i<(argc-1))
 	   {
   	      infilename.push_back( std::string(argv[++i]) );
-	      option = argv[i+1];
+	      if(i<(argc-1)) option = argv[i+1];
 	   }
   	   break;
   	 }
@@ -81,6 +98,7 @@ int main(int argc, char **argv)
   	 {
 	   bunch = true;
            rootfilename.push_back( std::string(argv[++i]) );
+	   break;
   	 }	 
   	 case 'v': 
   	 {
