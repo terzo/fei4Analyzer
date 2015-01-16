@@ -68,7 +68,7 @@ int main(int argc, char **argv)
 	   std::cout << "-n [0..1]\t\t\t:" << "specify the hit frequency for noise suppression (no noise suppression by default)" << "\n";
 	   std::cout << "-g [0..9999]\t\t\t:" << "correct the charge in the temporary output plots by the specified factor" << "\n";
 	   std::cout << "-0\t \t \t \t:" << "doen't perform langaus fits (faster)" << "\n";
-	   std::cout << "-x [4,25]\t\t\t:" << "define module type: 4 = quad module; 25 = 500x50um FE-I4 pitch arrangement" << "\n";
+	   std::cout << "-x [4,25]\t\t\t:" << "define module type: 4 = quad module; 25 = 500x25um FE-I4 pitch arrangement" << "\n";
 	   std::cout << "-t\t \t \t \t:" << "read timestaps (for ComsicGUI test beam applications only)" << "\n";
 	   std::cout << "-f [1,2]\t\t\t:" << "select the fit function for ToT plots: 1->landau MP (default); 2->langaus MPV;" << "\n";
 	   std::cout << "-m [0..inf]\t\t\t:" << "merge consecutive triggers" << "\n";
