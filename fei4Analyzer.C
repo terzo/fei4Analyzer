@@ -42,9 +42,10 @@ int main(int argc, char **argv)
   bool readTimeStamp = false;
   bool quiet = true;
   bool bunch = false;
+  bool borders = false;
   int  lv1diff = 3;
   std::vector<double> correction_factors;
-  int colRowCuts[4] = {-1,-1,-1,-1};
+  int colRowCuts[4] = {0,0,0,0};
   double noise = -1;
   unsigned int fitFunction = 1;
   int maxevents = -1;
@@ -72,11 +73,12 @@ int main(int argc, char **argv)
 	   std::cout << "-t\t \t \t \t:" << "read timestaps (for ComsicGUI test beam applications only)" << "\n";
 	   std::cout << "-f [1,2]\t\t\t:" << "select the fit function for ToT plots: 1->landau MP (default); 2->langaus MPV;" << "\n";
 	   std::cout << "-m [0..inf]\t\t\t:" << "merge consecutive triggers" << "\n";
-	   std::cout << "-l [0..16]\t\t\t:" << "maximum lvl1 difference for clustering" << "\n";
+	   std::cout << "-l [0..16]\t\t\t:" << "maximum lvl1 difference for clustering (default is 3)" << "\n";
 	   std::cout << "-c minCol minRow maxCol maxRow\t:" << "define square cuts in pixel coordinates for the analysis" << "\n";
+	   std::cout << "-b\t \t \t \t:" << "invert the logic of the square cuts to select the borders only" << "\n";
 	   std::cout << "-e [0..inf]\t\t\t:" << "maximum number of event to process (default process all events)" << "\n";
 	   std::cout << "-s [0..inf]\t\t\t:" << "skip the first n events (NOT IMPLEMENTED)" << "\n";
-	   std::cout << "-b [0..inf]\t\t\t:" << "I forgot what was that intended for... (NOT IMPLEMENTED)" << "\n";
+	   std::cout << "-9 [0..inf]\t\t\t:" << "I forgot what was that intended for... (NOT IMPLEMENTED)" << "\n";
 	   std::cout <<  std::endl;
 	   std::cout << "STControl quad module analysis example:" << std::endl;
 	   std::cout << "\tfei4Analyzer -x 4 -r root_outputfile.root -i stcontrol_rawfile.raw -l 2" << std::endl;	   
@@ -94,7 +96,7 @@ int main(int argc, char **argv)
 	   }
   	   break;
   	 }
-	 case 'b': 
+	 case '9': 
   	 {
 	   bunch = true;
            rootfilename.push_back( std::string(argv[++i]) );
@@ -108,10 +110,10 @@ int main(int argc, char **argv)
   	 case 'r': 
   	 {
 	   option = argv[i+1];
-	   while( i<(argc-2) && option[0]!='-')
+	   while( i<(argc-1) && option[0]!='-')
 	   {
   	      rootfilename.push_back( std::string(argv[++i]) );
-	      option = argv[i+1];
+	      if(i<(argc-1)) option = argv[i+1];
 	   }
   	   break;
   	 } 
@@ -134,12 +136,12 @@ int main(int argc, char **argv)
 	 case 'g': 
   	 {
 	   option = argv[i+1];
-	   while( i<(argc-2) && option[0]!='-')
+	   while( i<(argc-1) && option[0]!='-')
 	   {
 	       double correction_factor = 1;
   	       string_to_number(argv[++i],correction_factor);
 	       correction_factors.push_back(correction_factor);
-	       option = argv[i+1];
+	       if(i<(argc-1)) option = argv[i+1];
 	   }
   	   break;
   	 }
@@ -183,15 +185,19 @@ int main(int argc, char **argv)
 	 {
 	   option = argv[i+1];
 	   unsigned int j = 0;
-	   while( j<4 && i<(argc-2) && option[0]!='-')
+	   while( j<4 && i<(argc-1) && option[0]!='-')
 	   {
-	       int limit = -1;
+	       int limit = 0;
   	       string_to_number(argv[++i],limit);
 	       colRowCuts[j] = limit;
-	       option = argv[i+1];
+	       if(i<(argc-1)) option = argv[i+1];
 	       j++;
 	   }
   	   break;
+	 }
+	 case 'b':
+	 {
+		borders=true;
 	 }
   	 default: 
   	 {
@@ -233,7 +239,7 @@ int main(int argc, char **argv)
 
      #pragma omp critical
      {
-        thePlotter->setCuts(colRowCuts);
+        thePlotter->setCuts(colRowCuts,borders);
 	thePlotter->fillHitPlots(hitMap);
      	thePlotter->fillClusterPlots(clusterMap, noise);
      	

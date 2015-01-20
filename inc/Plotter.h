@@ -32,8 +32,8 @@ class Plotter
    void fillHitPlots(EventMaker::hitMapDef& hitMap);
    void fitPlots(double voltage = 0);
    void writePlots(std::string rootFileName, bool bunch);
-   void setCuts(int colRowCuts[4]);
-   void setCuts(int minCol = -1, int minRow = -1, int maxCol = -1, int maxRow= -1);
+   void setCuts(int colRowCuts[4], bool borders = false);
+   void setCuts(int minCol = -1, int minRow = -1, int maxCol = -1, int maxRow= -1, bool borders = false);
    void setModuleType(int module_type);
    bool isEmpty(){return empty_;}
    void showGraph(std::vector<double> correction_factor,unsigned int fit_function = 1);
@@ -43,6 +43,7 @@ class Plotter
    
    void quadEncode(const int chip, int &col, int &row);
    void deletePlots();
+   bool outOfLimits(int &col,int &row);
    
    std::stringstream  ss_;
    bool isQuad_;
@@ -53,6 +54,7 @@ class Plotter
    int minRowCut_;
    int maxColCut_;
    int maxRowCut_;
+   bool borders_;
    
    //single plots
    std::map<int, TH1I*> clusterToT_, two_hitToT_, one_hitToT_, clusterSize_, clusterSizeRow_, clusterSizeCol_;

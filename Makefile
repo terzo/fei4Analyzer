@@ -46,9 +46,9 @@ dependencies :
 	@echo '            [1;32m[1m>>********** Making main sequence dependencies ***********<<[0m'
 	@if [ ! -e dependencies ] ; then touch dependencies ;fi
         ifdef CPPVERBOSE
-	  ${CC} -MM $(SRCDIR)/*.cc $(CCFLAGS) | sed 's/.*\.o:/$(OBJDIR)\/&/' >  dependencies
+	  ${CC} -MM $(SRCDIR)/*.cpp $(CCFLAGS) | sed 's/.*\.o:/$(OBJDIR)\/&/' >  dependencies
         else
-	 @${CC} -MM $(SRCDIR)/*.cc $(CCFLAGS) | sed 's/.*\.o:/$(OBJDIR)\/&/' >  dependencies
+	 @${CC} -MM $(SRCDIR)/*.cpp $(CCFLAGS) | sed 's/.*\.o:/$(OBJDIR)\/&/' >  dependencies
         endif
 
 #--------------------------------------------------------------------------------------------------------#

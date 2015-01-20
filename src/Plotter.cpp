@@ -14,11 +14,12 @@ Plotter::Plotter(bool quiet, int module_type)
     theFitter = new Fitter(quiet);
     quiet_ = quiet;
     empty_ = true;
+    borders_ = false;
     v_=0;
-    minColCut_ = -1;
-    minRowCut_ = -1;
-    maxColCut_ = -1;
-    maxRowCut_ = -1;
+    minColCut_ = 0;
+    minRowCut_ = 0;
+    maxColCut_ = 0;
+    maxRowCut_ = 0;
 }
 //==========================================
 Plotter::~Plotter()
@@ -35,20 +36,24 @@ Plotter::~Plotter()
 	*/
 }
 //================================================================================================
-void Plotter::setCuts(int minCol, int minRow, int maxCol, int maxRow)
+void Plotter::setCuts(int minCol, int minRow, int maxCol, int maxRow, bool borders)
 {
    minColCut_ = minCol;
    minRowCut_ = minRow;
    maxColCut_ = maxCol;
    maxRowCut_ = maxRow;
+   
+   borders_   = borders;
 }
 //================================================================================================
-void Plotter::setCuts(int colRowCuts[4])
+void Plotter::setCuts(int colRowCuts[4], bool borders)
 {
    minColCut_ = colRowCuts[0];
    minRowCut_ = colRowCuts[1];
    maxColCut_ = colRowCuts[2];
    maxRowCut_ = colRowCuts[3];
+   
+   borders_   = borders;
 }
 //==========================================CLUSTER TOT ANALYSIS=====================================
 void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double noise)
@@ -158,10 +163,7 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 	 
 	 for(unsigned int hit=0; hit<cSize; hit++)
     	 {
-	   if( minColCut_ > -1 && clus->second[hit].col < minColCut_ ) continue;
-	   if( minRowCut_ > -1 && clus->second[hit].row < minRowCut_ ) continue;
-	   if( maxColCut_ > -1 && clus->second[hit].col > maxColCut_ ) continue;
-           if( maxRowCut_ > -1 && clus->second[hit].row > maxRowCut_ ) continue;
+	   if( outOfLimits(clus->second[hit].col,clus->second[hit].row) ) continue;
 	   
 	   
 	   if(noise > 0 && 1.*hitMap_[(*chip).first]->GetBinContent((*clus).second[hit].col+1,(*clus).second[hit].row+1)/hitMap_[(*chip).first]->GetEntries() > noise) 
@@ -320,10 +322,7 @@ void Plotter::fillHitPlots(EventMaker::hitMapDef& hitMap)
  
       for(unsigned int h=0; h<(*chip).second.size(); h++)
       {
-        if( minColCut_ > -1 && chip->second[h].col < minColCut_ ) continue;
-	if( minRowCut_ > -1 && chip->second[h].row < minRowCut_ ) continue;
-	if( maxColCut_ > -1 && chip->second[h].col > maxColCut_ ) continue;
-	if( maxRowCut_ > -1 && chip->second[h].row > maxRowCut_ ) continue;
+        if( outOfLimits(chip->second[h].col,chip->second[h].row) ) continue;
       
         hitMap_[(*chip).first]->Fill((*chip).second[h].col, (*chip).second[h].row);
       
@@ -339,7 +338,29 @@ void Plotter::fillHitPlots(EventMaker::hitMapDef& hitMap)
   }
   
 }
-//============================================
+//========================================================================
+bool Plotter::outOfLimits(int &col, int &row)   
+{
+	bool out=false;
+	if(!borders_)
+	{
+	    //internal frame
+	    if( minColCut_ > 0 && col < minColCut_ ) out = true;
+	    if( minRowCut_ > 0 && row < minRowCut_ ) out = true;
+	    if( maxColCut_ > 0 && col > maxColCut_ ) out = true;
+	    if( maxRowCut_ > 0 && row > maxRowCut_ ) out = true;
+	}
+	else
+	{
+	    //external frame
+	    if( minColCut_ > 0 && maxColCut_ > 0 && minRowCut_ > 0 && maxRowCut_ > 0)
+	    {
+	        if( col > minColCut_ && col < maxColCut_ && row > minRowCut_ && row < maxRowCut_) out = true;
+	    }
+	}
+	return out;
+}
+//=========================================================================
 void Plotter::quadEncode(const int chip, int &col, int &row)
 {
   if(chip == 0)
@@ -487,6 +508,7 @@ void Plotter::showGraph(std::vector<double> correction_factors,unsigned int fit_
 
     std::map<double, Fitter::fitResultDef> vec;
     double correction_factor;
+    //std::cout << __LINE__ << "] " << "correction_factors.size(): "  << correction_factors.size() << " > " << "chip->first: " << chip->first << "\n";
     if( correction_factors.size() > chip->first ) 
             correction_factor = correction_factors[chip->first]; //2.46 2.42 2.75 2.49 2.59
     else    correction_factor = 1;
