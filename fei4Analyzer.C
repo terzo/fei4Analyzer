@@ -248,7 +248,7 @@ int main(int argc, char **argv)
       
      	if( rootfilename.size() < infilename.size() ) 
      	{ 
-     	    rootfilename.push_back( infilename[i].substr(0, infilename[i].substr( infilename[i].find_last_of("/\\")+1 ).find_last_of(".") ) + std::string(".root") );
+     	    rootfilename.push_back( infilename[i].substr(infilename[i].find_last_of("/\\")+1, infilename[i].substr( infilename[i].find_last_of("/\\")+1 ).find_last_of(".") ) + std::string(".root") );
      	    std::cout << "Write out file: " << rootfilename.back() << "\n";
      	}
      	thePlotter->writePlots(rootfilename.back(),bunch);
