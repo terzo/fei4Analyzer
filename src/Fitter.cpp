@@ -6,7 +6,7 @@
 **
 ****************************************************************************/
 
-#include "/home/iwsatlas1/terzo/utility/ClusterAnalysis/Analyzer/inc/Fitter.h"
+#include "Fitter.h"
 
 Double_t langaufun(Double_t *x, Double_t *par) {
 
