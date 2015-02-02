@@ -22,6 +22,10 @@
 #include "Clusterizer.h"
 #include "Plotter.h"
 
+#ifdef LCIO
+#include "LCIOEventMaker.h"
+#endif
+
 template <typename N, typename S>
 void string_to_number(const S theString, N &n)
 {
@@ -34,6 +38,7 @@ int main(int argc, char **argv)
 {
 //  int skipcount=0;
   std::vector<std::string> infilename, rootfilename;
+  std::string calibname = "calib.root";
   std::string outfilename;
   bool merge = false;
   int maxMerge = 1;
@@ -195,6 +200,20 @@ int main(int argc, char **argv)
 	   }
   	   break;
 	 }
+	 case 's':
+	 {
+	   /*
+	   option = argv[i+1];
+	   while( option[0]!='-' && i<(argc-1))
+	   {
+	      calibname.push_back( std::string(argv[++i]) );
+	      if(i<(argc-1)) option = argv[i+1];
+	   }
+	   break;
+	   */
+	   calibname = std::string(argv[++i]);
+	   break;
+	 }
 	 case 'b':
 	 {
 		borders=true;
@@ -222,7 +241,14 @@ int main(int argc, char **argv)
           
      std::string extension = infilename[i].substr(infilename[i].find_last_of(".") + 1); 
      if ( extension == "dat")
-     		theEventMaker = new CosmicEventMaker(quiet, readTimeStamp, design25); 
+     		theEventMaker = new CosmicEventMaker(quiet, readTimeStamp, design25);
+     else if(extension == "slcio")
+     {
+                theEventMaker = NULL;
+                #ifdef LCIO
+                theEventMaker = new LCIOEventMaker(quiet, readTimeStamp, design25);
+		#endif
+     }
      else      
      		theEventMaker = new USBpixEventMaker(quiet, readTimeStamp, design25);
      	
@@ -241,7 +267,7 @@ int main(int argc, char **argv)
      {
         thePlotter->setCuts(colRowCuts,borders);
 	thePlotter->fillHitPlots(hitMap);
-     	thePlotter->fillClusterPlots(clusterMap, noise);
+     	thePlotter->fillClusterPlots(clusterMap, noise, calibname);
      	
      	//#pragma omp critical
      	if(dofit) thePlotter->fitPlots(voltage);
@@ -252,8 +278,8 @@ int main(int argc, char **argv)
      	    std::cout << "Write out file: " << rootfilename.back() << "\n";
      	}
      	thePlotter->writePlots(rootfilename.back(),bunch);
-      }
-   } 
+     }
+  } 
 //  }
   
   if(dofit) thePlotter->showGraph(correction_factors, fitFunction);

@@ -5,7 +5,16 @@ CC = g++
 SRCDIR  = src
 INCDIR  = inc
 OBJDIR  = obj
-BINDIR  = ~/utility/bin/
+ifdef suffix
+ BINDIR  = $(suffix)
+else
+ BINDIR  = ./bin/
+endif
+
+ifdef LCIO
+ LCIOINC= -I$(LCIO)/include  -I$(LCIO)/sio/include
+ LCIOLIBS= -L$(LCIO)/lib -llcio -L$(LCIO)/sio/lib -lsio -lz
+endif
 
 #XERCES-C-INC = /usr/include/xercesc
 #XERCES-C-LIB = /usr/lib
@@ -17,9 +26,10 @@ OPTIMIZER_FLAGS = -O3 -Wall -Wextra
 
 INCFLAGS = -I$(INCDIR)            \
            -I$(BOOSTINC)            \
+	   $(LCIOINC) 	\
 	   `root-config --cflags`
 	   
-LIBFLAGS = -lMinuit -fopenmp -lboost_regex -L$(BOOSTLIB) `root-config --libs`
+LIBFLAGS = -lMinuit -fopenmp -lboost_regex -L$(BOOSTLIB) $(LCIOLIBS) `root-config --libs`
 	   
 CCFLAGS = $(INCFLAGS) $(OPTIMIZER_FLAGS)
 
@@ -73,6 +83,7 @@ fei4Analyzer : fei4Analyzer.C                                            \
          obj/EventMaker.o                        \
          obj/USBpixEventMaker.o                        \
 	 obj/CosmicEventMaker.o                        \
+	 obj/LCIOEventMaker.o					\
 	 obj/Clusterizer.o                                 \
 	 obj/Plotter.o                                    \
 	 obj/Calibrator.o                                    \
@@ -87,6 +98,7 @@ fei4Analyzer : fei4Analyzer.C                                            \
 	           obj/EventMaker.o              \
 	           obj/USBpixEventMaker.o              \
 		   obj/CosmicEventMaker.o                        \
+		   obj/LCIOEventMaker.o                        \
 		   obj/Clusterizer.o                                 \
 	           obj/Plotter.o                                    \
 		   obj/Calibrator.o                                    \
@@ -99,6 +111,7 @@ fei4Analyzer : fei4Analyzer.C                                            \
 	           obj/EventMaker.o              \
    	           obj/USBpixEventMaker.o              \
 		   obj/CosmicEventMaker.o                        \
+		   obj/LCIOEventMaker.o                        \
 		   obj/Clusterizer.o                                 \
 	           obj/Plotter.o                      \
 		   obj/Fitter.o                                    \
@@ -166,6 +179,29 @@ obj/CosmicEventMaker.o : src/CosmicEventMaker.cpp     \
 		      $(CCFLAGS)                              \
 		      `root-config --cflags`
         endif
+#--------------------------------------------------------------------------------------------------------#
+obj/LCIOEventMaker.o : src/LCIOEventMaker.cpp     \
+                       inc/LCIOEventMaker.h     \
+                       inc/EventMaker.h     \
+                       inc/macros.h	       \
+		       inc/ANSIColors.h     \
+		       inc/FormattedRecord.hh
+	@echo " "
+	@echo '            [0;31m[1m[7mCompiling[0m [0;36m[1m[7m$< [0m'
+        ifdef CPPVERBOSE
+	  $(CC) -c -o $@              \
+	              $<  	      \
+		      $(CCFLAGS)                              \
+		      `root-config --cflags`
+        else
+	 @$(CC) -c -o $@              \
+	              $<  	      \
+		      -I$(LCIODIR)	\
+		      $(CCFLAGS)                              \
+		      `root-config --cflags`
+        endif
+	
+	
 #--------------------------------------------------------------------------------------------------------#
 obj/Clusterizer.o : src/Clusterizer.cpp     \
                    inc/Clusterizer.h	\
@@ -250,7 +286,7 @@ clean:
 	@echo ' '
 	@echo '[1;32m[1m----------- Main sequence clean up --------------------------------------------------[0m'
         ifdef CPPVERBOSE
-	  rm -rf $(OBJDIR)/*.o *~  $(EXELIST) dependencies
+	  rm -rf $(OBJDIR)/*.o *~  $(EXELIST) $(BINDIR)/$(EXELIST) $dependencies
         else
 	 @rm -rf $(OBJDIR)/*.o *~  $(EXELIST) dependencies
         endif

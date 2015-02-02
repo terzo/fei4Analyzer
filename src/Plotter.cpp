@@ -56,13 +56,13 @@ void Plotter::setCuts(int colRowCuts[4], bool borders)
    borders_   = borders;
 }
 //==========================================CLUSTER TOT ANALYSIS=====================================
-void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double noise)
+void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double noise, std::string calibname)
 {
   if(!empty_) this->deletePlots();
 
   TH1::AddDirectory(kFALSE);
   TH2::AddDirectory(kFALSE);
-  //Calibrator *theCalibrator = new Calibrator();
+  Calibrator *theCalibrator = new Calibrator(calibname);
   if(isQuad_)
   {
      clusterMap_cs1_all_       = new TH2I("clusterMap_cs1","Cluster Map CS1 - all chips",80*2,0,80*2,336*2,0,336*2);		   
@@ -71,14 +71,14 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
      clusterTotMap_cs2_all_    = new TH2D("clusterTotMap_cs2","Cluster Tot Map CS2 - all chips",80*2,0,80*2,336*2,0,336*2);	       
      clusterMeanTotMap_cs1_all_= new TH2D("clusterMeanTotMap_cs1","Cluster Mean Tot Map CS1 - all chips",80*2,0,80*2,336*2,0,336*2);
      
-     clusterToT_all_ 	       = new TH1I("ToTdist","ToT Distribution",50,-0.5,49.5) ;
-     one_hitToT_all_ 	       = new TH1I("ToTdistCS1","ToT Distribution CS1",50,-0.5,49.5) ;
-     two_hitToT_all_ 	       = new TH1I("ToTdistCS2","ToT Distribution CS2",50,-0.5,49.5) ;
-     totMax_all_	       = new TH1I("ToTdistCS2_LR","ToT Max Distribution CS2",50,-0.5,49.5) ; 	    
-     totMin_all_	       = new TH1I("ToTdistCS2_UD","ToT Min Distribution CS2",50,-0.5,49.5) ; 	    
-     clusterSize_all_	       = new TH1I("CSdist","Cluster Size Distribution",11,0.5,10.5);
-     clusterSizeRow_all_       = new TH1I("CSdistRow","Cluster Size Distribution Rows",11,0.5,10.5);
-     clusterSizeCol_all_       = new TH1I("CSdistCol","Cluster Size Distribution Cols",11,0.5,10.5);
+     clusterToT_all_ 	       = new TH1I("ToTdist","ToT Distribution",150,-0.5,149.5) ;
+     one_hitToT_all_ 	       = new TH1I("ToTdistCS1","ToT Distribution CS1",150,-0.5,149.5) ;
+     two_hitToT_all_ 	       = new TH1I("ToTdistCS2","ToT Distribution CS2",150,-0.5,149.5) ;
+     totMax_all_	       = new TH1I("ToTdistCS2_LR","ToT Max Distribution CS2",150,-0.5,149.5) ; 	    
+     totMin_all_	       = new TH1I("ToTdistCS2_UD","ToT Min Distribution CS2",150,-0.5,149.5) ; 	    
+     clusterSize_all_	       = new TH1I("CSdist","Cluster Size Distribution",50,-0.5,49.5);
+     clusterSizeRow_all_       = new TH1I("CSdistRow","Cluster Size Distribution Rows",50,0.5,50.5);
+     clusterSizeCol_all_       = new TH1I("CSdistCol","Cluster Size Distribution Cols",50,0.5,50.5);
      clusterCharge_all_	       = new TH1D("Qdist","Charge Distribution",100,0,100 ) ;
      clusterCharge_cs1_all_    = new TH1D("QdistCS1","Charge Distribution CS1",100,0,100) ;
      clusterCharge_cs2_all_    = new TH1D("QdistCS2","Charge Distribution CS2",100,0,100) ;
@@ -100,54 +100,60 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
       
         std::cout << "Making new histograms for chip: " << (*chip).first << std::endl;
         std::stringstream ss;
-        ss.str("");
-        ss << "chip"<< (*chip).first << "_ToTdist";
- 	clusterToT_[(*chip).first] = new TH1I(ss.str().c_str(),"ToT Distribution",50,-0.5,49.5) ;
- 	ss.str("");
-        ss << "chip"<< (*chip).first << "_ToTdistCS1";
- 	one_hitToT_[(*chip).first] = new TH1I(ss.str().c_str(),"ToT Distribution CS1",50,-0.5,49.5) ;
- 	ss.str("");
- 	ss << "chip"<< (*chip).first << "_ToTdistCS2";
- 	two_hitToT_[(*chip).first] = new TH1I(ss.str().c_str(),"ToT Distribution CS2",50,-0.5,49.5) ;
-	ss.str("");
-	ss << "chip"<< (*chip).first << "_ToTdistCS2_LR";
-	totMax_[(*chip).first] = new TH1I(ss.str().c_str(),"ToT Max Distribution CS2",50,-0.5,49.5) ;
-	ss.str("");
- 	ss << "chip"<< (*chip).first << "_ToTdistCS2_UD";
- 	totMin_[(*chip).first] = new TH1I(ss.str().c_str(),"ToT Min Distribution CS2",50,-0.5,49.5) ;
- 	ss.str("");
- 	ss << "chip"<< (*chip).first << "_CSdist";
- 	clusterSize_[(*chip).first]= new TH1I(ss.str().c_str(),"Cluster Size Distribution",11,0.5,10.5);
-	ss.str("");
- 	ss << "chip"<< (*chip).first << "_CSdistRow";
- 	clusterSizeRow_[(*chip).first]= new TH1I(ss.str().c_str(),"Cluster Size Distribution Rows",11,0.5,10.5);
-        ss.str("");
- 	ss << "chip"<< (*chip).first << "_CSdistCol";
- 	clusterSizeCol_[(*chip).first]= new TH1I(ss.str().c_str(),"Cluster Size Distribution Cols",11,0.5,10.5);
-	ss.str("");
- 	ss << "chip"<< (*chip).first << "_clusterMap_cs1";
+        
+	ss.str(""); ss << "chip"<< (*chip).first << "_ToTdist";
+ 	clusterToT_[(*chip).first] = new TH1I(ss.str().c_str(),"ToT Distribution",150,-0.5,149.5) ;
+ 	
+	ss.str(""); ss << "chip"<< (*chip).first << "_ToTdistCS1";
+ 	one_hitToT_[(*chip).first] = new TH1I(ss.str().c_str(),"ToT Distribution CS1",150,-0.5,149.5) ;
+ 	
+	ss.str(""); ss << "chip"<< (*chip).first << "_ToTdistCS2";
+ 	two_hitToT_[(*chip).first] = new TH1I(ss.str().c_str(),"ToT Distribution CS2",150,-0.5,149.5) ;
+	
+	ss.str(""); ss << "chip"<< (*chip).first << "_ToTdistCS2_LR";
+	totMax_[(*chip).first] = new TH1I(ss.str().c_str(),"ToT Max Distribution CS2",150,-0.5,149.5) ;
+	
+	ss.str(""); ss << "chip"<< (*chip).first << "_ToTdistCS2_UD";
+ 	totMin_[(*chip).first] = new TH1I(ss.str().c_str(),"ToT Min Distribution CS2",150,-0.5,149.5) ;
+ 	
+	ss.str(""); ss << "chip"<< (*chip).first << "_CSdist";
+ 	clusterSize_[(*chip).first]= new TH1I(ss.str().c_str(),"Cluster Size Distribution",50,0.5,50.5);
+	
+	ss.str(""); ss << "chip"<< (*chip).first << "_CSdistRow";
+ 	clusterSizeRow_[(*chip).first]= new TH1I(ss.str().c_str(),"Cluster Size Distribution Rows",50,0.5,50.5);
+        
+	ss.str(""); ss << "chip"<< (*chip).first << "_CSdistCol";
+ 	clusterSizeCol_[(*chip).first]= new TH1I(ss.str().c_str(),"Cluster Size Distribution Cols",50,0.5,50.5);
+	
+	ss.str(""); ss << "chip"<< (*chip).first << "_clusterMap_cs1";
  	clusterMap_cs1_[(*chip).first]= new TH2I(ss.str().c_str(),"Cluster Map CS1",cols,0,cols,rows,0,rows);
-	ss.str("");
- 	ss << "chip"<< (*chip).first << "_clusterMap_cs2";
+	
+	ss.str(""); ss << "chip"<< (*chip).first << "_clusterMap_cs2";
  	clusterMap_cs2_[(*chip).first]= new TH2I(ss.str().c_str(),"Cluster Map CS2",cols,0,cols,rows,0,rows);
-	ss.str("");
-        ss << "chip"<< (*chip).first << "_clusterTotMap_cs1";
+	
+	ss.str(""); ss << "chip"<< (*chip).first << "_clusterTotMap_cs1";
  	clusterTotMap_cs1_[(*chip).first]= new TH2D(ss.str().c_str(),"Cluster Tot Map CS1",cols,0,cols,rows,0,rows);
-	ss.str("");
-        ss << "chip"<< (*chip).first << "_clusterTotMap_cs2";
+	
+	ss.str(""); ss << "chip"<< (*chip).first << "_clusterTotMap_cs2";
  	clusterTotMap_cs2_[(*chip).first]= new TH2D(ss.str().c_str(),"Cluster Tot Map CS2",cols,0,cols,rows,0,rows);
-        ss.str("");
-        ss << "chip"<< (*chip).first << "_clusterMeanTotMap_cs1";
+        
+	ss.str(""); ss << "chip"<< (*chip).first << "_clusterMeanTotMap_cs1";
  	clusterMeanTotMap_cs1_[(*chip).first]= new TH2D(ss.str().c_str(),"Cluster Mean Tot Map CS1",cols,0,cols,rows,0,rows);
-	ss.str("");
-        ss << "chip"<< (*chip).first << "_Qdist";
+	
+	ss.str(""); ss << "chip"<< (*chip).first << "_Qdist";
  	clusterCharge_[(*chip).first] = new TH1D(ss.str().c_str(),"Charge Distribution",100,0,100	) ;
- 	ss.str("");
-        ss << "chip"<< (*chip).first << "_QdistCS1";
+ 	
+	ss.str(""); ss << "chip"<< (*chip).first << "_QdistCS1";
  	clusterCharge_cs1_[(*chip).first] = new TH1D(ss.str().c_str(),"Charge Distribution CS1",100,0,100) ;
- 	ss.str("");
- 	ss << "chip"<< (*chip).first << "_QdistCS2";
+ 	
+	ss.str(""); ss << "chip"<< (*chip).first << "_QdistCS2";
  	clusterCharge_cs2_[(*chip).first] = new TH1D(ss.str().c_str(),"Charge Distribution CS2",100,0,100) ;
+	
+	ss.str(""); ss << "chip"<< (*chip).first << "_clusterHolesCol";
+	clusterHolesCol_[(*chip).first]= new TH2I(ss.str().c_str(),"Cluster holes Col",cols,0,cols,cols,0,cols);
+	
+	ss.str(""); ss << "chip"<< (*chip).first << "_clusterHolesRow";
+	clusterHolesRow_[(*chip).first]= new TH2I(ss.str().c_str(),"Cluster holes Row",rows,0,rows,rows,0,rows);
       }
       
       for( Clusterizer::clustersDef::iterator clus=(*chip).second.begin(); clus!=(*chip).second.end(); ++clus )
@@ -160,6 +166,7 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 	 maxTot=minTot=minRowTot=maxRowTot=maxColTot=minColTot=(*clus).second[0].tot;
 	 unsigned int cSize = (*clus).second.size();
 	 bool bad_cluster = false;
+	 std::map<int,int> rowNum, colNum;
 	 
 	 for(unsigned int hit=0; hit<cSize; hit++)
     	 {
@@ -169,12 +176,16 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 	   if(noise > 0 && 1.*hitMap_[(*chip).first]->GetBinContent((*clus).second[hit].col+1,(*clus).second[hit].row+1)/hitMap_[(*chip).first]->GetEntries() > noise) 
 	   { 
 	      bad_cluster = true;
+	      //std::cout << "noise suppresssed" << "\n";
 	      continue;
 	   }
 	   
-	   int& tot=(*clus).second[hit].tot;
-           //double charge = theCalibrator->calib( (*clus).second[hit] );
-	   double charge = 0;
+	   rowNum[(*clus).second[hit].row]++;
+	   colNum[(*clus).second[hit].col]++;
+	   
+	   int tot=(*clus).second[hit].tot;
+           double charge = theCalibrator->calib( (*clus).second[hit] );
+	   //double charge = 0;
            chargeSum += charge;
     	   cToT+=tot;
            if( (*clus).second[hit].row > maxRow ) 
@@ -235,8 +246,12 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
     	 if(cSize!=0)  
 	 {
 	    clusterSize_[(*chip).first]->Fill(cSize);
-	    clusterSizeRow_[(*chip).first]->Fill( maxRow-minRow+1 );
-	    clusterSizeCol_[(*chip).first]->Fill( maxCol-minCol+1 );
+	    int rowSize = maxRow-minRow+1;
+	    int colSize = maxCol-minCol+1;
+	    clusterSizeRow_[(*chip).first]->Fill( rowSize );
+	    clusterSizeCol_[(*chip).first]->Fill( colSize );
+	    clusterHolesRow_[(*chip).first]->Fill( rowSize , rowSize - rowNum.size() );
+	    clusterHolesCol_[(*chip).first]->Fill( colSize , colSize - colNum.size() );
 	 }
     	 else std::cout << "WARNING: cluster size 0" << std::endl;
 	 
@@ -293,6 +308,7 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
   if(isQuad_) clusterMeanTotMap_cs1_all_->Divide(clusterTotMap_cs1_all_,clusterMap_cs1_all_,1.0,1.0,"B");						    
   
   empty_=false;
+  delete theCalibrator;
 }
   
 //============================================
@@ -445,6 +461,8 @@ void Plotter::writePlots(std::string rootFileName, bool bunch)
     clusterSize_[(*chip).first]->Write();
     clusterSizeRow_[(*chip).first]->Write();
     clusterSizeCol_[(*chip).first]->Write();
+    clusterHolesRow_[(*chip).first]->Write();
+    clusterHolesCol_[(*chip).first]->Write();
     totMax_[(*chip).first]->Write();
     totMin_[(*chip).first]->Write();
     hitMap_[(*chip).first]->Write();
@@ -672,6 +690,8 @@ void Plotter::deletePlots(void)
     if(clusterSize_[(*chip).first] 	       !=NULL) delete clusterSize_[(*chip).first];
     if(clusterSizeRow_[(*chip).first]          !=NULL) delete clusterSizeRow_[(*chip).first];
     if(clusterSizeCol_[(*chip).first]          !=NULL) delete clusterSizeCol_[(*chip).first];
+    if(clusterHolesRow_[(*chip).first]	       !=NULL) delete clusterHolesRow_[(*chip).first];
+    if(clusterHolesCol_[(*chip).first]	       !=NULL) delete clusterHolesCol_[(*chip).first];
     if(totMax_[(*chip).first]   	       !=NULL) delete totMax_[(*chip).first];
     if(totMin_[(*chip).first]   	       !=NULL) delete totMin_[(*chip).first];
     if(hitMap_[(*chip).first]   	       !=NULL) delete hitMap_[(*chip).first];
@@ -690,6 +710,8 @@ void Plotter::deletePlots(void)
   clusterSize_.clear();
   clusterSizeRow_.clear();
   clusterSizeCol_.clear();
+  clusterHolesRow_.clear();
+  clusterHolesCol_.clear();
   totMax_.clear();
   totMin_.clear();
   hitMap_.clear();

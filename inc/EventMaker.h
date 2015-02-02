@@ -35,6 +35,7 @@ class EventMaker
       int row ;
       int bcid;
       int l1id;
+      int chip;
    } aHit, hitDef ;
  
    typedef std::vector<hitDef>                            hitsDef       ;

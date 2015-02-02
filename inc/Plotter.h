@@ -28,7 +28,7 @@ class Plotter
    Plotter(bool quiet, int module_type=0       ) ;
   ~Plotter(void                    )  ;
   
-   void fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double noise = -1);
+   void fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double noise = -1, std::string calibname = "calib.root");
    void fillHitPlots(EventMaker::hitMapDef& hitMap);
    void fitPlots(double voltage = 0);
    void writePlots(std::string rootFileName, bool bunch);
@@ -60,7 +60,7 @@ class Plotter
    std::map<int, TH1I*> clusterToT_, two_hitToT_, one_hitToT_, clusterSize_, clusterSizeRow_, clusterSizeCol_;
    std::map<int, TH1D*> clusterCharge_,clusterCharge_cs1_,clusterCharge_cs2_;
    std::map<int, TH1I*> totMax_, totMin_;
-   std::map<int, TH2I*> hitMap_, clusterMap_cs1_, clusterMap_cs2_;
+   std::map<int, TH2I*> hitMap_, clusterMap_cs1_, clusterMap_cs2_, clusterHolesRow_, clusterHolesCol_;
    std::map<int, TH2D*> clusterMeanTotMap_cs1_, clusterTotMap_cs1_, clusterTotMap_cs2_;
    TH2I *clusterMap_cs1_all_;  
    TH2I *clusterMap_cs2_all_;      

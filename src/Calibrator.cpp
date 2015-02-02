@@ -8,49 +8,39 @@
 
 #include "Calibrator.h"
 
-Calibrator::Calibrator(void )
+Calibrator::Calibrator(std::string calibname)
 {
-  int i,j;
-
-  //TH1F* dummy = new TH1F("dummy", "dummy", 10, 0, 1);
-
-  char infileName2[] = "./data/TOT_TEST_002108/analysis.root";
-  TFile *infile2 = new TFile(infileName2,"READ");
-  if(!infile2->IsOpen())
-  { 
-    std::cout << "ERROR: no file " << infileName2 << " found" << std::endl;
-    exit(0);
-  } 
-  else 
-  {
-   std::cout << "file : " << infileName2 << " loaded" <<std::endl;
-  }
-
-  //infile2->ls();
-  std::string histoName2 = "ToT_Mean_Mod_1";
-  TH2* h2 = (TH2*)infile2->FindObjectAny(histoName2.c_str());
-  if(h2==NULL)
-  {
-    std::cout << "ERROR: no histogram " << histoName2 << " found" << std::endl;
-    exit(0);
-  } 
+  TFile fileA( "A.root" );
+  TCanvas *pixcan = (TCanvas*)fileA.Get("pixcan");
+  ParA_ = (TH1F*)pixcan->FindObject("ParA_0_MA")->Clone("parA");
+  fileA.Close();
+  delete pixcan;
   
-  for (i=1; i<81; i++)
-  { 
-   	for (j=1; j<337; j++) 
-   	{
-    		 totmap_[i] [j] = h2->GetCellContent (i,j);
-   	}
-  }
-  std::cout<<"totmap feddich" << std::endl;
+  TFile fileB( "B.root" );
+  pixcan = (TCanvas*)fileB.Get("pixcan");
+  ParB_ = (TH1F*)pixcan->FindObject("ParB_0_MA")->Clone("parB");
+  fileB.Close();
+  delete pixcan;
 
-  infile2->Close();
-  delete  infile2;
-
+  TFile fileC( "C.root" );
+  pixcan = (TCanvas*)fileC.Get("pixcan");
+  ParC_ = (TH1F*)pixcan->FindObject("ParC_0_MA")->Clone("parC");
+  fileC.Close();
+  delete pixcan;
+ 
+  calibname_ = calibname;
+}
+//=====================================================================
+Calibrator::~Calibrator(void)
+{
+        if(ParA_) delete ParA_;
+	if(ParB_) delete ParB_;
+	if(ParC_) delete ParC_;
 }
 //=====================================================================
 double Calibrator::calib(EventMaker::hitDef hit)
 {
+/*
    double charge = 0;
    int col = hit.col;
    int row = hit.row;
@@ -58,6 +48,14 @@ double Calibrator::calib(EventMaker::hitDef hit)
    {
      charge = hit.tot * 6. / totmap_ [col] [row];    
    }
+*/
 
-   return charge;
+   //In Par histos is entry 1,1 for pixel 0,0
+   double pA = ParA_ -> GetBinContent(hit.col+1, hit.row+1);
+   double pB = ParB_ -> GetBinContent(hit.col+1, hit.row+1);
+   double pC = ParC_ -> GetBinContent(hit.col+1, hit.row+1);
+
+   //cout << ParA -> GetBinContent(col+1, row+1) << endl;;
+   return pA + pB * hit.tot + pC * hit.tot * hit.tot;
+   
 }

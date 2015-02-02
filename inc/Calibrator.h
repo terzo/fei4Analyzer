@@ -18,23 +18,27 @@
 #include <string>
 #include <TH2.h>
 #include <TFile.h>
+#include <TCanvas.h>
 
 #include "EventMaker.h"
 
 class Calibrator
 {
  public :
-   Calibrator(void 				);
-  ~Calibrator(void                    		){;}
+   Calibrator(std::string calibname);
+  ~Calibrator(void                 );
   
   double calib(EventMaker::hitDef hit);
   
  private:
    
    std::stringstream  ss_;
+   std::string calibname_;
 
    int totmap_[81] [337];
- 
+   TH1F *ParA_;
+   TH1F *ParB_;
+   TH1F *ParC_;
 } ;
 
 #endif
