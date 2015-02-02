@@ -12,33 +12,39 @@
 Clusterizer::clusterMapDef Clusterizer::makeCluster(EventMaker::hitMapDef hitMap, int lv1diff)
 {
   Clusterizer::clusterMapDef clusterMap;
-  int clusterID=0;
   
   std::cout << __LINE__ << "] CLUSTERING" << std::endl;
   for(EventMaker::hitMapDef::iterator ev = hitMap.begin(); ev!=hitMap.end(); ++ev)
   {
     for(std::map<int, EventMaker::hitsDef>::iterator chip = (*ev).second.begin(); chip!=(*ev).second.end(); ++chip)
     {
+      int clusterID=0;   
       while( (*chip).second.size() != 0 )
       {
    	EventMaker::hitsDef& clusterHits = clusterMap[(*ev).first][(*chip).first][clusterID];
    	clusterHits.push_back( (*chip).second[0] );
    	(*chip).second.erase( (*chip).second.begin());
+	//std::cout << "========cluster" << clusterID  << "=====================" << "\n";	
    	for(unsigned int c=0; c < clusterHits.size(); c++ )
    	{
-   	  int& cRow = clusterHits[c].row ;
-   	  int& cCol = clusterHits[c].col ;
+   	  int cRow = clusterHits[c].row ;
+   	  int cCol = clusterHits[c].col ;
 	  //int& cTot  = clusterHits[c].tot ;
-	  int& cBcid= clusterHits[c].bcid;
-	  int& cL1id= clusterHits[c].l1id;
+	  int cBcid= clusterHits[c].bcid;
+	  int cL1id= clusterHits[c].l1id;
    	  for(unsigned int h=0; h < (*chip).second.size(); h++ )
    	  {
-   	    if ( ( abs(cCol - (*chip).second[h].col) <= 1  )  && ( abs(cRow - (*chip).second[h].row ) <= 1       ) && 
-	         ( abs(cBcid- (*chip).second[h].bcid)<10000)  && ( abs(cL1id- (*chip).second[h].l1id) <= lv1diff ) )
+	    //std::cout << "Clu: " << clusterHits[c].col << "-" << clusterHits[c].row << "\n";
+	    //std::cout << "cClu: " << cCol << "-" << cRow << "\n";
+	    //std::cout << "Hit: " << (*chip).second[h].col << "-" << (*chip).second[h].row << "\n";
+   	    if ( ( abs(cCol - (*chip).second[h].col) <= 1  )  && ( abs(cRow - (*chip).second[h].row ) <= 1       ) )//&& 
+	         //( abs(cBcid- (*chip).second[h].bcid)<10000)  && ( abs(cL1id- (*chip).second[h].l1id) <= lv1diff ) )
    	    {
    	      clusterHits.push_back( (*chip).second[h] );
    	      (*chip).second.erase(  (*chip).second.begin()+h );
    	      h--;
+	      //std::cout << "sizeHits: " << (*chip).second.size()<< "\n";
+	      //std::cout << "sizeClus: " << clusterHits.size()<< "\n";
    	    }
    	  }
    	}
@@ -46,7 +52,31 @@ Clusterizer::clusterMapDef Clusterizer::makeCluster(EventMaker::hitMapDef hitMap
       }
     }
   }
-  
+
+  /*
+  std::cout << "number of events:\t" << clusterMap.size() << "\n";
+  for(Clusterizer::clusterMapDef::iterator ev = clusterMap.begin(); ev!=clusterMap.end(); ++ev)
+  {
+    std::cout << "event:\t" <<  (*ev).first << "\n";
+    std::cout << "number of chips: " <<  (*ev).second.size() << "\n";
+    for(std::map<int, Clusterizer::clustersDef>::iterator chip=(*ev).second.begin(); chip!=(*ev).second.end(); ++chip)
+    {
+      std::cout << "chip:\t" <<  (*chip).first << "\n";
+      std::cout << "number of clusters: " <<  (*chip).second.size() << "\n";
+      for( Clusterizer::clustersDef::iterator clus=(*chip).second.begin(); clus!=(*chip).second.end(); ++clus )
+      {
+         std::cout << "cluster:\t" <<  (*clus).first << "\n";
+	 std::cout << "number of hits: " <<  (*clus).second.size() << "\n";
+         for(unsigned int hit=0; hit<(*clus).second.size(); hit++)
+         {
+	   std::cout << "hit:\t" << hit << "\n";
+	   std::cout << "col:\t" << (*clus).second[hit].col << "\n";
+	   std::cout << "row:\t" << (*clus).second[hit].row << "\n";
+	 }
+      }
+    }
+  }
+  */
   return clusterMap;
 }
   
