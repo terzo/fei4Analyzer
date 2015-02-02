@@ -177,6 +177,7 @@ obj/LCIOEventMaker.o : src/LCIOEventMaker.cpp     \
         ifdef CPPVERBOSE
 	  $(CC) -c -o $@              \
 	              $<  	      \
+		      -I$(LCIODIR)	\
 		      $(CCFLAGS)                              \
 		      `root-config --cflags`
         else
