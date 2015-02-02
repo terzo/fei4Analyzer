@@ -25,7 +25,7 @@
 class Calibrator
 {
  public :
-   Calibrator(std::string calibname);
+   Calibrator(bool calibname);
   ~Calibrator(void                 );
   
   double calib(EventMaker::hitDef hit);
@@ -33,7 +33,7 @@ class Calibrator
  private:
    
    std::stringstream  ss_;
-   std::string calibname_;
+   bool calibname_;
 
    int totmap_[81] [337];
    TH1F *ParA_;

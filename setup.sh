@@ -1,12 +1,12 @@
 #!bin/bash
 
-export LCIO=/home/iwsatlas1/terzo/utility/ClusterAnalysis/lcio/v01-60
+export USE_LCIO=/home/iwsatlas1/terzo/utility/ClusterAnalysis/lcio/v01-60
 
-if [[ -s ${LCIO} ]]
+if [[ -s ${USE_LCIO} ]]
   then
-   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$LCIO/lib/
+   export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${USE_LCIO}/lib/
   else
-   unset LCIO
+   unset USE_LCIO
 fi
 
 export suffix=`pwd`/bin

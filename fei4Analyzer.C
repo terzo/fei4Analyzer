@@ -22,8 +22,8 @@
 #include "Clusterizer.h"
 #include "Plotter.h"
 
-#ifdef LCIO
-#include "LCIOEventMaker.h"
+#ifdef USE_LCIO
+ #include "LCIOEventMaker.h"
 #endif
 
 template <typename N, typename S>
@@ -38,7 +38,8 @@ int main(int argc, char **argv)
 {
 //  int skipcount=0;
   std::vector<std::string> infilename, rootfilename;
-  std::string calibname = "calib.root";
+  //std::string calibname = "calib.root";
+  bool calibname = false;
   std::string outfilename;
   bool merge = false;
   int maxMerge = 1;
@@ -82,6 +83,7 @@ int main(int argc, char **argv)
 	   std::cout << "-c minCol minRow maxCol maxRow\t:" << "define square cuts in pixel coordinates for the analysis" << "\n";
 	   std::cout << "-b\t \t \t \t:" << "invert the logic of the square cuts to select the borders only" << "\n";
 	   std::cout << "-e [0..inf]\t\t\t:" << "maximum number of event to process (default process all events)" << "\n";
+	   std::cout << "-k\t \t \t \t:" << "enable calibration (needs A.root, B.root, C.root)" << "\n";
 	   std::cout << "-s [0..inf]\t\t\t:" << "skip the first n events (NOT IMPLEMENTED)" << "\n";
 	   std::cout << "-9 [0..inf]\t\t\t:" << "I forgot what was that intended for... (NOT IMPLEMENTED)" << "\n";
 	   std::cout <<  std::endl;
@@ -200,7 +202,7 @@ int main(int argc, char **argv)
 	   }
   	   break;
 	 }
-	 case 's':
+	 case 'k':
 	 {
 	   /*
 	   option = argv[i+1];
@@ -211,12 +213,13 @@ int main(int argc, char **argv)
 	   }
 	   break;
 	   */
-	   calibname = std::string(argv[++i]);
+	   //calibname = std::string(argv[++i]);
+	   calibname = true;
 	   break;
 	 }
 	 case 'b':
 	 {
-		borders=true;
+	   borders=true;
 	 }
   	 default: 
   	 {
@@ -244,9 +247,11 @@ int main(int argc, char **argv)
      		theEventMaker = new CosmicEventMaker(quiet, readTimeStamp, design25);
      else if(extension == "slcio")
      {
-                theEventMaker = NULL;
-                #ifdef LCIO
+                #ifdef USE_LCIO
                 theEventMaker = new LCIOEventMaker(quiet, readTimeStamp, design25);
+		#else
+		std::cout << "ERROR: variable USE_LCIO not defined" << std::endl;
+		exit(0);
 		#endif
      }
      else      

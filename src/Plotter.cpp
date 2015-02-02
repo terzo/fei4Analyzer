@@ -56,7 +56,7 @@ void Plotter::setCuts(int colRowCuts[4], bool borders)
    borders_   = borders;
 }
 //==========================================CLUSTER TOT ANALYSIS=====================================
-void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double noise, std::string calibname)
+void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double noise, bool calibname)
 {
   if(!empty_) this->deletePlots();
 
@@ -527,7 +527,7 @@ void Plotter::showGraph(std::vector<double> correction_factors,unsigned int fit_
     std::map<double, Fitter::fitResultDef> vec;
     double correction_factor;
     //std::cout << __LINE__ << "] " << "correction_factors.size(): "  << correction_factors.size() << " > " << "chip->first: " << chip->first << "\n";
-    if( correction_factors.size() > chip->first ) 
+    if( correction_factors.size() > (unsigned int)chip->first ) 
             correction_factor = correction_factors[chip->first]; //2.46 2.42 2.75 2.49 2.59
     else    correction_factor = 1;
     for(unsigned int i=0; i<graphs.size(); ++i)

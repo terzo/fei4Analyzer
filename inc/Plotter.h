@@ -28,7 +28,7 @@ class Plotter
    Plotter(bool quiet, int module_type=0       ) ;
   ~Plotter(void                    )  ;
   
-   void fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double noise = -1, std::string calibname = "calib.root");
+   void fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double noise = -1, bool calibname = "calib.root");
    void fillHitPlots(EventMaker::hitMapDef& hitMap);
    void fitPlots(double voltage = 0);
    void writePlots(std::string rootFileName, bool bunch);

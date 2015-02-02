@@ -1,4 +1,5 @@
 EXELIST = fei4Analyzer #clusterToT
+OBJS = obj/EventMaker.o	obj/USBpixEventMaker.o obj/CosmicEventMaker.o obj/Clusterizer.o obj/Plotter.o obj/Calibrator.o obj/Fitter.o 
 
 CC = g++
 
@@ -11,9 +12,11 @@ else
  BINDIR  = ./bin/
 endif
 
-ifdef LCIO
+ifdef USE_LCIO
  LCIOINC= -I$(LCIO)/include  -I$(LCIO)/sio/include
  LCIOLIBS= -L$(LCIO)/lib -llcio -L$(LCIO)/sio/lib -lsio -lz
+ OBJS += obj/LCIOEventMaker.o
+ ENVVAR = -D USE_LCIO
 endif
 
 #XERCES-C-INC = /usr/include/xercesc
@@ -36,6 +39,9 @@ CCFLAGS = $(INCFLAGS) $(OPTIMIZER_FLAGS)
 HERE   := $(shell pwd)
 
 CPPVERBOSE = 1
+
+
+		
 
 .PHONY : all 
 
@@ -80,42 +86,22 @@ clusterToT : clusterToT.C    \
 	
 #--------------------------------------------------------------------------------------------------------#
 fei4Analyzer : fei4Analyzer.C                                            \
-         obj/EventMaker.o                        \
-         obj/USBpixEventMaker.o                        \
-	 obj/CosmicEventMaker.o                        \
-	 obj/LCIOEventMaker.o					\
-	 obj/Clusterizer.o                                 \
-	 obj/Plotter.o                                    \
-	 obj/Calibrator.o                                    \
-	 obj/Fitter.o                                    \
+	 $(OBJS) 						\
          inc/ANSIColors.h			           \
          inc/macros.h
 	@echo " "
 	@echo '            [0;31m[1m[7mCompiling[0m [0;36m[1m[7m$< [0m'
         ifdef CPPVERBOSE
-	  $(CC) -o $@					   \
+	  $(CC)    -o $@					   \
 	           $<                                      \
-	           obj/EventMaker.o              \
-	           obj/USBpixEventMaker.o              \
-		   obj/CosmicEventMaker.o                        \
-		   obj/LCIOEventMaker.o                        \
-		   obj/Clusterizer.o                                 \
-	           obj/Plotter.o                                    \
-		   obj/Calibrator.o                                    \
-		   obj/Fitter.o                                    \
+		   $(OBJS)					\
 		   $(CCFLAGS)		                   \
-		   $(LIBFLAGS)
+		   $(LIBFLAGS)  			\
+		   $(ENVVAR)
         else
 	 @$(CC) -o $@					   \
 	           $<                                      \
-	           obj/EventMaker.o              \
-   	           obj/USBpixEventMaker.o              \
-		   obj/CosmicEventMaker.o                        \
-		   obj/LCIOEventMaker.o                        \
-		   obj/Clusterizer.o                                 \
-	           obj/Plotter.o                      \
-		   obj/Fitter.o                                    \
-		   obj/Calibrator.o                                    \
+		   $(OBJS)					\
 		   $(CCFLAGS)		                   \
 		   $(LIBFLAGS)		   
         endif
