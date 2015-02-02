@@ -37,8 +37,8 @@ Clusterizer::clusterMapDef Clusterizer::makeCluster(EventMaker::hitMapDef hitMap
 	    //std::cout << "Clu: " << clusterHits[c].col << "-" << clusterHits[c].row << "\n";
 	    //std::cout << "cClu: " << cCol << "-" << cRow << "\n";
 	    //std::cout << "Hit: " << (*chip).second[h].col << "-" << (*chip).second[h].row << "\n";
-   	    if ( ( abs(cCol - (*chip).second[h].col) <= 1  )  && ( abs(cRow - (*chip).second[h].row ) <= 1       ) )//&& 
-	         //( abs(cBcid- (*chip).second[h].bcid)<10000)  && ( abs(cL1id- (*chip).second[h].l1id) <= lv1diff ) )
+   	    if ( ( abs(cCol - (*chip).second[h].col) <= 1  )  && ( abs(cRow - (*chip).second[h].row ) <= 1       ) && 
+	         ( abs(cBcid- (*chip).second[h].bcid)<10000)  && ( abs(cL1id- (*chip).second[h].l1id) <= lv1diff ) )
    	    {
    	      clusterHits.push_back( (*chip).second[h] );
    	      (*chip).second.erase(  (*chip).second.begin()+h );
