@@ -74,10 +74,10 @@ EventMaker::hitMapDef LCIOEventMaker::makeEvents(std::string infilename, std::st
 	         if (type == kEUTelAPIXSparsePixel  )
 	         {
 		   //std::cout << zsData->getChargeValues().size() << "\n";
-	           for(int k=0; k < zsData->getChargeValues().size(); ++k)
+	           for(unsigned int k=0; k < zsData->getChargeValues().size(); ++k)
 	           {
 	               //std::cout << k << " : " << zsData->getChargeValues()[k] << "\n";
-		       if( (k * kElements + 4)  > (int)zsData->getChargeValues().size() ) continue;
+		       if( (k * kElements + 4)  > zsData->getChargeValues().size() ) continue;
 		       //if( evn%10000 == 0 )
 		       {
 		          std::cout << "event: "<< evn << "\tsensorID: " << sensorID << "\n";

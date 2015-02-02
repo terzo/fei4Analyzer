@@ -271,7 +271,7 @@ clean:
 	@echo ' '
 	@echo '[1;32m[1m----------- Main sequence clean up --------------------------------------------------[0m'
         ifdef CPPVERBOSE
-	  rm -rf $(OBJDIR)/*.o *~  $(EXELIST) $(BINDIR)/$(EXELIST) $dependencies
+	  rm -rf $(OBJDIR)/*.o *~  $(EXELIST) $(BINDIR)/$(EXELIST) $(dependencies)
         else
 	 @rm -rf $(OBJDIR)/*.o *~  $(EXELIST) dependencies
         endif

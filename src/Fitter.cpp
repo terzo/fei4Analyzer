@@ -252,16 +252,17 @@ Fitter::fitResultDef Fitter::fit(TH1* histo)
    
    Int_t    ndf = 100;
    Double_t chisqr  = 100000000;
-   Double_t chisqr_best = chisqr;
+   //Double_t chisqr_best = chisqr;
 
    TF1 *fitsnr;// = langaufit(histo,fr,sv,pllo,plhi,fp,fpe,&chisqr,&ndf, &cov);
    
-   int nleft =1;
-   int nright=1;
    bool left =true;
    bool right=true;
+   /*
+   int nleft =1;
+   int nright=1;   
    bool wasOK=false;
-   
+   */
       fr[0]=histo->GetBinCenter( histo->FindFirstBinAbove(1) );
       while(fr[0]<1) fr[0]++;
       fr[1]=13;
@@ -388,7 +389,8 @@ Fitter::fitResultDef Fitter::fit(TH1* histo)
    //TF1 *fitenv = new TF1("envelope_up",envelope,fr[0],fr[1],20);
    //TF1 *fitenv2 = new TF1("envelope_up2",envelope2,fr[0],fr[1],1);
    
-   Double_t SNRPeak, SNRFWHM, SNRPeak_min=0, SNRFWHM_min=0, SNRPeak_max=0, SNRFWHM_max=0;
+   Double_t SNRPeak, SNRFWHM; 
+   //Double_t SNRPeak_min=0, SNRFWHM_min=0, SNRPeak_max=0, SNRFWHM_max=0;
    langaupro(fp,SNRPeak,SNRFWHM);
    
    fitResult.chi2  = chisqr;
