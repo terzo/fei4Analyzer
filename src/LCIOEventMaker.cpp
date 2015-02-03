@@ -21,7 +21,6 @@ EventMaker::hitMapDef LCIOEventMaker::makeEvents(std::string infilename, std::st
 {
   EventMaker::hitMapDef hitMap;
   
-  
   LCReader* lcReader ;
 //  if( dumpNthEvent ) 
 //    lcReader = LCFactory::getInstance()->createLCReader() ;
@@ -43,11 +42,10 @@ EventMaker::hitMapDef LCIOEventMaker::makeEvents(std::string infilename, std::st
   }
   //if( skip > 1 ) 
   //lcReader->skipNEvents( nevt ) ;
-  
-  while( ( evt = lcReader->readNextEvent() ) != 0 && evn<nevt )
+  while( ( evt = lcReader->readNextEvent() ) != 0 )
   {
-       //evt = lcReader->readNextEvent() ; 
        //evt = lcReader->readEvent(338,  evn) ;
+       if( nevt>-1 && evn<nevt ) break;
        if( !evt ) continue;
        
        const StringVec* colNames = evt->getCollectionNames() ;
@@ -78,10 +76,10 @@ EventMaker::hitMapDef LCIOEventMaker::makeEvents(std::string infilename, std::st
 	           {
 	               //std::cout << k << " : " << zsData->getChargeValues()[k] << "\n";
 		       if( (k * kElements + 4)  > zsData->getChargeValues().size() ) continue;
-		       //if( evn%10000 == 0 )
-		       {
-		          std::cout << "event: "<< evn << "\tsensorID: " << sensorID << "\n";
-		       }
+		       
+		       if( evn%10000 == 0 )
+		            std::cout << "event: "<< evn << "\tsensorID: " << sensorID << "\n";
+		       
 		       
 		       EventMaker::hitDef aHit;
 		       aHit.col = static_cast<int> ( zsData->getChargeValues()[k * kElements    ] );
