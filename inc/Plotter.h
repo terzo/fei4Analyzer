@@ -45,6 +45,11 @@ class Plotter
    void deletePlots();
    bool outOfLimits(int &col,int &row);
    
+   template <class H>
+   void addPlot(std::map<int, H*> &histo, std::string name, int chip, Int_t nbinsx, Double_t xlow, Double_t xup, Int_t nbinsy, Double_t ylow, Double_t yup);
+   template <class H>
+   void addPlot(std::map<int, H*> &histo, std::string name, int chip, Int_t nbinsx, Double_t xlow, Double_t xup);
+   
    std::stringstream  ss_;
    bool isQuad_;
    bool quiet_;
@@ -60,8 +65,9 @@ class Plotter
    std::map<int, TH1I*> clusterToT_, two_hitToT_, one_hitToT_, clusterSize_, clusterSizeRow_, clusterSizeCol_;
    std::map<int, TH1D*> clusterCharge_,clusterCharge_cs1_,clusterCharge_cs2_;
    std::map<int, TH1I*> totMax_, totMin_;
-   std::map<int, TH2I*> hitMap_, clusterMap_cs1_, clusterMap_cs2_, clusterHolesRow_, clusterHolesCol_;
+   std::map<int, TH2I*> hitMap_, clusterMap_cs1_, clusterMap_cs2_, clusterHolesRow_, clusterHolesCol_, clusterToT_CSn_;
    std::map<int, TH2D*> clusterMeanTotMap_cs1_, clusterTotMap_cs1_, clusterTotMap_cs2_;
+   
    TH2I *clusterMap_cs1_all_;  
    TH2I *clusterMap_cs2_all_;      
    TH2D *clusterTotMap_cs1_all_;    
