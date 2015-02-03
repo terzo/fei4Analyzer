@@ -77,7 +77,7 @@ EventMaker::hitMapDef LCIOEventMaker::makeEvents(std::string infilename, std::st
 	               //std::cout << k << " : " << zsData->getChargeValues()[k] << "\n";
 		       if( (k * kElements + 4)  > zsData->getChargeValues().size() ) continue;
 		       
-		       if( evn%10000 == 0 )
+		       if( !quiet_ && evn%1000 == 0 )
 		            std::cout << "event: "<< evn << "\tsensorID: " << sensorID << "\n";
 		       
 		       
