@@ -45,7 +45,6 @@ void Plotter::setCuts(int minCol, int minRow, int maxCol, int maxRow, bool borde
    
    borders_   = borders;
    
-   
   //define root style
   TStyle *terzo_stile  = new TStyle("terzo_stile","terzo stile");
   terzo_stile->SetCanvasBorderMode(0);	 
@@ -154,16 +153,16 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
   {
     for(std::map<int, Clusterizer::clustersDef>::iterator chip=(*ev).second.begin(); chip!=(*ev).second.end(); ++chip)
     {
+      int cols = 80;
+      int rows = 336;
+      if(design25_)
+      {
+        cols /=2;
+        rows *=2;
+      }
+      
       if(clusterToT_.count((*chip).first)==0)
       {
-        int cols = 80;
-	int rows = 336;
-	if(design25_)
-	{
-	  cols /=2;
-	  rows *=2;
-	}
-      
         std::cout << "Making new histograms for chip: " << (*chip).first << std::endl;
         
 	addPlot(clusterToT_      ,"ToTdist"  	  ,(*chip).first, 150, -0.5, 149.5);
@@ -216,13 +215,14 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 	      continue;
 	   }
 	   
-	   rowNum[(*clus).second[hit].row]++;
-	   colNum[(*clus).second[hit].col]++;
-	   
 	   int tot=(*clus).second[hit].tot;
            double charge = theCalibrator->calib( (*clus).second[hit] );
            chargeSum += charge;
     	   cToT+=tot;
+	   
+	   rowNum[(*clus).second[hit].row]+=tot;
+           colNum[(*clus).second[hit].col]+=tot;
+	   
            if( (*clus).second[hit].row > maxRow ) 
 	   {
 	     maxRow = (*clus).second[hit].row;
@@ -245,7 +245,6 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 	   }
 	   if(tot>maxTot) maxTot=tot;
 	   if(tot<minTot) minTot=tot;
-	   
 	   
 	   if(cSize==1) 
 	   {
@@ -279,11 +278,33 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 	 
 	 if(bad_cluster) continue;
 	 
-    	 if(cSize!=0)  
-	 {
-	    clusterSize_[(*chip).first]->Fill(cSize);
+	 if(cSize!=0)  
+	 { 
 	    int rowSize = maxRow-minRow+1;
 	    int colSize = maxCol-minCol+1;
+	    //  	 #row,tot
+	    for( std::map<int,int>::iterator r = rowNum.begin(); r!= rowNum.end(); ++r)
+	    {  
+	    	if( inClusterRowToT_[(*chip).first].count(rowSize) == 0 )
+	    	{ 
+            	       std::stringstream ss;
+	    	       ss.str(""); ss << "inClusterRowToT_" << "CW"<< rowSize;
+            	       inClusterRowToT_[(*chip).first][rowSize] = new TH2I(ss.str().c_str(),"Row in the cluster .VS. ToT in the row",rowSize,0,rowSize,150,-0.5,149.5);
+	    	}
+	    	inClusterRowToT_[(*chip).first][rowSize]->Fill( r->first - minRow, r->second );
+	    }
+	    //  	 #col,tot
+	    for( std::map<int,int>::iterator c = colNum.begin(); c!= colNum.end(); ++c)
+ 	    {  
+	    	if( inClusterColToT_[(*chip).first].count(colSize) == 0 )
+	    	{ 
+            	       std::stringstream ss;
+	    	       ss.str(""); ss << "inClusterColToT_" << "CW"<< colSize;
+            	       inClusterColToT_[(*chip).first][colSize] = new TH2I(ss.str().c_str(),"Col in the cluster .VS. ToT in the col",colSize,0,colSize,150,-0.5,149.5);
+	    	}
+ 	    	inClusterColToT_[(*chip).first][colSize]->Fill( c->first - minCol, c->second );
+	    }
+	    clusterSize_[(*chip).first]->Fill(cSize);
 	    clusterSizeRow_[(*chip).first]->Fill( rowSize );
 	    clusterSizeCol_[(*chip).first]->Fill( colSize );
 	    clusterHolesRow_[(*chip).first]->Fill( rowSize , rowSize - rowNum.size() );
@@ -323,7 +344,6 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
     }
   }
 
-  std::cout << __LINE__ << "] " << "loop on clusterToT_" << "\n";		  
   for(std::map<int, TH1I*>::iterator chip=clusterToT_.begin(); chip!=clusterToT_.end(); ++chip)
   {   
     
@@ -462,7 +482,6 @@ void Plotter::fitPlots(double voltage)
   if(voltage == 0) v_++;
   else             v_=voltage;
   
-  std::cout << __LINE__ << "] " << "loop on clusterToT_"<< "\n";		  
   for(std::map<int, TH1I*>::iterator chip=clusterToT_.begin(); chip!=clusterToT_.end(); ++chip)
   {   
     ToT_all_[chip->first][v_] = theFitter->fit( (*chip).second		      );
@@ -488,7 +507,6 @@ void Plotter::writePlots(std::string rootFileName, bool bunch)
   
   TFile outRootFile(rootFileName.c_str(),"recreate");
   
-  std::cout << __LINE__ << "] " << "loop on clusterToT_"<< "\n";		  
   for(std::map<int, TH1I*>::iterator chip=clusterToT_.begin(); chip!=clusterToT_.end(); ++chip)
   {
     ss_.str("");
@@ -499,12 +517,12 @@ void Plotter::writePlots(std::string rootFileName, bool bunch)
     (*chip).second->Write();
     two_hitToT_[(*chip).first]->Write();
     one_hitToT_[(*chip).first]->Write();
+    clusterToT_CSn_[(*chip).first]->Write();
     clusterSize_[(*chip).first]->Write();
     clusterSizeRow_[(*chip).first]->Write();
     clusterSizeCol_[(*chip).first]->Write();
     clusterHolesRow_[(*chip).first]->Write();
     clusterHolesCol_[(*chip).first]->Write();
-    clusterToT_CSn_[(*chip).first]->Write();
     totMax_[(*chip).first]->Write();
     totMin_[(*chip).first]->Write();
     hitMap_[(*chip).first]->Write();
@@ -515,7 +533,13 @@ void Plotter::writePlots(std::string rootFileName, bool bunch)
     clusterMeanTotMap_cs1_[(*chip).first]->Write();
     clusterCharge_[(*chip).first]->Write();
     clusterCharge_cs1_[(*chip).first]->Write();
-    clusterCharge_cs2_[(*chip).first]->Write();	         
+    clusterCharge_cs2_[(*chip).first]->Write();
+    
+    ss_.str("");
+    ss_ << "inPixelToT";
+    dir->mkdir(ss_.str().c_str())->cd();
+    for(std::map<int, TH2I*>::iterator cs=inClusterRowToT_[(*chip).first].begin(); cs!=inClusterRowToT_[(*chip).first].end(); ++cs) cs->second->Write();
+    for(std::map<int, TH2I*>::iterator cs=inClusterColToT_[(*chip).first].begin(); cs!=inClusterColToT_[(*chip).first].end(); ++cs) cs->second->Write();       
   }
   
   if(isQuad_)
@@ -679,29 +703,27 @@ void Plotter::deletePlots(void)
 
   if(isQuad_)											      
   {
-    if(clusterMap_cs1_all_!=NULL)       delete clusterMap_cs1_all_;	     		    
-    if(clusterMap_cs2_all_!=NULL)       delete clusterMap_cs2_all_;	     		    
-    if(clusterTotMap_cs1_all_!=NULL)    delete clusterTotMap_cs1_all_;       		    
-    if(clusterTotMap_cs2_all_!=NULL)    delete clusterTotMap_cs2_all_;       		    
-    if(clusterMeanTotMap_cs1_all_!=NULL)delete clusterMeanTotMap_cs1_all_;   		    
-    if(hitMap_all_!=NULL)               delete hitMap_all_;		     		    
-    if(clusterToT_all_!=NULL)   	delete clusterToT_all_; 	     						     
-    if(one_hitToT_all_!=NULL)   	delete one_hitToT_all_; 	     						     
-    if(two_hitToT_all_!=NULL)   	delete two_hitToT_all_; 	     						     
-    if(totMax_all_!=NULL)   		delete totMax_all_;		     					    
-    if(totMin_all_!=NULL)   		delete totMin_all_;		     					    
-    if(clusterSize_all_!=NULL) 	    	delete clusterSize_all_;	     						     
-    if(clusterSizeRow_all_!=NULL)   	delete clusterSizeRow_all_;	     						    
-    if(clusterSizeCol_all_!=NULL)   	delete clusterSizeCol_all_;	     						    
-    if(clusterCharge_all_!=NULL)        delete clusterCharge_all_;	     									     
-    if(clusterCharge_cs1_all_!=NULL) 	delete clusterCharge_cs1_all_;       						     
-    if(clusterCharge_cs2_all_!=NULL) 	delete clusterCharge_cs2_all_;       						     
+    if(clusterMap_cs1_all_		       !=NULL) delete clusterMap_cs1_all_;	    
+    if(clusterMap_cs2_all_		       !=NULL) delete clusterMap_cs2_all_;	    
+    if(clusterTotMap_cs1_all_		       !=NULL) delete clusterTotMap_cs1_all_;	    
+    if(clusterTotMap_cs2_all_		       !=NULL) delete clusterTotMap_cs2_all_;	    
+    if(clusterMeanTotMap_cs1_all_	       !=NULL) delete clusterMeanTotMap_cs1_all_;   
+    if(hitMap_all_               	       !=NULL) delete hitMap_all_;		    
+    if(clusterToT_all_  		       !=NULL) delete clusterToT_all_;  					     
+    if(one_hitToT_all_  		       !=NULL) delete one_hitToT_all_;  					     
+    if(two_hitToT_all_  		       !=NULL) delete two_hitToT_all_; 
+    if(totMax_all_			       !=NULL) delete totMax_all_;					    
+    if(totMin_all_			       !=NULL) delete totMin_all_;					    
+    if(clusterSize_all_ 	    	       !=NULL) delete clusterSize_all_; 	 				     
+    if(clusterSizeRow_all_		       !=NULL) delete clusterSizeRow_all_;					    
+    if(clusterSizeCol_all_		       !=NULL) delete clusterSizeCol_all_;					    
+    if(clusterCharge_all_		       !=NULL) delete clusterCharge_all_;								     
+    if(clusterCharge_cs1_all_		       !=NULL) delete clusterCharge_cs1_all_;					     
+    if(clusterCharge_cs2_all_		       !=NULL) delete clusterCharge_cs2_all_;					     
   }
   
-  std::cout << __LINE__ << "] " << "loop on clusterToT_"	<< "\n";		  
   for(std::map<int, TH1I*>::iterator chip=clusterToT_.begin(); chip!=clusterToT_.end(); ++chip)
   {	
-    std::cout << __LINE__ << "] " << "delete clusterToT_"	<< "\n";		      											      
     if((*chip).second                          !=NULL) delete (*chip).second;   							      
     if(two_hitToT_[(*chip).first] 	       !=NULL) delete two_hitToT_[(*chip).first];
     if(one_hitToT_[(*chip).first] 	       !=NULL) delete one_hitToT_[(*chip).first];
@@ -711,6 +733,12 @@ void Plotter::deletePlots(void)
     if(clusterHolesRow_[(*chip).first]	       !=NULL) delete clusterHolesRow_[(*chip).first];
     if(clusterHolesCol_[(*chip).first]	       !=NULL) delete clusterHolesCol_[(*chip).first];
     if(clusterToT_CSn_[(*chip).first]	       !=NULL) delete clusterToT_CSn_[(*chip).first];
+    
+    for(std::map<int, TH2I*>::iterator cs=inClusterRowToT_[(*chip).first].begin(); cs!=inClusterRowToT_[(*chip).first].end(); ++cs)
+                              if(cs->second    !=NULL) delete cs->second;
+    for(std::map<int, TH2I*>::iterator cs=inClusterColToT_[(*chip).first].begin(); cs!=inClusterColToT_[(*chip).first].end(); ++cs)
+                              if(cs->second    !=NULL) delete cs->second; 
+    
     if(totMax_[(*chip).first]   	       !=NULL) delete totMax_[(*chip).first];
     if(totMin_[(*chip).first]   	       !=NULL) delete totMin_[(*chip).first];
     if(hitMap_[(*chip).first]   	       !=NULL) delete hitMap_[(*chip).first];
@@ -723,7 +751,7 @@ void Plotter::deletePlots(void)
     if(clusterCharge_cs1_[(*chip).first]       !=NULL) delete clusterCharge_cs1_[(*chip).first];
     if(clusterCharge_cs2_[(*chip).first]       !=NULL) delete clusterCharge_cs2_[(*chip).first];
   }
-  std::cout << __LINE__ << "] " << "clear clusterToT_"	<< "\n";		  
+
   clusterToT_.clear();
   one_hitToT_.clear();
   two_hitToT_.clear();
@@ -733,6 +761,8 @@ void Plotter::deletePlots(void)
   clusterHolesRow_.clear();
   clusterHolesCol_.clear();
   clusterToT_CSn_.clear();
+  inClusterRowToT_.clear();
+  inClusterColToT_.clear();
   totMax_.clear();
   totMin_.clear();
   hitMap_.clear();

@@ -30,7 +30,7 @@ class Clusterizer
    Clusterizer(void                    ) {;}
   ~Clusterizer(void                    ) {;}
   
-   clusterMapDef makeCluster(EventMaker::hitMapDef hitMap, int lv1diff = 1);
+   clusterMapDef makeCluster(EventMaker::hitMapDef hitMap, unsigned int cdCol = 1, unsigned int cdRow = 1, unsigned int lv1diff = 3);
    void          mergeLv1(Clusterizer::clusterMapDef &clusterMap, int maxMerge);
   
  private:

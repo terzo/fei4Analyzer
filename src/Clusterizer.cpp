@@ -9,7 +9,7 @@
 #include "Clusterizer.h"
 
  //================CLUSTERIZER============================================
-Clusterizer::clusterMapDef Clusterizer::makeCluster(EventMaker::hitMapDef hitMap, int lv1diff)
+Clusterizer::clusterMapDef Clusterizer::makeCluster(EventMaker::hitMapDef hitMap, unsigned int cdCol, unsigned int cdRow, unsigned int lv1diff)
 {
   Clusterizer::clusterMapDef clusterMap;
   
@@ -37,7 +37,7 @@ Clusterizer::clusterMapDef Clusterizer::makeCluster(EventMaker::hitMapDef hitMap
 	    //std::cout << "Clu: " << clusterHits[c].col << "-" << clusterHits[c].row << "\n";
 	    //std::cout << "cClu: " << cCol << "-" << cRow << "\n";
 	    //std::cout << "Hit: " << (*chip).second[h].col << "-" << (*chip).second[h].row << "\n";
-   	    if ( ( abs(cCol - (*chip).second[h].col) <= 1  )  && ( abs(cRow - (*chip).second[h].row ) <= 1       ) && 
+   	    if ( ( abs(cCol - (*chip).second[h].col) <= cdCol  )  && ( abs(cRow - (*chip).second[h].row ) <= cdRow ) && 
 	         ( abs(cBcid- (*chip).second[h].bcid)<10000)  && ( abs(cL1id- (*chip).second[h].l1id) <= lv1diff ) )
    	    {
    	      clusterHits.push_back( (*chip).second[h] );

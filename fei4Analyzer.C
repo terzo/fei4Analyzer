@@ -49,7 +49,9 @@ int main(int argc, char **argv)
   bool quiet = true;
   bool bunch = false;
   bool borders = false;
-  int  lv1diff = 3;
+  unsigned int  lv1diff = 3;
+  unsigned int  cdRow = 1;
+  unsigned int  cdCol = 1;
   std::vector<double> correction_factors;
   int colRowCuts[4] = {0,0,0,0};
   double noise = -1;
@@ -157,6 +159,12 @@ int main(int argc, char **argv)
   	 //  skipcount = atoi(option.substr(2).c_str());
   	 //  break;
   	 //}
+	 case 'd': 
+	 {
+	   if(option[2] == 'c') string_to_number(argv[++i], cdCol);
+	   if(option[2] == 'r') string_to_number(argv[++i], cdRow);
+	   break;
+	 } 
 	 case '0': 
   	 {
   	   dofit = false;
@@ -263,7 +271,7 @@ int main(int argc, char **argv)
      delete theEventMaker;
   
      Clusterizer *theClusterizer = new Clusterizer();
-     Clusterizer::clusterMapDef clusterMap = theClusterizer->makeCluster(hitMap, lv1diff);
+     Clusterizer::clusterMapDef clusterMap = theClusterizer->makeCluster(hitMap, cdCol, cdRow, lv1diff);
      if(merge)theClusterizer->mergeLv1(clusterMap, maxMerge);
      
      delete theClusterizer;
