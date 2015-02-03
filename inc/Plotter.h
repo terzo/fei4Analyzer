@@ -30,7 +30,7 @@ class Plotter
   
    void fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double noise = -1, bool calibname = "calib.root");
    void fillHitPlots(EventMaker::hitMapDef& hitMap);
-   void fitPlots(double voltage = 0);
+   void fitPlots(double voltage = 0, unsigned int dofit = 1);
    void writePlots(std::string rootFileName, bool bunch);
    void setCuts(int colRowCuts[4], bool borders = false);
    void setCuts(int minCol = -1, int minRow = -1, int maxCol = -1, int maxRow= -1, bool borders = false);

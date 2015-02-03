@@ -36,7 +36,7 @@ void string_to_number(const S theString, N &n)
 
 int main(int argc, char **argv)
 {
-//  int skipcount=0;
+  int skipcount=0;
   std::vector<std::string> infilename, rootfilename;
   //std::string calibname = "calib.root";
   bool calibname = false;
@@ -57,7 +57,7 @@ int main(int argc, char **argv)
   double noise = -1;
   unsigned int fitFunction = 1;
   int maxevents = -1;
-  bool dofit = true;
+  unsigned int dofit = 1;
   bool design25=false;
   
   if (argc > 1) 
@@ -78,14 +78,18 @@ int main(int argc, char **argv)
 	   std::cout << "-o  filename[.txt]\t\t:" << "writes out a txt log file compatible with the Timepix reconstruction software (CosmicGUI binary data only)" << "\n";
 	   std::cout << "-n  [0..1]\t\t\t:" << "specify the hit frequency for noise suppression (no noise suppression by default)" << "\n";
 	   std::cout << "-g  [0..inf]\t\t\t:" << "correct the charge in the temporary output plots by the specified factor" << "\n";
-	   std::cout << "-0\t \t \t \t:" << "doen't perform langaus fits (faster)" << "\n";
-	   std::cout << "-x  [4,25]\t\t\t:" << "define module type: 4 = quad module; 25 = 500x25um FE-I4 pitch arrangement" << "\n";
+	   std::cout << "-m  [4,25]\t\t\t:" << "define module type:  4-> quad module, \n"
+	             << "\t\t\t\t "         << "                    25-> 500x25um FE-I4 pitch arrangement" << "\n";
 	   std::cout << "-t\t \t \t \t:" << "read timestaps (for ComsicGUI test beam applications only)" << "\n";
-	   std::cout << "-f  [1,2]\t\t\t:" << "select the fit function for ToT plots: 1->landau MP (default); 2->langaus MPV;" << "\n";
+	   std::cout << "-f  [0..2]\t\t\t:"  << "0-> doesn't perform langaus fits (faster), " << "\n"
+	             << "\t\t\t\t "          << "1-> perform langaus fits for ToT plots only (default), " << "\n"
+		     << "\t\t\t\t "          << "2-> perform langaus fits for all plots " << "\n";
+	   std::cout << "-ff [1,2]\t\t\t:" << "select the returned value for ToT plots: 1-> landau MP (default), \n"
+	             << "\t\t\t\t "        << "                                         2-> langaus MPV;" << "\n";
 	   std::cout << "-dr [1..inf]\t\t\t:" << "max row distance in a cluster (default is 1)" << "\n";
 	   std::cout << "-dc [1..inf]\t\t\t:" << "max column distance in a cluster (default is 1)" << "\n";
 	   std::cout << "-l  [0..16]\t\t\t:" << "maximum lvl1 difference for clustering (default is 3)" << "\n";
-	   std::cout << "-m  [0..inf]\t\t\t:" << "merge consecutive triggers" << "\n";
+	   std::cout << "-lm [0..inf]\t\t\t:" << "merge consecutive triggers" << "\n";
 	   std::cout << "-c  minCol minRow maxCol maxRow\t:" << "define square cuts in pixel coordinates for the analysis" << "\n";
 	   std::cout << "-cb minCol minRow maxCol maxRow\t:" << "invert the logic of the square cuts to select the borders only" << "\n";
 	   std::cout << "-e  [0..inf]\t\t\t:" << "maximum number of event to process (default process all events)" << "\n";
@@ -135,7 +139,7 @@ int main(int argc, char **argv)
   	   outfilename = argv[++i];
   	   break;
   	 }
-  	 case 'x': 
+  	 case 'm': 
   	 {
   	   string_to_number(argv[++i], module_type);
 	   if (module_type == 25) design25 = true;
@@ -158,22 +162,17 @@ int main(int argc, char **argv)
 	   }
   	   break;
   	 }
-  	 //case 's': 
-  	 //{
-  	 //  skipcount = atoi(option.substr(2).c_str());
-  	 //  break;
-  	 //}
+  	 case 's': 
+  	 {
+  	   string_to_number(argv[++i], skipcount);
+  	   break;
+  	 }
 	 case 'd': 
 	 {
 	   if(option[2] == 'c') string_to_number(argv[++i], cdCol);
 	   if(option[2] == 'r') string_to_number(argv[++i], cdRow);
 	   break;
 	 } 
-	 case '0': 
-  	 {
-  	   dofit = false;
-  	   break;
-  	 } 
 	 case 'e': 
   	 {
   	   string_to_number(argv[++i], maxevents);
@@ -186,18 +185,20 @@ int main(int argc, char **argv)
   	 }
 	 case 'f': 
   	 {
-  	   string_to_number(argv[++i],fitFunction);
+	   if(option[2] == 'f') string_to_number(argv[++i],fitFunction);
+	   else                 string_to_number(argv[++i],dofit);
   	   break;
   	 }
-	 case 'm':
-	 {
-	   merge=true;
-	   string_to_number(argv[++i],maxMerge);
-	   break;
-	 }
 	 case 'l':
-	 {
-	   string_to_number(argv[++i],lv1diff);
+	 { 
+	   if(option[2] == 'm')
+	   {
+	     merge=true;
+	     string_to_number(argv[++i],maxMerge);
+	     
+	   }
+	   else 
+	     string_to_number(argv[++i],lv1diff);
 	   break;
 	 }	 
 	 case 'c':
@@ -284,7 +285,7 @@ int main(int argc, char **argv)
      	thePlotter->fillClusterPlots(clusterMap, noise, calibname);
      	
      	//#pragma omp critical
-     	if(dofit) thePlotter->fitPlots(voltage);
+     	if(dofit!=0) thePlotter->fitPlots(voltage, dofit);
       
      	if( rootfilename.size() < infilename.size() ) 
      	{ 

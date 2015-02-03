@@ -238,6 +238,12 @@ void Fitter::getStat()
 Fitter::fitResultDef Fitter::fit(TH1* histo)
 {
    Fitter::fitResultDef fitResult;
+   int entries;
+   if( (entries = histo->GetEntries() ) < 10 ) 
+   {     
+     std::cout << "WARNING: skip fit: only " << entries << " entries in histogram " << histo->GetName() << "\n";
+     return fitResult;
+   }
    
    //TH1* histo_copy = (TH1*)histo->Clone("histo_copy");
    // Setting fit range and start values

@@ -99,8 +99,8 @@ void Clusterizer::mergeLv1(Clusterizer::clusterMapDef &clusterMap, int maxMerge)
   	      {
   		for(unsigned int nHit=0; nHit<(*nClus).second.size(); nHit++)
   		{
-  		  int& nRow = (*nClus).second[nHit].row ;
-  		  int& nCol = (*nClus).second[nHit].col ;
+  		  int nRow = (*nClus).second[nHit].row ;
+  		  int nCol = (*nClus).second[nHit].col ;
   		  if ( ( abs(nCol - (*clus).second[hit].row) <= 1 ) && ( abs(nRow - (*clus).second[hit].col) <= 1 ) )
   		  {
   		    //std::cout << __LINE__ << "] cluster merged" << std::endl;

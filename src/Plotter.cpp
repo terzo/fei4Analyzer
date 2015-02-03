@@ -477,28 +477,37 @@ void Plotter::setModuleType(int module_type)
 	else design25_ = false;
 }
 //=========================FIT HISTOS=========================================
-void Plotter::fitPlots(double voltage)
+void Plotter::fitPlots(double voltage, unsigned int dofit)
 {
   if(voltage == 0) v_++;
   else             v_=voltage;
   
-  for(std::map<int, TH1I*>::iterator chip=clusterToT_.begin(); chip!=clusterToT_.end(); ++chip)
-  {   
-    ToT_all_[chip->first][v_] = theFitter->fit( (*chip).second		      );
-    ToT_cs1_[chip->first][v_] = theFitter->fit( two_hitToT_[(*chip).first]        );
-    ToT_cs2_[chip->first][v_] = theFitter->fit( one_hitToT_[(*chip).first]        );
-    //theFitter->fit( clusterCharge_[(*chip).first]	);
-    //theFitter->fit( clusterCharge_cs1_[(*chip).first] );
-    //theFitter->fit( clusterCharge_cs2_[(*chip).first] );
-  }
-  if(isQuad_)
+  if(dofit>0)
   {
-    ToT_mod_all_[v_] = theFitter->fit( clusterToT_all_ );
-    ToT_mod_cs1_[v_] = theFitter->fit( one_hitToT_all_ );
-    ToT_mod_cs2_[v_] = theFitter->fit( two_hitToT_all_ );
-    //theFitter->fit( clusterCharge_all_	);
-    //theFitter->fit( clusterCharge_cs1_all_	);
-    //theFitter->fit( clusterCharge_cs2_all_	);
+      for(std::map<int, TH1I*>::iterator chip=clusterToT_.begin(); chip!=clusterToT_.end(); ++chip)
+      {   
+        ToT_all_[chip->first][v_] = theFitter->fit( (*chip).second		  );
+        ToT_cs1_[chip->first][v_] = theFitter->fit( two_hitToT_[(*chip).first]    );
+        ToT_cs2_[chip->first][v_] = theFitter->fit( one_hitToT_[(*chip).first]    );
+	if(dofit>1)
+	{
+          theFitter->fit( clusterCharge_[(*chip).first]     );
+          theFitter->fit( clusterCharge_cs1_[(*chip).first] );
+          theFitter->fit( clusterCharge_cs2_[(*chip).first] );
+	}
+      }
+      if(isQuad_)
+      {
+        ToT_mod_all_[v_] = theFitter->fit( clusterToT_all_ );
+        ToT_mod_cs1_[v_] = theFitter->fit( one_hitToT_all_ );
+        ToT_mod_cs2_[v_] = theFitter->fit( two_hitToT_all_ );
+	if(dofit>1)
+	{
+          theFitter->fit( clusterCharge_all_	    );
+          theFitter->fit( clusterCharge_cs1_all_    );
+          theFitter->fit( clusterCharge_cs2_all_    );
+	}
+      }
   }
 }
 //=========================WRITEOUT HISTOS=========================================
