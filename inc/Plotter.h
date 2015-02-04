@@ -49,6 +49,10 @@ class Plotter
    void addPlot(std::map<int, H*> &histo, std::string name, int chip, Int_t nbinsx, Double_t xlow, Double_t xup, Int_t nbinsy, Double_t ylow, Double_t yup);
    template <class H>
    void addPlot(std::map<int, H*> &histo, std::string name, int chip, Int_t nbinsx, Double_t xlow, Double_t xup);
+   template <class H>
+   void addPlot(H* histo, std::string name, int chip, Int_t nbinsx, Double_t xlow, Double_t xup){;}
+   template <class H>
+   void addPlot(H* histo, std::string name, int chip, Int_t nbinsx, Double_t xlow, Double_t xup, Int_t nbinsy, Double_t ylow, Double_t yup){;}
    
    std::stringstream  ss_;
    bool isQuad_;

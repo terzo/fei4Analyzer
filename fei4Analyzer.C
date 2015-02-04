@@ -73,7 +73,7 @@ int main(int argc, char **argv)
 	   std::cout << "-i  filename.[raw,dat,slcio]\t:" << "input file[s]: .raw   for USBpix files" << "\n" 
 	             << "\t\t\t\t "                       << "               .dat   for CosmicGui binary files" << "\n"
 		     << "\t\t\t\t "                       << "               .slcio for EUTelescope lcio files" << "\n";
-	   std::cout << "-v\t \t \t \t:" << "verbosity: debug mode" << "\n";
+	   std::cout << "-v\t \t \t \t:" << "verbose (debug mode)" << "\n";
 	   std::cout << "-r  filename[.root]\t\t:" << "define the ROOT output file name[s]: if not set or #input<#output the output_filename[s] = input_filename[s].root" << "\n";
 	   std::cout << "-o  filename[.txt]\t\t:" << "writes out a txt log file compatible with the Timepix reconstruction software (CosmicGUI binary data only)" << "\n";
 	   std::cout << "-n  [0..1]\t\t\t:" << "specify the hit frequency for noise suppression (no noise suppression by default)" << "\n";
@@ -84,6 +84,7 @@ int main(int argc, char **argv)
 	   std::cout << "-f  [0..2]\t\t\t:"  << "0-> doesn't perform langaus fits (faster), " << "\n"
 	             << "\t\t\t\t "          << "1-> perform langaus fits for ToT plots only (default), " << "\n"
 		     << "\t\t\t\t "          << "2-> perform langaus fits for all plots " << "\n";
+           std::cout << "-0\t \t \t \t:" << "doesn't perform langaus fits (same as -f 0)" << "\n";
 	   std::cout << "-ff [1,2]\t\t\t:" << "select the returned value for ToT plots: 1-> landau MP (default), \n"
 	             << "\t\t\t\t "        << "                                         2-> langaus MPV;" << "\n";
 	   std::cout << "-dr [1..inf]\t\t\t:" << "max row distance in a cluster (default is 1)" << "\n";
@@ -98,7 +99,7 @@ int main(int argc, char **argv)
 	   std::cout << "-b  [0..inf]\t\t\t:" << "I forgot what was that intended for... (NOT IMPLEMENTED)" << "\n";
 	   std::cout <<  std::endl;
 	   std::cout << "STControl quad module analysis example:" << std::endl;
-	   std::cout << "\tfei4Analyzer -x 4 -r root_outputfile.root -i stcontrol_rawfile.raw -l 2" << std::endl;	   
+	   std::cout << "\tfei4Analyzer -m 4 -r root_outputfile.root -i stcontrol_rawfile.raw -l 2" << std::endl;	   
 	   std::cout << "CosmicGUI SCM analysis example:" << std::endl;
 	   std::cout << "\tfei4Analyzer -t -r root_outputfile.root -i cosmic_rawfile.dat -l 2" << std::endl;
 	   return 0;
@@ -189,6 +190,11 @@ int main(int argc, char **argv)
 	   else                 string_to_number(argv[++i],dofit);
   	   break;
   	 }
+	 case '0': 
+	 {
+	   dofit = 0;
+	   break;
+	 }
 	 case 'l':
 	 { 
 	   if(option[2] == 'm')

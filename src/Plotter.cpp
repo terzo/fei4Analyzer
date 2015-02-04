@@ -124,6 +124,14 @@ void Plotter::addPlot(std::map<int, H*> &histo, std::string name, int chip, Int_
 void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double noise, bool calibname)
 {
   if(!empty_) this->deletePlots();
+  
+  int cols = 80;
+  int rows = 336;
+  if(design25_)
+  {
+    cols /=2;
+    rows *=2;
+  }
 
   TH1::AddDirectory(kFALSE);
   TH2::AddDirectory(kFALSE);
@@ -153,13 +161,6 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
   {
     for(std::map<int, Clusterizer::clustersDef>::iterator chip=(*ev).second.begin(); chip!=(*ev).second.end(); ++chip)
     {
-      int cols = 80;
-      int rows = 336;
-      if(design25_)
-      {
-        cols /=2;
-        rows *=2;
-      }
       
       if(clusterToT_.count((*chip).first)==0)
       {
