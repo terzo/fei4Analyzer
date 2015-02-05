@@ -84,7 +84,7 @@ EventMaker::hitMapDef LCIOEventMaker::makeEvents(std::string infilename, std::st
 		       EventMaker::hitDef aHit;
 		       aHit.col = static_cast<int> ( zsData->getChargeValues()[k * kElements    ] );
 	  	       aHit.row = static_cast<int> ( zsData->getChargeValues()[k * kElements + 1] );
-		       aHit.tot = static_cast<int> ( zsData->getChargeValues()[k * kElements + 2] )+1;
+		       aHit.tot = static_cast<int> ( zsData->getChargeValues()[k * kElements + 2] );
 		       aHit.chip= static_cast<int> ( zsData->getChargeValues()[k * kElements + 3] );
 	  	       aHit.l1id= static_cast<int> ( zsData->getChargeValues()[k * kElements + 4] );
 		       aHit.bcid= evn;//bcid;

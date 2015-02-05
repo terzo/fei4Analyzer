@@ -184,8 +184,8 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 	addPlot(clusterTotMap_cs2_    ,"clusterTotMap_cs2"    ,(*chip).first,cols,0,cols,rows,0,rows);
         addPlot(clusterMeanTotMap_cs1_,"clusterMeanTotMap_cs1",(*chip).first,cols,0,cols,rows,0,rows);
 	
-	addPlot(clusterHolesCol_      ,"clusterHolesCol"      ,(*chip).first,cols,0,cols,rows,0,rows);
-	addPlot(clusterHolesRow_      ,"clusterHolesRow"      ,(*chip).first,cols,0,cols,rows,0,rows);
+	addPlot(clusterHolesCol_      ,"clusterHolesCol"      ,(*chip).first,cols,0.5,cols+0.5,cols,0,cols);
+	addPlot(clusterHolesRow_      ,"clusterHolesRow"      ,(*chip).first,rows,0.5,rows+0.5,rows,0,rows);
 	
 	addPlot(clusterCharge_    ,"Qdist"   ,(*chip).first,100,0,100);
         addPlot(clusterCharge_cs1_,"QdistCS1",(*chip).first,100,0,100);	
@@ -289,7 +289,7 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 	    	if( inClusterRowToT_[(*chip).first].count(rowSize) == 0 )
 	    	{ 
             	       std::stringstream ss;
-	    	       ss.str(""); ss << "inClusterRowToT_" << "CW"<< rowSize;
+	    	       ss.str(""); ss << "chip" << (*chip).first << "_inClusterRowToT_" << "CW"<< rowSize;
             	       inClusterRowToT_[(*chip).first][rowSize] = new TH2I(ss.str().c_str(),"Row in the cluster .VS. ToT in the row",rowSize,0,rowSize,150,-0.5,149.5);
 	    	}
 	    	inClusterRowToT_[(*chip).first][rowSize]->Fill( r->first - minRow, r->second );
@@ -300,7 +300,7 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 	    	if( inClusterColToT_[(*chip).first].count(colSize) == 0 )
 	    	{ 
             	       std::stringstream ss;
-	    	       ss.str(""); ss << "inClusterColToT_" << "CW"<< colSize;
+	    	       ss.str(""); ss << "chip" << (*chip).first << "_inClusterColToT_" << "CW"<< colSize;
             	       inClusterColToT_[(*chip).first][colSize] = new TH2I(ss.str().c_str(),"Col in the cluster .VS. ToT in the col",colSize,0,colSize,150,-0.5,149.5);
 	    	}
  	    	inClusterColToT_[(*chip).first][colSize]->Fill( c->first - minCol, c->second );
@@ -319,14 +319,8 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 	 
 	 if(cSize==2)
 	 {				
-	   if(maxRow==minRow)
-	   {	  
-	     totMax_[(*chip).first]->Fill(maxTot);
-	   }
-	   else
-	   {
-	     totMin_[(*chip).first]->Fill(minTot);
-	   }
+	   if(maxRow==minRow) totMax_[(*chip).first]->Fill(maxTot);
+	   else               totMin_[(*chip).first]->Fill(minTot);
 	   
 	   if( (maxTot-minTot)<0 ) clusterTotMap_cs2_[(*chip).first]->Fill((maxCol+minCol)*0.5,(maxRow+minRow)*0.5);				   
 	 }	 

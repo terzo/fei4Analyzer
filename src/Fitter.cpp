@@ -249,10 +249,10 @@ Fitter::fitResultDef Fitter::fit(TH1* histo)
    // Setting fit range and start values
    Double_t fr[2];
 
-   pllo[0]=0.2; pllo[1]=2.0; pllo[2]=1.0; pllo[3]=0.4;
+   pllo[0]=0.1; pllo[1]=2.0; pllo[2]=1.0; pllo[3]=0.4;
    plhi[0]=5.0; plhi[1]=50.0; plhi[2]=1000000.0; plhi[3]=5.0;
    sv[0]=histo->GetRMS(); 
-   sv[1]=histo->GetBinLowEdge( histo->GetMaximumBin() ); 
+   sv[1]=histo->GetBinCenter( histo->GetMaximumBin() ); 
    sv[2]=50000.0; 
    sv[3]=histo->GetRMS()/3.;
    
@@ -409,134 +409,4 @@ Fitter::fitResultDef Fitter::fit(TH1* histo)
    histo->GetListOfFunctions()->Add(fitsnr);
    
    return fitResult;
-   
-   
-   
-/*   
-   TMatrixDSym scov = cov;
-   cov.Print();
-   for(int i=0; i<4; i++)
-   {
-   	scov[i][i] = sqrt(scov[i][i]);
-   }
-
-   double mean = fitsnr->Mean(fr[0],fr[1]);
-   fitsnr->DrawCopy("lsame");
-   for(int i=0; i<4; ++i)
-   {
-   	fitenv->SetParameter(i,fp[i]);
-        for(int j=0; j<4; ++j)
-        {
-   	    fitenv->SetParameter(4*(i+1)+j,-scov[j][i]);
-        }
-   }
-   double mean_min = fitenv->Mean(fr[0],fr[1]);
-   double mpv_min  = fitenv->GetMaximumX();
-   fitenv->SetLineColor(4);
-   //fitenv->DrawCopy("lsame");
-   //fitenv2->SetParameter(1,-1);
-   //fitenv2->SetLineColor(4);
-   //fitenv2->DrawCopy("lsame");
-   scov.Print();
-   for(int i=0; i<4; ++i)
-   {
-   	fitenv->SetParameter(i,fp[i]);
-        for(int j=0; j<4; ++j)
-        {
-   	    fitenv->SetParameter(4*(i+1)+j,scov[i][j]);
-        }
-   }
-   double mean_max = fitenv->Mean(fr[0],fr[1]);
-   double mpv_max  = fitenv->GetMaximumX();
-   fitenv->SetLineColor(3);
-   //fitenv->DrawCopy("lsame");
-   //fitenv2->SetParameter(1,1);
-   //fitenv2->SetLineColor(3);
-   //fitenv2->DrawCopy("lsame");
-   
-   Double_t  peak=0;
-   Double_t max_pars[4]; 
-   Double_t min_pars[4];
-   
-   fitsnr->SetLineColor(4);
-   for(int i=0; i<4; ++i)
-   {
-   	//fitsnr->SetParameters(fp[0]+scov[0][i],fp[1]+scov[1][i],fp[2]+scov[2][i],fp[3]+scov[3][i]);
-	
-	if(fitsnr->GetMaximum()>peak)
-	{
-		langaupro(fitsnr->GetParameters(),SNRPeak_min,SNRFWHM_min);
-		//min_pars = fitsnr->GetParameters();
-	}
-	//fitsnr->DrawCopy("lsame");
-   }
-   //fitsnr->SetParameters(min_pars);
-   //double mean_min = fitsnr->Mean(fr[0],fr[1]);
-   //fitsnr->DrawCopy("lsame");
-   peak=0;
-   fitsnr->SetLineColor(3);
-   for(int i=0; i<4; ++i)
-   {
-  
-	//fitsnr->SetParameters(fp[0]+scov[0][i],fp[1]+scov[1][i],fp[2]+scov[2][i],fp[3]+scov[3][i]);
-	
-	if(fitsnr->GetMaximum()>peak)
-	{
-		langaupro(fitsnr->GetParameters(),SNRPeak_max,SNRFWHM_max);
-		//max_pars = fitsnr->GetParameters();
-	}
-	//fitsnr->DrawCopy("lsame");
-   }
-   //fitsnr->SetParameters(max_pars);
-   //double mean_max = fitsnr->Mean(fr[0],fr[1]);
-   //fitsnr->DrawCopy("lsame");
-
-   std::stringstream string;
-   //string.precision(3);
-   TPaveText *tpt = new TPaveText(0.622126,0.711864,0.981322,0.930085,"brNDC");
-   string << "Mean     = " << std::setprecision(3) << mean << "^{+" << std::setprecision(1) << mean-mean_min << "}_{-" << -1*(mean-mean_max) << "} ke";
-   tpt->AddText(string.str().c_str());
-   string.str("");
-   //string << "MPV     = " << std::setprecision(3) << SNRPeak << "_{-" << std::setprecision(1) << SNRPeak-SNRPeak_min << "}^{+" << SNRPeak_max-SNRPeak << "} ke";
-   string << "MPV     = " << std::setprecision(3) << SNRPeak << "^{+" << std::setprecision(1) << SNRPeak-mpv_min << "}_{-" << -1*(SNRPeak-mpv_max) << "} ke";
-   tpt->AddText(string.str().c_str());
-   string.str("");
-   string <<"FWHM = " << SNRFWHM << " ke";
-   //tpt->AddText(string.str().c_str());
-   tpt->SetBorderSize(1);
-   tpt->SetFillColor(0);
-   tpt->SetLineColor(1);
-   tpt->SetTextFont(132);
-   tpt->SetTextColor(kBlack);
-   tpt->Draw();
-
-   
-   TLine *lineThr = new TLine(3,0,3,2.2*1000);
-   lineThr->SetLineColor(2);
-   lineThr->SetLineStyle(2);
-   lineThr->SetLineWidth(3);
-   lineThr->Draw();
-   
-   TLine *lineMean = new TLine(mean,0,mean,fitsnr->Eval(mean));
-   lineMean->SetLineColor(kSpring+4);
-   lineMean->SetLineStyle(2);
-   lineMean->SetLineWidth(3);
-   lineMean->Draw();
-   
-   TLine *lineMPV = new TLine(SNRPeak,0,SNRPeak,fitsnr->GetMaximum());
-   lineMPV->SetLineColor(4);
-   lineMPV->SetLineStyle(2);
-   lineMPV->SetLineWidth(3);
-   lineMPV->Draw();
-   
-   TLegend *leg = new TLegend(0.63936,0.625,0.978448,0.930085);
-   //leg->SetNColumns(4);
-   leg->AddEntry(lineThr,"Threshold","l");
-   leg->AddEntry(lineMPV,"MPV","l");
-   leg->AddEntry(lineMean,"Mean","l");
-   leg->SetTextFont(132);
-   leg->SetBorderSize(1);
-   leg->SetFillColor(kWhite);
-   leg->Draw();
-*/
 }
