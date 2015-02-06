@@ -20,6 +20,55 @@ Plotter::Plotter(bool quiet, int module_type)
     minRowCut_ = 0;
     maxColCut_ = 0;
     maxRowCut_ = 0;
+    
+    //define root style
+    TStyle *terzo_stile  = new TStyle("terzo_stile","terzo stile");
+    terzo_stile->SetCanvasBorderMode(0);   
+    terzo_stile->SetCanvasBorderSize(2);   
+    terzo_stile->SetCanvasColor(0);	   
+    terzo_stile->SetDrawBorder(0);	   
+    terzo_stile->SetFrameBorderMode(0);    
+    terzo_stile->SetLabelFont(132,"X");    
+    terzo_stile->SetLabelFont(132,"Y");    
+    terzo_stile->SetLabelFont(132,"Z");    
+    terzo_stile->SetLabelSize(0.06,"X");   
+    terzo_stile->SetLabelSize(0.06,"Y");   
+    terzo_stile->SetLabelSize(0.06,"Z");   
+    terzo_stile->SetLegendFillColor(0);    
+    terzo_stile->SetLegendFont(132);	   
+    terzo_stile->SetNdivisions(510,"X");   
+    terzo_stile->SetNdivisions(510,"Y");   
+    terzo_stile->SetNdivisions(510,"Z");   
+    terzo_stile->SetOptStat(0); 	   
+    terzo_stile->SetOptTitle(0);	   
+    terzo_stile->SetPadBorderMode(0);	   
+    terzo_stile->SetPadBorderSize(0);	   
+    terzo_stile->SetPadBottomMargin(0.15); 
+    terzo_stile->SetPadColor(0);	   
+    terzo_stile->SetPadGridX(true);	   
+    terzo_stile->SetPadGridY(true);	   
+    terzo_stile->SetPadLeftMargin(0.15);   
+    terzo_stile->SetPadRightMargin(0.05);  
+    terzo_stile->SetPadTickX(1);	   
+    terzo_stile->SetPadTickY(1);	   
+    terzo_stile->SetPadTopMargin(0.05);    
+    terzo_stile->SetStatFont(132);	   
+    terzo_stile->SetTextFont(132);	   
+    terzo_stile->SetTickLength(0.03,"X");  
+    terzo_stile->SetTickLength(0.03,"Y");  
+    terzo_stile->SetTickLength(0.03,"Z");  
+    terzo_stile->SetTitleFillColor(0);     
+    terzo_stile->SetTitleFont(132,"X");    
+    terzo_stile->SetTitleFont(132,"Y");    
+    terzo_stile->SetTitleFont(132,"Z");    
+    terzo_stile->SetTitleFontSize(132);    
+    terzo_stile->SetTitleOffset(0.07,"Z"); 
+    terzo_stile->SetTitleSize(0.06,"X");   
+    terzo_stile->SetTitleSize(0.06,"Y");   
+    terzo_stile->SetTitleSize(0.06,"Z");   
+    terzo_stile->SetTitleXOffset(1);	   
+    terzo_stile->SetTitleYOffset(0.9);     
+    gROOT->SetStyle("terzo_stile"); 
 }
 //==========================================
 Plotter::~Plotter()
@@ -43,56 +92,7 @@ void Plotter::setCuts(int minCol, int minRow, int maxCol, int maxRow, bool borde
    maxColCut_ = maxCol;
    maxRowCut_ = maxRow;
    
-   borders_   = borders;
-   
-  //define root style
-  TStyle *terzo_stile  = new TStyle("terzo_stile","terzo stile");
-  terzo_stile->SetCanvasBorderMode(0);	 
-  terzo_stile->SetCanvasBorderSize(2);	 
-  terzo_stile->SetCanvasColor(0);	 
-  terzo_stile->SetDrawBorder(0);	 
-  terzo_stile->SetFrameBorderMode(0);	 
-  terzo_stile->SetLabelFont(132,"X");	 
-  terzo_stile->SetLabelFont(132,"Y");	 
-  terzo_stile->SetLabelFont(132,"Z");	 
-  terzo_stile->SetLabelSize(0.06,"X");	 
-  terzo_stile->SetLabelSize(0.06,"Y");	 
-  terzo_stile->SetLabelSize(0.06,"Z");	 
-  terzo_stile->SetLegendFillColor(0);	 
-  terzo_stile->SetLegendFont(132);	 
-  terzo_stile->SetNdivisions(510,"X");	 
-  terzo_stile->SetNdivisions(510,"Y");	 
-  terzo_stile->SetNdivisions(510,"Z");	 
-  terzo_stile->SetOptStat(0);		 
-  terzo_stile->SetOptTitle(0);		 
-  terzo_stile->SetPadBorderMode(0);	 
-  terzo_stile->SetPadBorderSize(0);	 
-  terzo_stile->SetPadBottomMargin(0.15); 
-  terzo_stile->SetPadColor(0);		 
-  terzo_stile->SetPadGridX(true);	 
-  terzo_stile->SetPadGridY(true);	 
-  terzo_stile->SetPadLeftMargin(0.15);	 
-  terzo_stile->SetPadRightMargin(0.05);  
-  terzo_stile->SetPadTickX(1);		 
-  terzo_stile->SetPadTickY(1);		 
-  terzo_stile->SetPadTopMargin(0.05);	 
-  terzo_stile->SetStatFont(132);	 
-  terzo_stile->SetTextFont(132);	 
-  terzo_stile->SetTickLength(0.03,"X");  
-  terzo_stile->SetTickLength(0.03,"Y");  
-  terzo_stile->SetTickLength(0.03,"Z");  
-  terzo_stile->SetTitleFillColor(0);	 
-  terzo_stile->SetTitleFont(132,"X");	 
-  terzo_stile->SetTitleFont(132,"Y");	 
-  terzo_stile->SetTitleFont(132,"Z");	 
-  terzo_stile->SetTitleFontSize(132);	 
-  terzo_stile->SetTitleOffset(0.07,"Z"); 
-  terzo_stile->SetTitleSize(0.06,"X");	 
-  terzo_stile->SetTitleSize(0.06,"Y");	 
-  terzo_stile->SetTitleSize(0.06,"Z");	 
-  terzo_stile->SetTitleXOffset(1);	 
-  terzo_stile->SetTitleYOffset(0.9);	 
-  gROOT->SetStyle("terzo_stile"); 	 
+   borders_   = borders;	 
 }
 //================================================================================================
 void Plotter::setCuts(int colRowCuts[4], bool borders)
@@ -169,6 +169,8 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 	addPlot(clusterToT_      ,"ToTdist"  	  ,(*chip).first, 150, -0.5, 149.5);
  	addPlot(one_hitToT_      ,"ToTdistCS1"	  ,(*chip).first, 150, -0.5, 149.5);
  	addPlot(two_hitToT_      ,"ToTdistCS2"	  ,(*chip).first, 150, -0.5, 149.5);
+	addPlot(three_hitToT_    ,"ToTdistCS3"	  ,(*chip).first, 150, -0.5, 149.5);
+	
 	addPlot(totMax_          ,"ToTdistCS2_max",(*chip).first, 150, -0.5, 149.5);
 	addPlot(totMin_          ,"ToTdistCS2_min",(*chip).first, 150, -0.5, 149.5);
 	
@@ -190,6 +192,7 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 	addPlot(clusterCharge_    ,"Qdist"   ,(*chip).first,100,0,100);
         addPlot(clusterCharge_cs1_,"QdistCS1",(*chip).first,100,0,100);	
  	addPlot(clusterCharge_cs2_,"QdistCS2",(*chip).first,100,0,100);
+	addPlot(clusterCharge_cs3_,"QdistCS3",(*chip).first,100,0,100);
       }
       
       for( Clusterizer::clustersDef::iterator clus=(*chip).second.begin(); clus!=(*chip).second.end(); ++clus )
@@ -335,6 +338,11 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
             two_hitToT_[(*chip).first]->Fill(cToT);
             if(chargeSum !=0 )clusterCharge_cs2_[(*chip).first]->Fill(chargeSum);
          }
+	 if( cSize==3 ) 
+         {
+            three_hitToT_[(*chip).first]->Fill(cToT);
+            if(chargeSum !=0 ) clusterCharge_cs3_[(*chip).first]->Fill(chargeSum); 
+	 }
       }
     }
   }
@@ -372,7 +380,7 @@ void Plotter::fillHitPlots(EventMaker::hitMapDef& hitMap)
 
   for(EventMaker::hitMapDef::iterator ev = hitMap.begin(); ev!=hitMap.end(); ++ev)
   {
-    for(std::map<int, EventMaker::hitsDef>::iterator chip=(*ev).second.begin(); chip!=(*ev).second.end(); ++chip)
+    for(std::map<int, EventMaker::hitsDef>::iterator chip=ev->second.begin(); chip!=(*ev).second.end(); ++chip)
     {
     
       if(hitMap_.count((*chip).first)==0)
@@ -521,6 +529,7 @@ void Plotter::writePlots(std::string rootFileName, bool bunch)
     (*chip).second->Write();
     two_hitToT_[(*chip).first]->Write();
     one_hitToT_[(*chip).first]->Write();
+    three_hitToT_[(*chip).first]->Write();
     clusterToT_CSn_[(*chip).first]->Write();
     clusterSize_[(*chip).first]->Write();
     clusterSizeRow_[(*chip).first]->Write();
@@ -731,6 +740,7 @@ void Plotter::deletePlots(void)
     if((*chip).second                          !=NULL) delete (*chip).second;   							      
     if(two_hitToT_[(*chip).first] 	       !=NULL) delete two_hitToT_[(*chip).first];
     if(one_hitToT_[(*chip).first] 	       !=NULL) delete one_hitToT_[(*chip).first];
+    if(three_hitToT_[(*chip).first]            !=NULL) delete three_hitToT_[(*chip).first];
     if(clusterSize_[(*chip).first] 	       !=NULL) delete clusterSize_[(*chip).first];
     if(clusterSizeRow_[(*chip).first]          !=NULL) delete clusterSizeRow_[(*chip).first];
     if(clusterSizeCol_[(*chip).first]          !=NULL) delete clusterSizeCol_[(*chip).first];
@@ -759,6 +769,7 @@ void Plotter::deletePlots(void)
   clusterToT_.clear();
   one_hitToT_.clear();
   two_hitToT_.clear();
+  three_hitToT_.clear();
   clusterSize_.clear();
   clusterSizeRow_.clear();
   clusterSizeCol_.clear();

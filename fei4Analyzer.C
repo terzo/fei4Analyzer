@@ -286,7 +286,8 @@ int main(int argc, char **argv)
 
      #pragma omp critical
      {
-        thePlotter->setCuts(colRowCuts,borders);
+        thePlotter->setCuts(colRowCuts,borders);	
+	
 	thePlotter->fillHitPlots(hitMap);
      	thePlotter->fillClusterPlots(clusterMap, noise, calibname);
      	

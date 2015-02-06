@@ -66,8 +66,8 @@ class Plotter
    bool borders_;
    
    //single plots
-   std::map<int, TH1I*> clusterToT_, two_hitToT_, one_hitToT_, clusterSize_, clusterSizeRow_, clusterSizeCol_;
-   std::map<int, TH1D*> clusterCharge_,clusterCharge_cs1_,clusterCharge_cs2_;
+   std::map<int, TH1I*> clusterToT_, three_hitToT_, two_hitToT_, one_hitToT_, clusterSize_, clusterSizeRow_, clusterSizeCol_;
+   std::map<int, TH1D*> clusterCharge_,clusterCharge_cs1_,clusterCharge_cs2_, clusterCharge_cs3_;
    std::map<int, TH1I*> totMax_, totMin_;
    std::map<int, TH2I*> hitMap_, clusterMap_cs1_, clusterMap_cs2_, clusterHolesRow_, clusterHolesCol_, clusterToT_CSn_;
    std::map<int, TH2D*> clusterMeanTotMap_cs1_, clusterTotMap_cs1_, clusterTotMap_cs2_;
