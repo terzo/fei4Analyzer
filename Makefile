@@ -11,6 +11,8 @@ else
  BINDIR  = ./bin/
 endif
 
+OBJS = obj/EventMaker.o	obj/USBpixEventMaker.o obj/CosmicEventMaker.o obj/Clusterizer.o obj/Plotter.o obj/Calibrator.o obj/Fitter.o obj/fei4TelEventMaker.o
+
 ifdef USE_LCIO
  LCIOINC= -I$(LCIO)/include  -I$(LCIO)/sio/include
  LCIOLIBS= -L$(LCIO)/lib -llcio -L$(LCIO)/sio/lib -lsio -lz
@@ -38,8 +40,6 @@ CCFLAGS = $(INCFLAGS) $(OPTIMIZER_FLAGS)
 HERE   := $(shell pwd)
 
 CPPVERBOSE = 0
-
-OBJS = obj/EventMaker.o	obj/USBpixEventMaker.o obj/CosmicEventMaker.o obj/Clusterizer.o obj/Plotter.o obj/Calibrator.o obj/Fitter.o obj/fei4TelEventMaker.o obj/LCIOEventMaker.o
 		
 
 .PHONY : all 
