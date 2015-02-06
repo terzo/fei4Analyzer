@@ -50,9 +50,9 @@ class Plotter
    template <class H>
    void addPlot(std::map<int, H*> &histo, std::string name, int chip, Int_t nbinsx, Double_t xlow, Double_t xup);
    template <class H>
-   void addPlot(H* histo, std::string name, int chip, Int_t nbinsx, Double_t xlow, Double_t xup){;}
+   H* addPlot(H* histo, std::string name, Int_t nbinsx, Double_t xlow, Double_t xup);
    template <class H>
-   void addPlot(H* histo, std::string name, int chip, Int_t nbinsx, Double_t xlow, Double_t xup, Int_t nbinsy, Double_t ylow, Double_t yup){;}
+   H* addPlot(H* histo, std::string name, Int_t nbinsx, Double_t xlow, Double_t xup, Int_t nbinsy, Double_t ylow, Double_t yup);
    
    std::stringstream  ss_;
    bool isQuad_;
@@ -94,6 +94,8 @@ class Plotter
    
    bool design25_;
    
+   std::vector<TObject*> trashbin_;
+   
    //batch vectors
    //std::vector<TGraphErrors*> graphs;
    std::map<int, std::map<double,Fitter::fitResultDef> > ToT_all_;
@@ -104,7 +106,7 @@ class Plotter
    std::map<double,Fitter::fitResultDef> ToT_mod_cs2_;
    
    
-   Fitter *theFitter;
+   Fitter *theFitter_;
 } ;
 
 #endif

@@ -17,6 +17,7 @@
 #include <boost/cregex.hpp>
 
 #include "EventMaker.h"
+#include "fei4TelEventMaker.h"
 #include "USBpixEventMaker.h"
 #include "CosmicEventMaker.h"
 #include "Clusterizer.h"
@@ -269,6 +270,10 @@ int main(int argc, char **argv)
 		std::cout << "ERROR: variable USE_LCIO not defined" << std::endl;
 		exit(0);
 		#endif
+     }
+     else if(extension == "root")
+     { 
+                theEventMaker = new fei4TelEventMaker(quiet, readTimeStamp, design25);
      }
      else      
      		theEventMaker = new USBpixEventMaker(quiet, readTimeStamp, design25);

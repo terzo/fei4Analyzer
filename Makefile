@@ -1,5 +1,4 @@
-EXELIST = fei4Analyzer #clusterToT
-OBJS = obj/EventMaker.o	obj/USBpixEventMaker.o obj/CosmicEventMaker.o obj/Clusterizer.o obj/Plotter.o obj/Calibrator.o obj/Fitter.o 
+EXELIST = fei4Analyzer 
 
 CC = g++
 
@@ -38,9 +37,9 @@ CCFLAGS = $(INCFLAGS) $(OPTIMIZER_FLAGS)
 
 HERE   := $(shell pwd)
 
-CPPVERBOSE = 1
+CPPVERBOSE = 0
 
-
+OBJS = obj/EventMaker.o	obj/USBpixEventMaker.o obj/CosmicEventMaker.o obj/Clusterizer.o obj/Plotter.o obj/Calibrator.o obj/Fitter.o obj/fei4TelEventMaker.o obj/LCIOEventMaker.o
 		
 
 .PHONY : all 
@@ -66,30 +65,12 @@ dependencies :
         else
 	 @${CC} -MM $(SRCDIR)/*.cpp $(CCFLAGS) | sed 's/.*\.o:/$(OBJDIR)\/&/' >  dependencies
         endif
-
-#--------------------------------------------------------------------------------------------------------#
-clusterToT : clusterToT.C    \
-	     inc/FormattedRecord.hh
-	@echo " "
-	@echo '            [0;31m[1m[7mCompiling[0m [0;36m[1m[7m$< [0m'
-        ifdef CPPVERBOSE
-	  $(CC) -o $@					   \
-	           $<                                      \
-		   $(CCFLAGS)		                   \
-		   $(LIBFLAGS)
-        else
-	 @$(CC) -o $@					   \
-	           $<                                      \
-		   $(CCFLAGS)		                   \
-		   $(LIBFLAGS)		   
-        endif
-	
 #--------------------------------------------------------------------------------------------------------#
 fei4Analyzer : fei4Analyzer.C                                            \
-	 $(OBJS) 						\
-         inc/ANSIColors.h			           \
-         inc/macros.h
-	@echo " "
+	       $(OBJS)  					      \
+               inc/ANSIColors.h 				 \
+               inc/macros.h
+	@      echo " "
 	@echo '            [0;31m[1m[7mCompiling[0m [0;36m[1m[7m$< [0m'
         ifdef CPPVERBOSE
 	  $(CC)    -o $@					   \
@@ -185,8 +166,26 @@ obj/LCIOEventMaker.o : src/LCIOEventMaker.cpp     \
 		      $(CCFLAGS)                              \
 		      `root-config --cflags`
         endif
-	
-	
+#--------------------------------------------------------------------------------------------------------#
+obj/fei4TelEventMaker.o : src/fei4TelEventMaker.cpp     \
+                          inc/fei4TelEventMaker.h     \
+                          inc/EventMaker.h     \
+                          inc/macros.h  	  \
+		          inc/ANSIColors.h     \
+		          inc/FormattedRecord.hh
+	@echo " "
+	@echo '            [0;31m[1m[7mCompiling[0m [0;36m[1m[7m$< [0m'
+        ifdef CPPVERBOSE
+	  $(CC) -c -o $@              \
+	              $<  	      \
+		      $(CCFLAGS)                              \
+		      `root-config --cflags`
+        else
+	 @$(CC) -c -o $@              \
+	              $<  	      \
+		      $(CCFLAGS)                              \
+		      `root-config --cflags`
+        endif		
 #--------------------------------------------------------------------------------------------------------#
 obj/Clusterizer.o : src/Clusterizer.cpp     \
                    inc/Clusterizer.h	\
