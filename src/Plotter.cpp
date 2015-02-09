@@ -763,6 +763,7 @@ void Plotter::deletePlots(void)
   clusterCharge_cs1_.clear();
   clusterCharge_cs2_.clear();
   clusterCharge_cs3_.clear();
+  trashbin_.clear();
   
   empty_ = true;
 }
