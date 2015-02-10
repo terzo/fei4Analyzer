@@ -235,12 +235,12 @@ EventMaker::hitMapDef USBpixEventMaker::makeEvents(std::string infilename, std::
 				    if (aHit.col % 2!=0)
 				    {
 				      aHit.row *= 2;
-				      aHit.row++;
 				      aHit.col = (aHit.col-1)/2;
 				    }
 				    else 
 				    {
 				      aHit.row *= 2;
+				      aHit.row++;
 				      aHit.col = aHit.col/2;
 				    }
 				  }
