@@ -275,7 +275,7 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 	   if(cSize==2) 
 	   { 
 	      clusterMap_cs2_[(*chip).first]->Fill((*clus).second[hit].col, (*clus).second[hit].row);
-	      clusterTotMap_cs2_[(*chip).first]->Fill((*clus).second[hit].col, (*clus).second[hit].row,cToT);
+	      clusterTotMap_cs2_[(*chip).first]->Fill((*clus).second[hit].col, (*clus).second[hit].row,tot);
 	   }
 	   
 	   if(isQuad_)
