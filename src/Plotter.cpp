@@ -362,7 +362,7 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 	    if(isQuad_)
 	    {
 	      clusterMap_cs2_all_->Fill(col, row);
-	      clusterTotMap_cs2_all_->Fill(col, row,tot);
+	      clusterTotMap_cs2_all_->Fill(col, row,cToT);
 	    }
 	    
          }
