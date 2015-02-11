@@ -361,8 +361,8 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 	    
 	    if(isQuad_)
 	    {
-	      clusterMap_cs2_all_->Fill(col, row);
-	      clusterTotMap_cs2_all_->Fill(col, row,cToT);
+	      clusterMap_cs2_all_->Fill(maxTotCol, maxTotRow);
+	      clusterTotMap_cs2_all_->Fill(maxTotCol, maxTotRow,cToT);
 	    }
 	    
          }
