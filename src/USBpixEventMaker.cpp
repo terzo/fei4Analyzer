@@ -258,18 +258,4 @@ EventMaker::hitMapDef USBpixEventMaker::makeEvents(std::string infilename, std::
   //STDLINE(ss_.str(), ACGreen);
   return hitMap;
 }
-//=========================================
-void USBpixEventMaker::design25Encode(EventMaker::hitDef &aHit)
-{
-  if (aHit.col % 2!=0)
-  {
-    aHit.row *= 2;
-    aHit.col = (aHit.col-1)/2;
-  }
-  else 
-  {
-    aHit.row *= 2;
-    aHit.row++;
-    aHit.col = aHit.col/2;
-  }
-}
+

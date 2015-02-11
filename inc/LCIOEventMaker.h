@@ -68,9 +68,6 @@ class LCIOEventMaker : public EventMaker
  private:
     
    std::stringstream  ss_;
-   bool quiet_;
-   bool design25_;
-   bool readTimeStamp_   ;
  
 } ;
 

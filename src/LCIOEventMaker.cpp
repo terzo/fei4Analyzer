@@ -13,7 +13,7 @@ LCIOEventMaker::LCIOEventMaker(bool quiet, bool readTimeStamp, bool design25)
   quiet_ = quiet;
   readTimeStamp_ = readTimeStamp;
   design25_ = design25;
-  std::cout << "LCIO version! FE-I4" << "\n";
+  std::cout << "LCIO event converter for FE-I4 (no totcode!)" << "\n";
 }
 
 //====================================================================================

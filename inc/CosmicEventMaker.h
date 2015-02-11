@@ -43,9 +43,6 @@ class CosmicEventMaker : public EventMaker
    bool     triggerDecode(char* block, unsigned long long &counter, unsigned long long &trgtime, unsigned long long &deadtime, int &bitpos);
  
    std::stringstream  ss_;
-   bool quiet_;
-   bool design25_;
-   bool readTimeStamp_   ;
  
 } ;
 

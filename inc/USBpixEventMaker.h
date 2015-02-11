@@ -50,11 +50,6 @@ class USBpixEventMaker : public EventMaker
  private:
     
    std::stringstream  ss_;
-   bool quiet_;
-   bool design25_;
-   bool readTimeStamp_   ;
-   
-   void design25Encode(EventMaker::hitDef &aHit);
  
 } ;
 

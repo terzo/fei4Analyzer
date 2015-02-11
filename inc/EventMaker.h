@@ -54,13 +54,15 @@ class EventMaker
  protected:
  
    int      string_to_int(std::string theString);
+   void     design25Encode(EventMaker::hitDef &aHit);
    
- private:
- 
-   std::stringstream  ss_;
    bool quiet_;
    bool design25_;
    bool readTimeStamp_   ;
+   
+ private:
+ 
+  std::stringstream  ss_;
  
 } ;
 

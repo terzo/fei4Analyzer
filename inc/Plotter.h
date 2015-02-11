@@ -70,7 +70,7 @@ class Plotter
    std::map<int, TH1D*> clusterCharge_,clusterCharge_cs1_,clusterCharge_cs2_, clusterCharge_cs3_;
    std::map<int, TH1I*> totMax_, totMin_;
    std::map<int, TH2I*> hitMap_, clusterMap_cs1_, clusterMap_cs2_, clusterHolesRow_, clusterHolesCol_, clusterToT_CSn_;
-   std::map<int, TH2D*> clusterMeanTotMap_cs1_, clusterTotMap_cs1_, clusterTotMap_cs2_;
+   std::map<int, TH2D*> clusterMeanTotMap_cs1_, clusterMeanTotMap_cs2_, clusterTotMap_cs1_, clusterTotMap_cs2_;
    //     #chip,           CS,RowVSToT
    std::map<int, std::map<int, TH2I*> > inClusterRowToT_, inClusterColToT_;
    

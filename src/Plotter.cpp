@@ -202,6 +202,7 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 	addPlot(clusterTotMap_cs1_    ,"clusterTotMap_cs1"    ,(*chip).first,cols,0,cols,rows,0,rows);
 	addPlot(clusterTotMap_cs2_    ,"clusterTotMap_cs2"    ,(*chip).first,cols,0,cols,rows,0,rows);
         addPlot(clusterMeanTotMap_cs1_,"clusterMeanTotMap_cs1",(*chip).first,cols,0,cols,rows,0,rows);
+	addPlot(clusterMeanTotMap_cs2_,"clusterMeanTotMap_cs2",(*chip).first,cols,0,cols,rows,0,rows);
 	
 	addPlot(clusterHolesCol_      ,"clusterHolesCol"      ,(*chip).first,cols,0.5,cols+0.5,cols,0,cols);
 	addPlot(clusterHolesRow_      ,"clusterHolesRow"      ,(*chip).first,rows,0.5,rows+0.5,rows,0,rows);
@@ -298,11 +299,6 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 	        clusterMap_cs1_all_->Fill(col, row);	        
 	        clusterTotMap_cs1_all_->Fill(col, row,tot);
 	      }
-	      //if(cSize==2) 
-	      //{ 
-	      //   clusterMap_cs2_all_->Fill(col, row);
-	      //   clusterTotMap_cs2_all_->Fill(col, row,tot);
-	      //}
 	   }
 	   
     	 }
@@ -355,13 +351,20 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
     	 if( cSize==2 ) 
          {
             two_hitToT_[(*chip).first]->Fill(cToT);
-            if(chargeSum !=0 )clusterCharge_cs2_[(*chip).first]->Fill(chargeSum);
+            if(chargeSum !=0 ) clusterCharge_cs2_[(*chip).first]->Fill(chargeSum);
 	    
-	    if(maxRow==minRow) totMax_[(*chip).first]->Fill(maxTot);
-	    else	       totMin_[(*chip).first]->Fill(minTot);
+	    totMax_[(*chip).first]->Fill(maxTot);
+	    totMin_[(*chip).first]->Fill(minTot);
             
 	    clusterMap_cs2_[(*chip).first]->Fill(maxTotCol,maxTotRow);
 	    clusterTotMap_cs2_[(*chip).first]->Fill(maxTotCol,maxTotRow,cToT);
+	    
+	    if(isQuad_)
+	    {
+	      clusterMap_cs2_all_->Fill(col, row);
+	      clusterTotMap_cs2_all_->Fill(col, row,tot);
+	    }
+	    
          }
 	 if( cSize==3 ) 
          {
@@ -376,6 +379,7 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
   {   
     
     clusterMeanTotMap_cs1_[(*chip).first]->Divide(clusterTotMap_cs1_[(*chip).first],clusterMap_cs1_[(*chip).first],1.0,1.0,"B");
+    clusterMeanTotMap_cs2_[(*chip).first]->Divide(clusterTotMap_cs2_[(*chip).first],clusterMap_cs2_[(*chip).first],1.0,1.0,"B");
     
     if(isQuad_) 						    
     {	
@@ -570,6 +574,7 @@ void Plotter::writePlots(std::string rootFileName, bool bunch)
     clusterTotMap_cs1_[(*chip).first]->Write();
     clusterTotMap_cs2_[(*chip).first]->Write();
     clusterMeanTotMap_cs1_[(*chip).first]->Write();
+    clusterMeanTotMap_cs2_[(*chip).first]->Write();
     clusterCharge_[(*chip).first]->Write();
     clusterCharge_cs1_[(*chip).first]->Write();
     clusterCharge_cs2_[(*chip).first]->Write();
@@ -770,6 +775,7 @@ void Plotter::deletePlots(void)
   clusterTotMap_cs1_.clear();
   clusterTotMap_cs2_.clear();
   clusterMeanTotMap_cs1_.clear();
+  clusterMeanTotMap_cs2_.clear();
   clusterCharge_.clear();
   clusterCharge_cs1_.clear();
   clusterCharge_cs2_.clear();
