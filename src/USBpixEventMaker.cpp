@@ -199,20 +199,7 @@ EventMaker::hitMapDef USBpixEventMaker::makeEvents(std::string infilename, std::
 	  			  aHit.row = rowData-1 ;
 	  			  aHit.bcid= nev;
 	  			  aHit.l1id= lvl1;
-				  if(design25_)
-				  {
-				    if (aHit.col % 2!=0)
-				    {
-				      aHit.row *= 2;
-				      aHit.row++;
-				      aHit.col = (aHit.col-1)/2;
-				    }
-				    else 
-				    {
-				      aHit.row *= 2;
-				      aHit.col = aHit.col/2;
-				    }
-				  }
+				  if(design25_) this->design25Encode(aHit);
 	  			  ss_.str("");
 	  			  //ss_ << bxid << oldl1id;
 	  			  ss_ <<  nev;
@@ -230,20 +217,7 @@ EventMaker::hitMapDef USBpixEventMaker::makeEvents(std::string infilename, std::
 	  			  aHit.row = rowData ;
 	  			  aHit.bcid= nev;//bcid;
 	  			  aHit.l1id= lvl1;
-				  if(design25_)
-				  {
-				    if (aHit.col % 2!=0)
-				    {
-				      aHit.row *= 2;
-				      aHit.col = (aHit.col-1)/2;
-				    }
-				    else 
-				    {
-				      aHit.row *= 2;
-				      aHit.row++;
-				      aHit.col = aHit.col/2;
-				    }
-				  }
+				  if(design25_) this->design25Encode(aHit);
 	  			  ss_.str("");
 	  			  //ss_ << bxid << oldl1id;
 	  			  ss_ <<  nev;
@@ -283,4 +257,19 @@ EventMaker::hitMapDef USBpixEventMaker::makeEvents(std::string infilename, std::
   //ss_ << "highest tot: " << highesttot << " maxCol: " << maxCol << " maxRow: " << maxRow;
   //STDLINE(ss_.str(), ACGreen);
   return hitMap;
+}
+//=========================================
+void USBpixEventMaker::design25Encode(EventMaker::hitDef &aHit)
+{
+  if (aHit.col % 2!=0)
+  {
+    aHit.row *= 2;
+    aHit.col = (aHit.col-1)/2;
+  }
+  else 
+  {
+    aHit.row *= 2;
+    aHit.row++;
+    aHit.col = aHit.col/2;
+  }
 }

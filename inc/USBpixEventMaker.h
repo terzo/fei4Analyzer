@@ -53,6 +53,8 @@ class USBpixEventMaker : public EventMaker
    bool quiet_;
    bool design25_;
    bool readTimeStamp_   ;
+   
+   void design25Encode(EventMaker::hitDef &aHit);
  
 } ;
 

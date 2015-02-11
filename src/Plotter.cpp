@@ -216,9 +216,9 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
       {
     	 int cToT=0;
          double chargeSum = 0;
-	 int maxRow, maxCol, minRow, minCol, maxRowTot, minRowTot , maxColTot, minColTot, maxTot, minTot;
-	 maxRow=minRow= (*clus).second[0].row;
-	 maxCol=minCol= (*clus).second[0].col;
+	 int maxRow, maxCol, minRow, minCol, maxRowTot, minRowTot , maxColTot, minColTot, maxTot, minTot, maxTotRow, minTotRow, maxTotCol, minTotCol;
+	 maxRow=minRow=maxTotRow=minTotRow= (*clus).second[0].row;
+	 maxCol=minCol=maxTotCol=minTotCol= (*clus).second[0].col;
 	 maxTot=minTot=minRowTot=maxRowTot=maxColTot=minColTot=(*clus).second[0].tot;
 	 unsigned int cSize = (*clus).second.size();
 	 bool bad_cluster = false;
@@ -264,19 +264,29 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 	     minCol = (*clus).second[hit].col;
 	     minColTot = (*clus).second[hit].tot;
 	   }
-	   if(tot>maxTot) maxTot=tot;
-	   if(tot<minTot) minTot=tot;
+	   if(tot>maxTot) 
+	   {
+	     maxTotCol = (*clus).second[hit].col;
+	     maxTotRow = (*clus).second[hit].row;
+	     maxTot=tot;
+	   }
+	   if(tot<minTot) 
+	   {
+	     minTotCol = (*clus).second[hit].col;
+             minTotRow = (*clus).second[hit].row;
+	     minTot=tot;
+	   }
 	   
 	   if(cSize==1) 
 	   {
 	      clusterMap_cs1_[(*chip).first]->Fill((*clus).second[hit].col, (*clus).second[hit].row);
-	      clusterTotMap_cs1_[(*chip).first]->Fill((*clus).second[hit].col, (*clus).second[hit].row,cToT);
+	      clusterTotMap_cs1_[(*chip).first]->Fill((*clus).second[hit].col, (*clus).second[hit].row,tot);
 	   }
-	   if(cSize==2) 
-	   { 
-	      clusterMap_cs2_[(*chip).first]->Fill((*clus).second[hit].col, (*clus).second[hit].row);
-	      clusterTotMap_cs2_[(*chip).first]->Fill((*clus).second[hit].col, (*clus).second[hit].row,tot);
-	   }
+	   //if(cSize==2) 
+	   //{ 
+	   //   clusterMap_cs2_[(*chip).first]->Fill((*clus).second[hit].col, (*clus).second[hit].row);
+	   //   clusterTotMap_cs2_[(*chip).first]->Fill((*clus).second[hit].col, (*clus).second[hit].row,tot);
+	   //}
 	   
 	   if(isQuad_)
 	   {
@@ -286,13 +296,13 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 	      if(cSize==1) 
 	      {									        
 	        clusterMap_cs1_all_->Fill(col, row);	        
-	        clusterTotMap_cs1_all_->Fill(col, row,cToT);
+	        clusterTotMap_cs1_all_->Fill(col, row,tot);
 	      }
-	      if(cSize==2) 
-	      { 
-	         clusterMap_cs2_all_->Fill(col, row);
-	         clusterTotMap_cs2_all_->Fill(col, row,cToT);
-	      }
+	      //if(cSize==2) 
+	      //{ 
+	      //   clusterMap_cs2_all_->Fill(col, row);
+	      //   clusterTotMap_cs2_all_->Fill(col, row,tot);
+	      //}
 	   }
 	   
     	 }
@@ -349,8 +359,9 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 	    
 	    if(maxRow==minRow) totMax_[(*chip).first]->Fill(maxTot);
 	    else	       totMin_[(*chip).first]->Fill(minTot);
-
-	    if( (maxTot-minTot)<0 ) clusterTotMap_cs2_[(*chip).first]->Fill((maxCol+minCol)*0.5,(maxRow+minRow)*0.5);
+            
+	    clusterMap_cs2_[(*chip).first]->Fill(maxTotCol,maxTotRow);
+	    clusterTotMap_cs2_[(*chip).first]->Fill(maxTotCol,maxTotRow,cToT);
          }
 	 if( cSize==3 ) 
          {
