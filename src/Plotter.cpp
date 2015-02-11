@@ -227,9 +227,12 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 	 
 	 for(unsigned int hit=0; hit<cSize; hit++)
     	 {
-	   if( outOfLimits(clus->second[hit].col,clus->second[hit].row) ) continue;
-	   
-	   
+	   if( outOfLimits(clus->second[hit].col,clus->second[hit].row) ) 
+	   { 
+	      bad_cluster = true;
+	      break;
+	   }
+ 
 	   if(noise > 0 && 1.*hitMap_[(*chip).first]->GetBinContent((*clus).second[hit].col+1,(*clus).second[hit].row+1)/hitMap_[(*chip).first]->GetEntries() > noise) 
 	   { 
 	      bad_cluster = true;
@@ -276,31 +279,7 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 	     minTotCol = (*clus).second[hit].col;
              minTotRow = (*clus).second[hit].row;
 	     minTot=tot;
-	   }
-	   
-	   if(cSize==1) 
-	   {
-	      clusterMap_cs1_[(*chip).first]->Fill((*clus).second[hit].col, (*clus).second[hit].row);
-	      clusterTotMap_cs1_[(*chip).first]->Fill((*clus).second[hit].col, (*clus).second[hit].row,tot);
-	   }
-	   //if(cSize==2) 
-	   //{ 
-	   //   clusterMap_cs2_[(*chip).first]->Fill((*clus).second[hit].col, (*clus).second[hit].row);
-	   //   clusterTotMap_cs2_[(*chip).first]->Fill((*clus).second[hit].col, (*clus).second[hit].row,tot);
-	   //}
-	   
-	   if(isQuad_)
-	   {
-	      int col = (*clus).second[hit].col;					     	
-	      int row = (*clus).second[hit].row;					        
-	      this->quadEncode((*chip).first, col, row);				     	
-	      if(cSize==1) 
-	      {									        
-	        clusterMap_cs1_all_->Fill(col, row);	        
-	        clusterTotMap_cs1_all_->Fill(col, row,tot);
-	      }
-	   }
-	   
+	   } 
     	 }
 	 
 	 if(bad_cluster) continue;
@@ -315,8 +294,8 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 	    	if( inClusterRowToT_[(*chip).first].count(rowSize) == 0 )
 	    	{ 
             	       std::stringstream ss;
-	    	       ss.str(""); ss << "chip" << (*chip).first << "_inClusterRowToT_" << "CW"<< rowSize;
-            	       inClusterRowToT_[(*chip).first][rowSize] = new TH2I(ss.str().c_str(),"Row in the cluster .VS. ToT in the row",rowSize,0,rowSize,150,-0.5,149.5);
+	    	       ss.str(""); ss << "chip" << (*chip).first << "_inClusterRowVsToT_" << "CW"<< rowSize;
+            	       inClusterRowToT_[(*chip).first][rowSize] = addPlot(inClusterRowToT_[(*chip).first][rowSize],ss.str(),rowSize,0,rowSize,500,-0.5,499.5);
 	    	}
 	    	inClusterRowToT_[(*chip).first][rowSize]->Fill( r->first - minRow, r->second );
 	    }
@@ -326,8 +305,8 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 	    	if( inClusterColToT_[(*chip).first].count(colSize) == 0 )
 	    	{ 
             	       std::stringstream ss;
-	    	       ss.str(""); ss << "chip" << (*chip).first << "_inClusterColToT_" << "CW"<< colSize;
-            	       inClusterColToT_[(*chip).first][colSize] = new TH2I(ss.str().c_str(),"Col in the cluster .VS. ToT in the col",colSize,0,colSize,150,-0.5,149.5);
+	    	       ss.str(""); ss << "chip" << (*chip).first << "_inClusterColVsToT_" << "CW"<< colSize;
+            	       inClusterColToT_[(*chip).first][colSize] = addPlot(inClusterColToT_[(*chip).first][colSize],ss.str(),colSize,0,colSize,500,-0.5,499.5);
 	    	}
  	    	inClusterColToT_[(*chip).first][colSize]->Fill( c->first - minCol, c->second );
 	    }
@@ -337,40 +316,51 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 	    clusterHolesRow_[(*chip).first]->Fill( rowSize , rowSize - rowNum.size() );
 	    clusterHolesCol_[(*chip).first]->Fill( colSize , colSize - colNum.size() );
 	    clusterToT_CSn_[(*chip).first]->Fill(cToT, cSize);
-	 }
-    	 else std::cout << "WARNING: cluster size 0" << std::endl;
+	    clusterToT_[(*chip).first]->Fill(cToT);
+	    if(chargeSum !=0 ) clusterCharge_[(*chip).first]->Fill(chargeSum);
 	 
-	 clusterToT_[(*chip).first]->Fill(cToT);
-	 if(chargeSum !=0 ) clusterCharge_[(*chip).first]->Fill(chargeSum);
-
-    	 if( cSize==1 ) 
-         {
-           one_hitToT_[(*chip).first]->Fill(cToT);
-           if(chargeSum !=0 )clusterCharge_cs1_[(*chip).first]->Fill(chargeSum);
-         }
-    	 if( cSize==2 ) 
-         {
-            two_hitToT_[(*chip).first]->Fill(cToT);
-            if(chargeSum !=0 ) clusterCharge_cs2_[(*chip).first]->Fill(chargeSum);
-	    
-	    totMax_[(*chip).first]->Fill(maxTot);
-	    totMin_[(*chip).first]->Fill(minTot);
-            
-	    clusterMap_cs2_[(*chip).first]->Fill(maxTotCol,maxTotRow);
-	    clusterTotMap_cs2_[(*chip).first]->Fill(maxTotCol,maxTotRow,cToT);
-	    
+	    if( cSize==1 ) 
+	    {
+    	      one_hitToT_[(*chip).first]->Fill(cToT);
+              if(chargeSum !=0 )clusterCharge_cs1_[(*chip).first]->Fill(chargeSum);
+	      
+	      clusterMap_cs1_[(*chip).first]->Fill(maxTotCol, maxTotRow);
+              clusterTotMap_cs1_[(*chip).first]->Fill(maxTotCol, maxTotRow,cToT);
+            }
+            if( cSize==2 ) 
+            {
+    	       two_hitToT_[(*chip).first]->Fill(cToT);
+               if(chargeSum !=0 ) clusterCharge_cs2_[(*chip).first]->Fill(chargeSum);
+               
+               totMax_[(*chip).first]->Fill(maxTot);
+	       totMin_[(*chip).first]->Fill(minTot);
+	       
+	       clusterMap_cs2_[(*chip).first]->Fill(maxTotCol,maxTotRow);
+               clusterTotMap_cs2_[(*chip).first]->Fill(maxTotCol,maxTotRow,cToT);
+	    }
+	    if( cSize==3 ) 
+            {
+	       three_hitToT_[(*chip).first]->Fill(cToT);
+               if(chargeSum !=0 ) clusterCharge_cs3_[(*chip).first]->Fill(chargeSum); 
+            }
 	    if(isQuad_)
 	    {
-	      clusterMap_cs2_all_->Fill(maxTotCol, maxTotRow);
-	      clusterTotMap_cs2_all_->Fill(maxTotCol, maxTotRow,cToT);
+	       int col = maxTotCol;
+               int row = maxTotRow;
+	       this->quadEncode((*chip).first, col, row);
+	       if( cSize==1 )
+               {
+	          clusterMap_cs1_all_->Fill(col, row);	   
+                  clusterTotMap_cs1_all_->Fill(col, row,cToT);
+	       }
+	       if( cSize==2 )
+               {
+	          clusterMap_cs2_all_->Fill(col, row);
+                  clusterTotMap_cs2_all_->Fill(col, row,cToT);
+	       }
 	    }
-	    
-         }
-	 if( cSize==3 ) 
-         {
-            three_hitToT_[(*chip).first]->Fill(cToT);
-            if(chargeSum !=0 ) clusterCharge_cs3_[(*chip).first]->Fill(chargeSum); 
 	 }
+         else std::cout << "WARNING: cluster size 0" << std::endl;
       }
     }
   }
@@ -612,7 +602,6 @@ void Plotter::writePlots(std::string rootFileName, bool bunch)
   
   outRootFile.Close();
   this->deletePlots();
-  
 }
 //========================================================================================================
 void Plotter::showGraph(std::vector<double> correction_factors,unsigned int fit_function)
