@@ -1,6 +1,7 @@
 #!bin/bash
 
-export USE_LCIO=/home/iwsatlas1/terzo/utility/ClusterAnalysis/lcio/v01-60
+#uncomment to set the LCIO path here
+#export USE_LCIO=
 
 if [[ -s ${USE_LCIO} ]]
   then
@@ -11,4 +12,7 @@ fi
 
 export suffix=`pwd`/bin
 export PATH=$PATH:$suffix
+
+#uncomment to use LCIO files
+unset USE_LCIO
 
