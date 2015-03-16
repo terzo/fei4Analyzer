@@ -79,7 +79,7 @@ Plotter::~Plotter()
 	if(!empty_) this->deletePlots();
 }
 //================================================================================================
-void Plotter::setCuts(int minCol, int minRow, int maxCol, int maxRow, bool borders)
+void Plotter::setFrameCuts(int minCol, int minRow, int maxCol, int maxRow, bool borders)
 {
    minColCut_ = minCol;
    minRowCut_ = minRow;
@@ -89,7 +89,7 @@ void Plotter::setCuts(int minCol, int minRow, int maxCol, int maxRow, bool borde
    borders_   = borders;	 
 }
 //================================================================================================
-void Plotter::setCuts(int colRowCuts[4], bool borders)
+void Plotter::setFrameCuts(int colRowCuts[4], bool borders)
 {
    minColCut_ = colRowCuts[0];
    minRowCut_ = colRowCuts[1];
@@ -97,6 +97,27 @@ void Plotter::setCuts(int colRowCuts[4], bool borders)
    maxRowCut_ = colRowCuts[3];
    
    borders_   = borders;
+}
+//================================================================================================
+void Plotter::setClusterCuts(int minWidthCol, int minWidthRow, int maxWidthCol, int maxWidthRow)
+{
+   minWidthCol_ = minWidthCol;
+   minWidthRow_ = minWidthRow;
+   maxWidthCol_ = maxWidthCol;
+   maxWidthRow_ = maxWidthRow;	 
+}
+//================================================================================================
+void Plotter::setClusterCuts(int colRowCluCuts[4])
+{
+   minWidthCol_ = colRowCluCuts[0];
+   minWidthRow_ = colRowCluCuts[1];
+   maxWidthCol_ = colRowCluCuts[2];
+   maxWidthRow_ = colRowCluCuts[3];
+}
+//================================================================================================
+void Plotter::setRefDutHitLimit(int dutID, int minCluNum, int maxCluNum)
+{
+  refDutHitLimit_[dutID]= std::make_pair(minCluNum,maxCluNum);
 }
 //================================================================================================
 template <class H>
@@ -139,7 +160,7 @@ H* Plotter::addPlot(H* histo, std::string name, Int_t nbinsx, Double_t xlow, Dou
 //==========================================CLUSTER TOT ANALYSIS=====================================
 void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double noise, bool calibname)
 {
-  if(!empty_) this->deletePlots();
+  //if(!empty_) this->deletePlots();
   
   int cols = 80;
   int rows = 336;
@@ -176,6 +197,23 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 
   for(Clusterizer::clusterMapDef::iterator ev = clusterMap.begin(); ev!=clusterMap.end(); ++ev)
   {
+    bool skipEvent=false;
+    
+    for(std::map<unsigned int, std::pair<unsigned int,unsigned int> >::iterator lim = refDutHitLimit_.begin(); lim != refDutHitLimit_.end(); ++lim)  
+    {															  
+       if( ev->second.count(lim->first)!=0) 								  
+       {
+    	 if(ev->second[lim->first].size() < lim->second.first || 						  
+    	    ev->second[lim->first].size() > lim->second.second   ) 
+    	 {
+    	    skipEvent=true;
+    	    break;
+    	 }
+       }
+    }
+    													  
+    if(skipEvent) continue;												  
+    
     for(std::map<int, Clusterizer::clustersDef>::iterator chip=(*ev).second.begin(); chip!=(*ev).second.end(); ++chip)
     {
       
@@ -197,6 +235,8 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
  	addPlot(clusterSizeRow_,"CSdistRow"     ,(*chip).first,  50,  0.5,  50.5);
         addPlot(clusterSizeCol_,"CSdistCol"     ,(*chip).first,  50,  0.5,  50.5);
 	
+	addPlot(clusterNumber_ ,"ClusterNumber" ,(*chip).first,  50, -0.5,  49.5);
+	
 	addPlot(clusterMap_cs1_       ,"clusterMap_cs1"       ,(*chip).first,cols,0,cols,rows,0,rows);
         addPlot(clusterMap_cs2_       ,"clusterMap_cs2"       ,(*chip).first,cols,0,cols,rows,0,rows);
 	addPlot(clusterTotMap_cs1_    ,"clusterTotMap_cs1"    ,(*chip).first,cols,0,cols,rows,0,rows);
@@ -213,6 +253,8 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 	addPlot(clusterCharge_cs3_,"QdistCS3",(*chip).first,100,0,100);
       }
       
+      clusterNumber_[(*chip).first]->Fill( (*chip).second.size() );
+      
       for( Clusterizer::clustersDef::iterator clus=(*chip).second.begin(); clus!=(*chip).second.end(); ++clus )
       {
     	 int cToT=0;
@@ -227,13 +269,13 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 	 
 	 for(unsigned int hit=0; hit<cSize; hit++)
     	 {
-	   if( outOfLimits(clus->second[hit].col,clus->second[hit].row) ) 
+	   if((*chip).first==21 && outOfLimits(clus->second[hit].col,clus->second[hit].row) ) 
 	   { 
 	      bad_cluster = true;
 	      break;
 	   }
  
-	   if(noise > 0 && 1.*hitMap_[(*chip).first]->GetBinContent((*clus).second[hit].col+1,(*clus).second[hit].row+1)/hitMap_[(*chip).first]->GetEntries() > noise) 
+	   if(noise > 0 && 1.*hitMap_[(*chip).first]->GetBinContent((*clus).second[hit].col+1,(*clus).second[hit].row+1)/clusterMap.size() > noise) 
 	   { 
 	      bad_cluster = true;
 	      //std::cout << "noise suppresssed" << "\n";
@@ -282,12 +324,16 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 	   } 
     	 }
 	 
+	 int rowSize = maxRow-minRow+1;
+         int colSize = maxCol-minCol+1;
+	 
+	 if( maxWidthCol_>0 && (colSize > maxWidthCol_ || colSize < minWidthCol_) ) bad_cluster = true;
+	 if( maxWidthRow_>0 && (rowSize > maxWidthRow_ || rowSize < minWidthRow_) ) bad_cluster = true;
+	 
 	 if(bad_cluster) continue;
 	 
 	 if(cSize!=0)  
 	 { 
-	    int rowSize = maxRow-minRow+1;
-	    int colSize = maxCol-minCol+1;
 	    //  	 #row,tot
 	    for( std::map<int,int>::iterator r = rowNum.begin(); r!= rowNum.end(); ++r)
 	    {  
@@ -420,7 +466,7 @@ void Plotter::fillHitPlots(EventMaker::hitMapDef& hitMap)
  
       for(unsigned int h=0; h<(*chip).second.size(); h++)
       {
-        if( outOfLimits(chip->second[h].col,chip->second[h].row) ) continue;
+        if((*chip).first==21 &&  outOfLimits(chip->second[h].col,chip->second[h].row) ) continue;
       
         hitMap_[(*chip).first]->Fill((*chip).second[h].col, (*chip).second[h].row);
       
@@ -534,7 +580,7 @@ void Plotter::fitPlots(double voltage, unsigned int dofit)
   }
 }
 //=========================WRITEOUT HISTOS=========================================
-void Plotter::writePlots(std::string rootFileName, bool bunch)
+void Plotter::writePlots(std::string rootFileName)
 { 
   
   TFile outRootFile(rootFileName.c_str(),"recreate");
@@ -551,6 +597,7 @@ void Plotter::writePlots(std::string rootFileName, bool bunch)
     one_hitToT_[(*chip).first]->Write();
     three_hitToT_[(*chip).first]->Write();
     clusterToT_CSn_[(*chip).first]->Write();
+    clusterNumber_[(*chip).first]->Write();
     clusterSize_[(*chip).first]->Write();
     clusterSizeRow_[(*chip).first]->Write();
     clusterSizeCol_[(*chip).first]->Write();
@@ -749,6 +796,7 @@ void Plotter::deletePlots(void)
   two_hitToT_.clear();
   three_hitToT_.clear();
   clusterSize_.clear();
+  clusterNumber_.clear();
   clusterSizeRow_.clear();
   clusterSizeCol_.clear();
   clusterHolesRow_.clear();

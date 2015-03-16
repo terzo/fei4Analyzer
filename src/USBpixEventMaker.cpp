@@ -14,12 +14,13 @@ USBpixEventMaker::USBpixEventMaker(bool quiet, bool readTimeStamp, bool design25
   readTimeStamp_ = readTimeStamp;
   design25_ = design25;
   std::cout << "USBPix version!FE-I4" << "\n";
+  evn = 0;
 }
 
 //====================================================================================
 EventMaker::hitMapDef USBpixEventMaker::makeEvents(std::string infilename, std::string outfilename, int lv1diff, int nevt)
 {
-  EventMaker::hitMapDef hitMap;
+  //EventMaker::hitMapDef hitMap;
   
   	  ////////// input raw-file
   FILE *in = fopen(infilename.c_str(),"r");
@@ -43,14 +44,14 @@ EventMaker::hitMapDef USBpixEventMaker::makeEvents(std::string infilename, std::
   int errorFlag = 0;		  // = 1 if there is an error in one trigger window
   int chip=0;
   int errorNumber = 0;
-  int nev = 0;
+  //int evn = 0;
   
   // read till end of .raw-file
   while(fgets(line,2000,in)!=0)
   {
   	  std::string sLine =line;
 	  
-	  if(nevt>0 && nev > nevt) break;
+	  if(nevt>0 && evn > nevt) break;
 	  
   	  if(strcmp(sLine.substr(0,2).c_str(),"0x")==0)
 	  {
@@ -73,7 +74,7 @@ EventMaker::hitMapDef USBpixEventMaker::makeEvents(std::string infilename, std::
   				  bcid = -1;
   				  BCIDnumber++;
   				  hitNum = hitNum + hitNumTrigger;
-				  if(hitNumTrigger>0) nev++;
+				  if(hitNumTrigger>0) evn++;
   				  hitNumTrigger = 0;
   			  }
   			  else
@@ -88,7 +89,7 @@ EventMaker::hitMapDef USBpixEventMaker::makeEvents(std::string infilename, std::
   				  bcid = -1;
   				  errorFlag = 0;
   				  BCIDnumber++;
-				  if(hitNumTrigger>0) nev++;
+				  if(hitNumTrigger>0) evn++;
   				  hitNumTrigger = 0;
   				  errorNumber++;
   			  }
@@ -137,7 +138,7 @@ EventMaker::hitMapDef USBpixEventMaker::makeEvents(std::string infilename, std::
   						  bcid = rawData & 255;
   						  errorFlag = 0;
   						  BCIDnumber++;
-						  if(hitNumTrigger>0) nev++;
+						  if(hitNumTrigger>0) evn++;
   						  hitNumTrigger = 0;
   						  errorNumber++;
   					  }
@@ -197,12 +198,12 @@ EventMaker::hitMapDef USBpixEventMaker::makeEvents(std::string infilename, std::
 	  			  aHit.tot = tot0Data ;
 	  			  aHit.col = colData-1 ;
 	  			  aHit.row = rowData-1 ;
-	  			  aHit.bcid= nev;
+	  			  aHit.bcid= evn;
 	  			  aHit.l1id= lvl1;
 				  if(design25_) this->design25Encode(aHit);
 	  			  ss_.str("");
 	  			  //ss_ << bxid << oldl1id;
-	  			  ss_ <<  nev;
+	  			  ss_ <<  evn;
 	  			  hitMap[EventMaker::string_to_int(ss_.str())][chip].push_back(aHit);
 //	  			  if(aHit.col>maxCol) maxCol = col;
 //	  			  if(Hit.row>maxRow ) maxRow = row;
@@ -215,12 +216,12 @@ EventMaker::hitMapDef USBpixEventMaker::makeEvents(std::string infilename, std::
 	  			  aHit.tot = tot1Data ;
 	  			  aHit.col = colData-1 ;
 	  			  aHit.row = rowData ;
-	  			  aHit.bcid= nev;//bcid;
+	  			  aHit.bcid= evn;//bcid;
 	  			  aHit.l1id= lvl1;
 				  if(design25_) this->design25Encode(aHit);
 	  			  ss_.str("");
 	  			  //ss_ << bxid << oldl1id;
-	  			  ss_ <<  nev;
+	  			  ss_ <<  evn;
 	  			  hitMap[EventMaker::string_to_int(ss_.str())][chip].push_back(aHit);
 //	  			  if(aHit.col>maxCol) maxCol = col;
 //	  			  if(Hit.row>maxRow ) maxRow = row;

@@ -60,6 +60,9 @@ class EventMaker
    bool design25_;
    bool readTimeStamp_   ;
    
+   EventMaker::hitMapDef hitMap;
+   int evn;
+   
  private:
  
   std::stringstream  ss_;

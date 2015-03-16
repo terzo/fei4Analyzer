@@ -14,12 +14,13 @@ LCIOEventMaker::LCIOEventMaker(bool quiet, bool readTimeStamp, bool design25)
   readTimeStamp_ = readTimeStamp;
   design25_ = design25;
   std::cout << "LCIO event converter for FE-I4 (no totcode!)" << "\n";
+  evn = 0;
 }
 
 //====================================================================================
 EventMaker::hitMapDef LCIOEventMaker::makeEvents(std::string infilename, std::string outfilename, int lv1diff, int nevt)
 {
-  EventMaker::hitMapDef hitMap;
+  //EventMaker::hitMapDef hitMap;
   
   LCReader* lcReader ;
 //  if( dumpNthEvent ) 
@@ -29,7 +30,7 @@ EventMaker::hitMapDef LCIOEventMaker::makeEvents(std::string infilename, std::st
     
     
   LCEvent* evt(0) ;
-  int evn = 0;
+  //int evn = 0;
   
   try
   {

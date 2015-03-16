@@ -31,9 +31,13 @@ class Plotter
    void fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double noise = -1, bool calibname = "calib.root");
    void fillHitPlots(EventMaker::hitMapDef& hitMap);
    void fitPlots(double voltage = 0, unsigned int dofit = 1);
-   void writePlots(std::string rootFileName, bool bunch);
-   void setCuts(int colRowCuts[4], bool borders = false);
-   void setCuts(int minCol = -1, int minRow = -1, int maxCol = -1, int maxRow= -1, bool borders = false);
+   void writePlots(std::string rootFileName);
+   void setFrameCuts(int colRowCuts[4], bool borders = false);
+   void setFrameCuts(int minCol = -1, int minRow = -1, int maxCol = -1, int maxRow= -1, bool borders = false);
+   void setClusterCuts(int colRowCluCuts[4]);
+   void setClusterCuts(int minWidthCol = 0, int minWidthRow = 0, int maxWidthCol = -1, int maxWidthRow= -1);
+   void setRefDutHitLimit(int dutID, int minCluNum, int maxCluNum);
+   void setRefDutHitLimit(std::map<unsigned int, std::pair<unsigned int,unsigned int> > refDutHitLimit) {refDutHitLimit_ = refDutHitLimit;}
    void setModuleType(int module_type);
    bool isEmpty(){return empty_;}
    void showGraph(std::vector<double> correction_factor,unsigned int fit_function = 1);
@@ -59,14 +63,15 @@ class Plotter
    bool quiet_;
    bool empty_;
    double v_;
-   int minColCut_;
-   int minRowCut_;
-   int maxColCut_;
-   int maxRowCut_;
+   int minColCut_,minWidthCol_;
+   int minRowCut_,minWidthRow_;
+   int maxColCut_,maxWidthCol_;
+   int maxRowCut_,maxWidthRow_;
    bool borders_;
+   std::map<unsigned int, std::pair<unsigned int,unsigned int> > refDutHitLimit_;
    
    //single plots
-   std::map<int, TH1I*> clusterToT_, three_hitToT_, two_hitToT_, one_hitToT_, clusterSize_, clusterSizeRow_, clusterSizeCol_;
+   std::map<int, TH1I*> clusterToT_, three_hitToT_, two_hitToT_, one_hitToT_, clusterSize_, clusterSizeRow_, clusterSizeCol_, clusterNumber_;
    std::map<int, TH1D*> clusterCharge_,clusterCharge_cs1_,clusterCharge_cs2_, clusterCharge_cs3_;
    std::map<int, TH1I*> totMax_, totMin_;
    std::map<int, TH2I*> hitMap_, clusterMap_cs1_, clusterMap_cs2_, clusterHolesRow_, clusterHolesCol_, clusterToT_CSn_;

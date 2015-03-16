@@ -14,8 +14,8 @@ endif
 OBJS = obj/EventMaker.o	obj/USBpixEventMaker.o obj/CosmicEventMaker.o obj/Clusterizer.o obj/Plotter.o obj/Calibrator.o obj/Fitter.o obj/fei4TelEventMaker.o
 
 ifdef USE_LCIO
- LCIOINC= -I$(LCIO)/include  -I$(LCIO)/sio/include
- LCIOLIBS= -L$(LCIO)/lib -llcio -L$(LCIO)/sio/lib -lsio -lz
+ LCIOINC= -I$(USE_LCIO)/include  -I$(USE_LCIO)/sio/include
+ LCIOLIBS= -L$(USE_LCIO)/lib -llcio -L$(USE_LCIO)/sio/lib -lsio -lz
  OBJS += obj/LCIOEventMaker.o
  ENVVAR = -D USE_LCIO
 endif

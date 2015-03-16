@@ -14,12 +14,13 @@ fei4TelEventMaker::fei4TelEventMaker(bool quiet, bool readTimeStamp, bool design
   readTimeStamp_ = readTimeStamp;
   design25_ = design25;
   std::cout << "fei4Tel version!" << "\n";
+  evn=0;
 }
 
 //====================================================================================
 EventMaker::hitMapDef fei4TelEventMaker::makeEvents(std::string infilename, std::string outfilename, int lv1diff, int nevt)
 {
-  EventMaker::hitMapDef hitMap;
+  //EventMaker::hitMapDef hitMap;
 /*
   Tfile *file = new TFile(infilename, "READ");
 

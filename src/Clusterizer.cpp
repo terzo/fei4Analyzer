@@ -9,10 +9,10 @@
 #include "Clusterizer.h"
 
  //================CLUSTERIZER============================================
-Clusterizer::clusterMapDef Clusterizer::makeCluster(EventMaker::hitMapDef hitMap, unsigned int cdCol, unsigned int cdRow, unsigned int lv1diff)
+Clusterizer::clusterMapDef Clusterizer::makeCluster(EventMaker::hitMapDef hitMap, unsigned int cdCol, unsigned int dRow, unsigned int lv1diff)
 {
   Clusterizer::clusterMapDef clusterMap;
-  
+  unsigned int cdRow;
   std::cout << __LINE__ << "] CLUSTERING" << std::endl;
   for(EventMaker::hitMapDef::iterator ev = hitMap.begin(); ev!=hitMap.end(); ++ev)
   {
@@ -37,6 +37,8 @@ Clusterizer::clusterMapDef Clusterizer::makeCluster(EventMaker::hitMapDef hitMap
 	    //std::cout << "Clu: " << clusterHits[c].col << "-" << clusterHits[c].row << "\n";
 	    //std::cout << "cClu: " << cCol << "-" << cRow << "\n";
 	    //std::cout << "Hit: " << (*chip).second[h].col << "-" << (*chip).second[h].row << "\n";
+	    if( (*ev).first ==  20 ) cdRow = 1;
+	    else                     cdRow = dRow;
    	    if ( ( abs(cCol - (*chip).second[h].col) <= cdCol  )  && ( abs(cRow - (*chip).second[h].row ) <= cdRow ) && 
 	         ( abs(cBcid- (*chip).second[h].bcid)<10000)  && ( abs(cL1id- (*chip).second[h].l1id) <= lv1diff ) )
    	    {

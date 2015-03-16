@@ -68,6 +68,8 @@ class LCIOEventMaker : public EventMaker
  private:
     
    std::stringstream  ss_;
+   //EventMaker::hitMapDef hitMap;
+   //int evn;
  
 } ;
 

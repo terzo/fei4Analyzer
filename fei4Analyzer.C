@@ -54,12 +54,14 @@ int main(int argc, char **argv)
   unsigned int  cdRow = 1;
   unsigned int  cdCol = 1;
   std::vector<double> correction_factors;
-  int colRowCuts[4] = {0,0,0,0};
+  int colRowFrameCuts[4] = {0,0,0,0};
+  int colRowCluCuts[4] = {0,0,0,0};
   double noise = -1;
   unsigned int fitFunction = 1;
   int maxevents = -1;
   unsigned int dofit = 1;
   bool design25=false;
+  std::map<unsigned int,std::pair<unsigned int,unsigned int> > hitsRef;
   
   if (argc > 1) 
   {
@@ -90,6 +92,8 @@ int main(int argc, char **argv)
 	             << "\t\t\t\t "        << "                                         2-> langaus MPV;" << "\n";
 	   std::cout << "-dr [1..inf]\t\t\t:" << "max row distance in a cluster (default is 1)" << "\n";
 	   std::cout << "-dc [1..inf]\t\t\t:" << "max column distance in a cluster (default is 1)" << "\n";
+	   std::cout << "-wr min max\t\t\t:" << "min and max cluster width row (default is all)" << "\n";
+           std::cout << "-wc min max\t\t\t:" << "min and max cluster width columns (default is all)" << "\n";
 	   std::cout << "-l  [0..16]\t\t\t:" << "maximum lvl1 difference for clustering (default is 3)" << "\n";
 	   std::cout << "-lm [0..inf]\t\t\t:" << "merge consecutive triggers" << "\n";
 	   std::cout << "-c  minCol minRow maxCol maxRow\t:" << "define square cuts in pixel coordinates for the analysis" << "\n";
@@ -97,7 +101,8 @@ int main(int argc, char **argv)
 	   std::cout << "-e  [0..inf]\t\t\t:" << "maximum number of event to process (default process all events)" << "\n";
 	   std::cout << "-k\t \t \t \t:" << "enable calibration (needs A.root, B.root, C.root)" << "\n";
 	   std::cout << "-s  [0..inf]\t\t\t:" << "skip the first n events (NOT IMPLEMENTED)" << "\n";
-	   std::cout << "-b  [0..inf]\t\t\t:" << "I forgot what was that intended for... (NOT IMPLEMENTED)" << "\n";
+	   std::cout << "-b  filename[.root]\t\t:" << "merge the input files and perform a single analysis for the full bunch, result are saved in 'filename.root'" << "\n";
+	   std::cout << "-dh id min max\t\t:" << "min and max number of clusters on the detector 'id' to accept an event" << "\n";
 	   std::cout <<  std::endl;
 	   std::cout << "STControl quad module analysis example:" << std::endl;
 	   std::cout << "\tfei4Analyzer -m 4 -r root_outputfile.root -i stcontrol_rawfile.raw -l 2" << std::endl;	   
@@ -173,6 +178,22 @@ int main(int argc, char **argv)
 	 {
 	   if(option[2] == 'c') string_to_number(argv[++i], cdCol);
 	   if(option[2] == 'r') string_to_number(argv[++i], cdRow);
+	   if(option[2] == 'h')
+	   {
+	     option = argv[i+1];
+	     unsigned int j = 0;
+	     std::vector<int> vec;
+	     while( j<3 && i<(argc-1) && option[0]!='-')
+	     {
+	     	 int val = 0;
+  	     	 string_to_number(argv[++i],val);
+		 vec.push_back(val);
+	     	 if(i<(argc-1)) option = argv[i+1];
+	     	 j++;
+	     }
+	     if(vec.size() == 3) hitsRef[vec[0]] = std::make_pair(vec[1],vec[2]);
+	     break;
+	   }
 	   break;
 	 } 
 	 case 'e': 
@@ -217,9 +238,41 @@ int main(int argc, char **argv)
 	   {
 	       int limit = 0;
   	       string_to_number(argv[++i],limit);
-	       colRowCuts[j] = limit;
+	       colRowFrameCuts[j] = limit;
 	       if(i<(argc-1)) option = argv[i+1];
 	       j++;
+	   }
+  	   break;
+	 }
+	 case 'w':
+	 {
+	   if(option[2] == 'c')
+	   {
+	     option = argv[i+1];
+	     unsigned int j = 0;
+	     while( j<3 && i<(argc-1) && option[0]!='-')
+	     {
+	     	 int limit = 0;
+  	     	 string_to_number(argv[++i],limit);
+	     	 colRowCluCuts[j] = limit;
+	     	 if(i<(argc-1)) option = argv[i+1];
+	     	 j = j+2;
+	     }
+	     break;
+	   }
+	   if(option[2] == 'r')
+	   {
+	     option = argv[i+1];
+	     unsigned int j = 1;
+	     while( j<4 && i<(argc-1) && option[0]!='-')
+	     {
+	     	 int limit = 0;
+  	     	 string_to_number(argv[++i],limit);
+	     	 colRowCluCuts[j] = limit;
+	     	 if(i<(argc-1)) option = argv[i+1];
+	     	 j = j+2;
+	     }
+	     break;
 	   }
   	   break;
 	 }
@@ -248,7 +301,7 @@ int main(int argc, char **argv)
   
   
   Plotter *thePlotter = new Plotter(quiet, module_type);
-  #pragma omp parallel for
+  #pragma omp parallel for if(!bunch)
   for(unsigned int i=0; i<infilename.size(); ++i)
   {
      EventMaker *theEventMaker;
@@ -279,8 +332,9 @@ int main(int argc, char **argv)
      		theEventMaker = new USBpixEventMaker(quiet, readTimeStamp, design25);
      	
      //if(design25) theEventMaker->setDesign25();
+     std::cout << "Reading file: " << infilename[i] << std::endl;
      EventMaker::hitMapDef hitMap = theEventMaker->makeEvents(infilename[i], outfilename, lv1diff, maxevents);
-  
+
      delete theEventMaker;
   
      Clusterizer *theClusterizer = new Clusterizer();
@@ -291,7 +345,9 @@ int main(int argc, char **argv)
 
      #pragma omp critical
      {
-        thePlotter->setCuts(colRowCuts,borders);	
+        thePlotter->setFrameCuts(colRowFrameCuts,borders);
+	thePlotter->setClusterCuts(colRowCluCuts);
+	thePlotter->setRefDutHitLimit(hitsRef);
 	
 	thePlotter->fillHitPlots(hitMap);
      	thePlotter->fillClusterPlots(clusterMap, noise, calibname);
@@ -299,16 +355,23 @@ int main(int argc, char **argv)
      	//#pragma omp critical
      	if(dofit!=0) thePlotter->fitPlots(voltage, dofit);
       
-     	if( rootfilename.size() < infilename.size() ) 
-     	{ 
-     	    rootfilename.push_back( infilename[i].substr(infilename[i].find_last_of("/\\")+1, infilename[i].substr( infilename[i].find_last_of("/\\")+1 ).find_last_of(".") ) + std::string(".root") );
-     	    std::cout << "Write out file: " << rootfilename.back() << "\n";
-     	}
-     	thePlotter->writePlots(rootfilename.back(),bunch);
+        if(!bunch)
+	{
+ 	   if(rootfilename.size() < infilename.size() )
+ 	   {
+ 	       rootfilename.push_back( infilename[i].substr(infilename[i].find_last_of("/\\")+1, infilename[i].substr( infilename[i].find_last_of("/\\")+1 ).find_last_of(".") ) + std::string(".root") );
+ 	   }
+	   std::cout << "Write out file: " << rootfilename.back() << "\n";
+ 	   thePlotter->writePlots(rootfilename.back());
+	}
      }
   } 
-//  }
   
+  if(bunch)
+  {
+    std::cout << "Write out file: " << rootfilename.back() << "\n";
+    thePlotter->writePlots(rootfilename.back());
+  }
   if(dofit) thePlotter->showGraph(correction_factors, fitFunction);
   delete thePlotter;
 }

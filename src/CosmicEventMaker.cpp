@@ -14,12 +14,13 @@ CosmicEventMaker::CosmicEventMaker(bool quiet, bool readTimeStamp, bool design25
   readTimeStamp_ = readTimeStamp;
   design25_ = design25;
   std::cout << "Cosmic GUI converter for FE-I4" << "\n";
+  evn=0;
 }
 
 //====================================================================================
 EventMaker::hitMapDef CosmicEventMaker::makeEvents(std::string infilename, std::string outfilename, int lv1diff, int nevt)
 {
-  EventMaker::hitMapDef hitMap;
+  //EventMaker::hitMapDef hitMap;
   
   std::ifstream inputfile;
   std::istream *fs;
@@ -52,7 +53,7 @@ EventMaker::hitMapDef CosmicEventMaker::makeEvents(std::string infilename, std::
   int highesttot=0;
   int maxRow=0;
   int maxCol=0;
-  int ntrg=0;
+  //int evn=0;
   char block0[9*sizeof(unsigned)] ;
   char* pixblock=0;
   unsigned size, evtno;
@@ -154,7 +155,7 @@ EventMaker::hitMapDef CosmicEventMaker::makeEvents(std::string infilename, std::
        int diffbx;
        if(current.isHeader())
        {
-    	  ntrg++;
+    	  evn++;
     	  //link=current.getLink();
     	  //std::cout<<"Data from link "<<link<<std::endl;
     	  l1id=current.getL1id();
