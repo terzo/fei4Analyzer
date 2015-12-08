@@ -18,16 +18,11 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <algorithm>
-#include <cmath>
 
+#include "TSystem.h"
 #include <TFile.h>
-#include <TH2F.h>
 #include <TTree.h>
-#include <TROOT.h>
-#include <TParameter.h>
-
-#include <TString.h>
+#include <TBranch.h>
 
 #include "FormattedRecord.hh"
 #include "EventMaker.h"
@@ -48,8 +43,17 @@ class fei4TelEventMaker : public EventMaker
    
  private:
     
-   std::stringstream  ss_;
+   std::stringstream  ss_;  
  
+   int    numHits;
+   int    hitPixX[1000];
+   int    hitPixY[1000];
+   double hitPosX[1000];
+   double hitPosY[1000];
+   double hitPosZ[1000];
+   int    hitValue[1000];
+   int    hitTiming[1000];
+   int    hitInCluster[1000];
 } ;
 
 #endif

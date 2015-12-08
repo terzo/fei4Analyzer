@@ -19,58 +19,77 @@ fei4TelEventMaker::fei4TelEventMaker(bool quiet, bool readTimeStamp, bool design
 
 //====================================================================================
 EventMaker::hitMapDef fei4TelEventMaker::makeEvents(std::string infilename, std::string outfilename, int lv1diff, int nevt)
-{
-  //EventMaker::hitMapDef hitMap;
-/*
-  Tfile *file = new TFile(infilename, "READ");
-
-  unsigned int planeCount = 0;
-  while (true)
+{  
+  gSystem->Load("libTree");
+  TFile *infile = new TFile(infilename.c_str(), "READ");
+  
+  if(!infile->IsOpen())
   {
+    std::cout << "ERROR: file " << infilename << " not found." << std::endl;
+    exit(0);
+  }
+  
+  unsigned int planeCount = 0;
+  while(true)
+  {
+  
     std::stringstream ss;
     ss << "Plane" << planeCount;
-
-    // Try to get this plane's directory
+    
     TDirectory* dir = 0;
-    file->GetObject(ss.str().c_str(), dir);
-    if (!dir) break;
-
-    planeCount++;
-
-    TTree* hits;
-    TTree* eventInfo;
-    //TTree* clusters;
-
-    file->GetObject(ss.str().append("/Hits").c_str(), hits);
-    //file->GetObject(ss.str().append("/Clusters").c_str(), clusters);
-    numPlanes++;
-
-    if(hits)
+    infile->GetObject(ss.str().c_str(), dir);
+    if (!dir) 
     {
-      hits->SetBranchAddress("NHits", &numHits, &bNumHits);
-      hits->SetBranchAddress("PixX", hitPixX, &bHitPixX);
-      hits->SetBranchAddress("PixY", hitPixY, &bHitPixY);
-      hits->SetBranchAddress("Value", hitValue, &bHitValue);
-      hits->SetBranchAddress("Timing", hitTiming, &bHitTiming);
-      hits->SetBranchAddress("HitInCluster", hitInCluster, &bHitInCluster);
-      hits->SetBranchAddress("PosX", hitPosX, &bHitPosX);
-      hits->SetBranchAddress("PosY", hitPosY, &bHitPosY);
-      hits->SetBranchAddress("PosZ", hitPosZ, &bHitPosZ);
+      std::cout << "Total number of planes in the file: " << planeCount << std::endl;
+      break;
     }
+    
+    std::cout << "Found " << ss.str() << "\n";
+    planeCount++;
+    
+    
+    TTree* hits = (TTree*)infile->Get(ss.str().append("/Hits").c_str());      
+    
+    if (hits)
+    {
+      hits->SetBranchAddress("NHits"	, &numHits);
+      hits->SetBranchAddress("PixX"   , hitPixX);
+      hits->SetBranchAddress("PixY"   , hitPixY);
+      hits->SetBranchAddress("Value"	, hitValue);
+      hits->SetBranchAddress("Timing"	, hitTiming);
+      //hits->SetBranchAddress("HitInCluster", &hitInCluster);
+      //hits->SetBranchAddress("PosX"	, &hitPosX);
+      //hits->SetBranchAddress("PosY"	, &hitPosY);
+      //hits->SetBranchAddress("PosZ"	, &hitPosZ);
+    }
+    //std::cout << __LINE__ << "] " << numHits << "\n";
+    for (unsigned int e = 0; e<hits->GetEntries(); e++) 
+    {
+      hits->GetEntry(e);
+      
+      for(unsigned int h = 0; h<numHits; h++)
+      {
+      	EventMaker::hitDef aHit;
+      	aHit.tot = hitValue[h];
+      	aHit.col = hitPixX[h];
+      	aHit.row = hitPixY[h];
+      	aHit.bcid= e;
+      	aHit.l1id= hitTiming[h];
+      
+      	if(design25_) this->design25Encode(aHit);
+      
+      	ss_.str("");
+      	ss_ << e;
+      	hitMap[string_to_int(ss_.str())][planeCount].push_back(aHit);
+      }
+    }
+    
   }
-
-  file->GetObject("Event", _eventInfo);
-
-  if (_eventInfo)
-  {
-    eventInfo->SetBranchAddress("TimeStamp", &timeStamp, &bTimeStamp);
-    eventInfo->SetBranchAddress("FrameNumber", &frameNumber, &bFrameNumber);
-    eventInfo->SetBranchAddress("TriggerOffset", &triggerOffset, &bTriggerOffset);
-    eventInfo->SetBranchAddress("TriggerInfo", &triggerInfo, &bTriggerInfo);
-    eventInfo->SetBranchAddress("Invalid", &invalid, &bInvalid);
-  }
-*/
-  std::cout << "ERROR: " << "cannot read " << infilename << ", file type not supported yet\n";
+  
+  infile->Close();
+  delete infile;
+  //std::cout << __LINE__ << "] I'm out here\n";
   return hitMap;
 }
 
+//===========================================================================================

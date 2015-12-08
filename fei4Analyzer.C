@@ -22,6 +22,7 @@
 #include "CosmicEventMaker.h"
 #include "Clusterizer.h"
 #include "Plotter.h"
+#include "TSystem.h"
 
 #ifdef USE_LCIO
  #include "LCIOEventMaker.h"
@@ -102,7 +103,7 @@ int main(int argc, char **argv)
 	   std::cout << "-k\t \t \t \t:" << "enable calibration (needs A.root, B.root, C.root)" << "\n";
 	   std::cout << "-s  [0..inf]\t\t\t:" << "skip the first n events (NOT IMPLEMENTED)" << "\n";
 	   std::cout << "-b  filename[.root]\t\t:" << "merge the input files and perform a single analysis for the full bunch, result are saved in 'filename.root'" << "\n";
-	   std::cout << "-dh id min max\t\t:" << "min and max number of clusters on the detector 'id' to accept an event" << "\n";
+	   std::cout << "-dh id min max\t\t\t:" << "min and max number of clusters on the detector 'id' to accept an event" << "\n";
 	   std::cout <<  std::endl;
 	   std::cout << "STControl quad module analysis example:" << std::endl;
 	   std::cout << "\tfei4Analyzer -m 4 -r root_outputfile.root -i stcontrol_rawfile.raw -l 2" << std::endl;	   
@@ -374,4 +375,5 @@ int main(int argc, char **argv)
   }
   if(dofit) thePlotter->showGraph(correction_factors, fitFunction);
   delete thePlotter;
+  
 }
