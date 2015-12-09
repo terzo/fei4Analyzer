@@ -265,7 +265,7 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 	 maxTot=minTot=minRowTot=maxRowTot=maxColTot=minColTot=(*clus).second[0].tot;
 	 unsigned int cSize = (*clus).second.size();
 	 bool bad_cluster = false;
-	 std::map<int,int> rowNum, colNum;
+	 std::map<int,int> rowNum, colNum, rowLvl1;
 	 
 	 for(unsigned int hit=0; hit<cSize; hit++)
     	 {
@@ -288,6 +288,7 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
     	   cToT+=tot;
 	   
 	   rowNum[(*clus).second[hit].row]+=tot;
+	   rowLvl1[(*clus).second[hit].row]+=clus->second[hit].l1id;
            colNum[(*clus).second[hit].col]+=tot;
 	   
            if( (*clus).second[hit].row > maxRow ) 
@@ -342,8 +343,12 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
             	       std::stringstream ss;
 	    	       ss.str(""); ss << "chip" << (*chip).first << "_inClusterRowVsToT_" << "CW"<< rowSize;
             	       inClusterRowToT_[(*chip).first][rowSize] = addPlot(inClusterRowToT_[(*chip).first][rowSize],ss.str(),rowSize,0,rowSize,500,-0.5,499.5);
+	    	       
+		       ss.str(""); ss << "chip" << (*chip).first << "_lvl1_" << "CW"<< rowSize;
+            	       lvl1_[(*chip).first][rowSize] = addPlot(lvl1_[(*chip).first][rowSize],ss.str(),rowSize,0,rowSize,16,0,16);
 	    	}
 	    	inClusterRowToT_[(*chip).first][rowSize]->Fill( r->first - minRow, r->second );
+		lvl1_[(*chip).first][rowSize]->Fill( r->first - minRow, rowLvl1[r->first]);
 	    }
 	    //  	 #col,tot
 	    for( std::map<int,int>::iterator c = colNum.begin(); c!= colNum.end(); ++c)
@@ -355,6 +360,7 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
             	       inClusterColToT_[(*chip).first][colSize] = addPlot(inClusterColToT_[(*chip).first][colSize],ss.str(),colSize,0,colSize,500,-0.5,499.5);
 	    	}
  	    	inClusterColToT_[(*chip).first][colSize]->Fill( c->first - minCol, c->second );
+		
 	    }
 	    clusterSize_[(*chip).first]->Fill(cSize);
 	    clusterSizeRow_[(*chip).first]->Fill( rowSize );
@@ -621,7 +627,11 @@ void Plotter::writePlots(std::string rootFileName)
     ss_ << "inPixelToT";
     dir->mkdir(ss_.str().c_str())->cd();
     for(std::map<int, TH2I*>::iterator cs=inClusterRowToT_[(*chip).first].begin(); cs!=inClusterRowToT_[(*chip).first].end(); ++cs) cs->second->Write();
-    for(std::map<int, TH2I*>::iterator cs=inClusterColToT_[(*chip).first].begin(); cs!=inClusterColToT_[(*chip).first].end(); ++cs) cs->second->Write();       
+    for(std::map<int, TH2I*>::iterator cs=inClusterColToT_[(*chip).first].begin(); cs!=inClusterColToT_[(*chip).first].end(); ++cs) cs->second->Write();
+    ss_.str("");
+    ss_ << "lvl1";
+    dir->mkdir(ss_.str().c_str())->cd();
+    for(std::map<int, TH2I*>::iterator cs=lvl1_[(*chip).first].begin(); cs!=lvl1_[(*chip).first].end(); ++cs) cs->second->Write();
   }
   
   if(isQuad_)
@@ -804,6 +814,7 @@ void Plotter::deletePlots(void)
   clusterToT_CSn_.clear();
   inClusterRowToT_.clear();
   inClusterColToT_.clear();
+  lvl1_.clear();
   totMax_.clear();
   totMin_.clear();
   hitMap_.clear();
