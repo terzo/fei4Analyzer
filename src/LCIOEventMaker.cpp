@@ -56,7 +56,7 @@ EventMaker::hitMapDef LCIOEventMaker::makeEvents(std::string infilename, std::st
           std::string colName = (*colNames)[i];
           //std::cout<<  colName << "\n";
 	  
-	  if(colName == "zsdata_apix")
+	  if(colName == "zsdata_apix" || colName == "zsdata_FEI4")
 	  {
 	      //LCCollection* col = evt->getCollection( (*colNames)[i] ) ;
 	  
@@ -89,7 +89,7 @@ EventMaker::hitMapDef LCIOEventMaker::makeEvents(std::string infilename, std::st
 		       aHit.chip= static_cast<int> ( zsData->getChargeValues()[k * kElements + 3] );
 	  	       aHit.l1id= static_cast<int> ( zsData->getChargeValues()[k * kElements + 4] );
 		       aHit.bcid= evn;//bcid;
-		       
+		       if(design25_) this->design25Encode(aHit);
 		       hitMap[evn][sensorID].push_back(aHit);
 		       
 	           }

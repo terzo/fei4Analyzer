@@ -249,7 +249,7 @@ Fitter::fitResultDef Fitter::fit(TH1* histo)
    // Setting fit range and start values
    Double_t fr[2];
 
-   pllo[0]=0.1; pllo[1]=2.0; pllo[2]=1.0; pllo[3]=0.4;
+   pllo[0]=0.1; pllo[1]=0.1; pllo[2]=1.0; pllo[3]=0.4;
    plhi[0]=5.0; plhi[1]=50.0; plhi[2]=1000000.0; plhi[3]=5.0;
    sv[0]=histo->GetRMS(); 
    sv[1]=histo->GetBinCenter( histo->GetMaximumBin() ); 

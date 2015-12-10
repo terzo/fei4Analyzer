@@ -16,10 +16,8 @@ Plotter::Plotter(bool quiet, int module_type)
     empty_ = true;
     borders_ = false;
     v_=0;
-    minColCut_ = 0;
-    minRowCut_ = 0;
-    maxColCut_ = 0;
-    maxRowCut_ = 0;
+    refDutHitLimit_.clear();
+    colRowCuts_.clear();
     
     //define root style
     TStyle *terzo_stile  = new TStyle("terzo_stile","terzo stile");
@@ -79,22 +77,21 @@ Plotter::~Plotter()
 	if(!empty_) this->deletePlots();
 }
 //================================================================================================
-void Plotter::setFrameCuts(int minCol, int minRow, int maxCol, int maxRow, bool borders)
-{
-   minColCut_ = minCol;
-   minRowCut_ = minRow;
-   maxColCut_ = maxCol;
-   maxRowCut_ = maxRow;
+void Plotter::setFrameCuts(int dutID, int minCol, int minRow, int maxCol, int maxRow, bool borders)
+{  
+   std::vector<int> vec;
+   vec.push_back(minCol);
+   vec.push_back(minRow);
+   vec.push_back(maxCol);
+   vec.push_back(maxRow);
+   colRowCuts_[dutID] = vec;
    
    borders_   = borders;	 
 }
 //================================================================================================
-void Plotter::setFrameCuts(int colRowCuts[4], bool borders)
+void Plotter::setFrameCuts(std::map<unsigned int,std::vector<int> > colRowCuts, bool borders)
 {
-   minColCut_ = colRowCuts[0];
-   minRowCut_ = colRowCuts[1];
-   maxColCut_ = colRowCuts[2];
-   maxRowCut_ = colRowCuts[3];
+   colRowCuts_ = colRowCuts;
    
    borders_   = borders;
 }
@@ -269,7 +266,7 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 	 
 	 for(unsigned int hit=0; hit<cSize; hit++)
     	 {
-	   if((*chip).first==21 && outOfLimits(clus->second[hit].col,clus->second[hit].row) ) 
+	   if( outOfLimits((*chip).first,clus->second[hit].col,clus->second[hit].row) ) 
 	   { 
 	      bad_cluster = true;
 	      break;
@@ -472,7 +469,7 @@ void Plotter::fillHitPlots(EventMaker::hitMapDef& hitMap)
  
       for(unsigned int h=0; h<(*chip).second.size(); h++)
       {
-        if((*chip).first==21 &&  outOfLimits(chip->second[h].col,chip->second[h].row) ) continue;
+        if(outOfLimits((*chip).first, chip->second[h].col,chip->second[h].row) ) continue;
       
         hitMap_[(*chip).first]->Fill((*chip).second[h].col, (*chip).second[h].row);
       
@@ -489,24 +486,31 @@ void Plotter::fillHitPlots(EventMaker::hitMapDef& hitMap)
   
 }
 //========================================================================
-bool Plotter::outOfLimits(int &col, int &row)   
+bool Plotter::outOfLimits(int dutID, int &col, int &row)   
 {
 	bool out=false;
-	if(!borders_)
-	{
-	    //internal frame
-	    if( minColCut_ > 0 && col < minColCut_ ) out = true;
-	    if( minRowCut_ > 0 && row < minRowCut_ ) out = true;
-	    if( maxColCut_ > 0 && col > maxColCut_ ) out = true;
-	    if( maxRowCut_ > 0 && row > maxRowCut_ ) out = true;
-	}
-	else
-	{
-	    //external frame
-	    if( minColCut_ > 0 && maxColCut_ > 0 && minRowCut_ > 0 && maxRowCut_ > 0)
+	if(colRowCuts_.count(dutID) > 0)
+	{ 
+	  if(colRowCuts_[dutID].size() == 4)
+	  {
+	    if(!borders_)
 	    {
-	        if( col > minColCut_ && col < maxColCut_ && row > minRowCut_ && row < maxRowCut_) out = true;
+	    	//internal frame
+	    	if( colRowCuts_[dutID][0] > 0 && col < colRowCuts_[dutID][0] ) out = true;
+	    	if( colRowCuts_[dutID][1] > 0 && row < colRowCuts_[dutID][1] ) out = true;
+	    	if( colRowCuts_[dutID][2] > 0 && col > colRowCuts_[dutID][2] ) out = true;
+	    	if( colRowCuts_[dutID][3] > 0 && row > colRowCuts_[dutID][3] ) out = true;
+	    	
 	    }
+	    else
+	    {
+	    	//external frame
+	    	if( colRowCuts_[dutID][0] > 0 && colRowCuts_[dutID][2] > 0 && colRowCuts_[dutID][1] > 0 && colRowCuts_[dutID][3] > 0)
+	    	{
+	    	    if( col > colRowCuts_[dutID][0] && col < colRowCuts_[dutID][2] && row > colRowCuts_[dutID][1] && row < colRowCuts_[dutID][3]) out = true;
+	    	}
+	    }
+	  }
 	}
 	return out;
 }

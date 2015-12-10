@@ -32,8 +32,8 @@ class Plotter
    void fillHitPlots(EventMaker::hitMapDef& hitMap);
    void fitPlots(double voltage = 0, unsigned int dofit = 1);
    void writePlots(std::string rootFileName);
-   void setFrameCuts(int colRowCuts[4], bool borders = false);
-   void setFrameCuts(int minCol = -1, int minRow = -1, int maxCol = -1, int maxRow= -1, bool borders = false);
+   void setFrameCuts(std::map<unsigned int,std::vector<int> >, bool borders = false);
+   void setFrameCuts(int dutID, int minCol = -1, int minRow = -1, int maxCol = -1, int maxRow= -1, bool borders = false);
    void setClusterCuts(int colRowCluCuts[4]);
    void setClusterCuts(int minWidthCol = 0, int minWidthRow = 0, int maxWidthCol = -1, int maxWidthRow= -1);
    void setRefDutHitLimit(int dutID, int minCluNum, int maxCluNum);
@@ -47,7 +47,7 @@ class Plotter
    
    void quadEncode(const int chip, int &col, int &row);
    void deletePlots();
-   bool outOfLimits(int &col,int &row);
+   bool outOfLimits(int dutID, int &col,int &row);
    
    template <class H>
    void addPlot(std::map<int, H*> &histo, std::string name, int chip, Int_t nbinsx, Double_t xlow, Double_t xup, Int_t nbinsy, Double_t ylow, Double_t yup);
@@ -63,10 +63,8 @@ class Plotter
    bool quiet_;
    bool empty_;
    double v_;
-   int minColCut_,minWidthCol_;
-   int minRowCut_,minWidthRow_;
-   int maxColCut_,maxWidthCol_;
-   int maxRowCut_,maxWidthRow_;
+   int minWidthCol_, minWidthRow_, maxWidthCol_, maxWidthRow_;
+   std::map<unsigned int,std::vector<int> > colRowCuts_;
    bool borders_;
    std::map<unsigned int, std::pair<unsigned int,unsigned int> > refDutHitLimit_;
    
@@ -77,7 +75,7 @@ class Plotter
    std::map<int, TH2I*> hitMap_, clusterMap_cs1_, clusterMap_cs2_, clusterHolesRow_, clusterHolesCol_, clusterToT_CSn_;
    std::map<int, TH2D*> clusterMeanTotMap_cs1_, clusterMeanTotMap_cs2_, clusterTotMap_cs1_, clusterTotMap_cs2_;
    //     #chip,           CS,RowVSToT
-   std::map<int, std::map<int, TH2I*> > inClusterRowToT_, inClusterColToT_;
+   std::map<int, std::map<int, TH2I*> > inClusterRowToT_, inClusterColToT_, lvl1_;
    
    TH2I *clusterMap_cs1_all_;  
    TH2I *clusterMap_cs2_all_;      

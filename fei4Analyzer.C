@@ -55,7 +55,7 @@ int main(int argc, char **argv)
   unsigned int  cdRow = 1;
   unsigned int  cdCol = 1;
   std::vector<double> correction_factors;
-  int colRowFrameCuts[4] = {0,0,0,0};
+  std::map<unsigned int,std::vector<int> > colRowFrameCuts;
   int colRowCluCuts[4] = {0,0,0,0};
   double noise = -1;
   unsigned int fitFunction = 1;
@@ -63,6 +63,8 @@ int main(int argc, char **argv)
   unsigned int dofit = 1;
   bool design25=false;
   std::map<unsigned int,std::pair<unsigned int,unsigned int> > hitsRef;
+  
+  gSystem->Load("libTree");
   
   if (argc > 1) 
   {
@@ -97,8 +99,8 @@ int main(int argc, char **argv)
            std::cout << "-wc min max\t\t\t:" << "min and max cluster width columns (default is all)" << "\n";
 	   std::cout << "-l  [0..16]\t\t\t:" << "maximum lvl1 difference for clustering (default is 3)" << "\n";
 	   std::cout << "-lm [0..inf]\t\t\t:" << "merge consecutive triggers" << "\n";
-	   std::cout << "-c  minCol minRow maxCol maxRow\t:" << "define square cuts in pixel coordinates for the analysis" << "\n";
-	   std::cout << "-cb minCol minRow maxCol maxRow\t:" << "invert the logic of the square cuts to select the borders only" << "\n";
+	   std::cout << "-c  id minCol minRow maxCol maxRow\t:" << "define square cuts in pixel coordinates for the analysis of detctor id" << "\n";
+	   std::cout << "-cb id minCol minRow maxCol maxRow\t:" << "invert the logic of the square cuts to select the borders only" << "\n";
 	   std::cout << "-e  [0..inf]\t\t\t:" << "maximum number of event to process (default process all events)" << "\n";
 	   std::cout << "-k\t \t \t \t:" << "enable calibration (needs A.root, B.root, C.root)" << "\n";
 	   std::cout << "-s  [0..inf]\t\t\t:" << "skip the first n events (NOT IMPLEMENTED)" << "\n";
@@ -234,15 +236,17 @@ int main(int argc, char **argv)
 	 {
 	   if(option[2] == 'b') borders=true;
 	   option = argv[i+1];
+	   std::vector<int> vec;	   
 	   unsigned int j = 0;
-	   while( j<4 && i<(argc-1) && option[0]!='-')
+	   while( j<5 && i<(argc-1) && option[0]!='-')
 	   {
 	       int limit = 0;
   	       string_to_number(argv[++i],limit);
-	       colRowFrameCuts[j] = limit;
+	       vec.push_back(limit);
 	       if(i<(argc-1)) option = argv[i+1];
 	       j++;
 	   }
+	   if(vec.size() == 5) colRowFrameCuts[vec[0]] = std::vector<int>(vec.begin()+1, vec.end());
   	   break;
 	 }
 	 case 'w':
@@ -300,7 +304,6 @@ int main(int argc, char **argv)
      }
   }
   
-  
   Plotter *thePlotter = new Plotter(quiet, module_type);
   #pragma omp parallel for if(!bunch)
   for(unsigned int i=0; i<infilename.size(); ++i)
@@ -327,6 +330,11 @@ int main(int argc, char **argv)
      }
      else if(extension == "root")
      { 
+                if(infilename.size() > 1)
+		{
+			std::cout << "Multi file parallel processing not allowd with TFiles\n";
+			continue;
+		}
                 theEventMaker = new fei4TelEventMaker(quiet, readTimeStamp, design25);
      }
      else      
@@ -334,8 +342,9 @@ int main(int argc, char **argv)
      	
      //if(design25) theEventMaker->setDesign25();
      std::cout << "Reading file: " << infilename[i] << std::endl;
+     
      EventMaker::hitMapDef hitMap = theEventMaker->makeEvents(infilename[i], outfilename, lv1diff, maxevents);
-
+     
      delete theEventMaker;
   
      Clusterizer *theClusterizer = new Clusterizer();
@@ -344,7 +353,7 @@ int main(int argc, char **argv)
      
      delete theClusterizer;
 
-     #pragma omp critical
+     #pragma omp critical(plotter)
      {
         thePlotter->setFrameCuts(colRowFrameCuts,borders);
 	thePlotter->setClusterCuts(colRowCluCuts);
@@ -360,7 +369,7 @@ int main(int argc, char **argv)
 	{
  	   if(rootfilename.size() < infilename.size() )
  	   {
- 	       rootfilename.push_back( infilename[i].substr(infilename[i].find_last_of("/\\")+1, infilename[i].substr( infilename[i].find_last_of("/\\")+1 ).find_last_of(".") ) + std::string(".root") );
+ 	       rootfilename.push_back( infilename[i].substr(infilename[i].find_last_of("/\\")+1, infilename[i].substr( infilename[i].find_last_of("/\\")+1 ).find_last_of(".") ) + std::string("_analysis.root") );
  	   }
 	   std::cout << "Write out file: " << rootfilename.back() << "\n";
  	   thePlotter->writePlots(rootfilename.back());

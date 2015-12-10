@@ -20,7 +20,6 @@ fei4TelEventMaker::fei4TelEventMaker(bool quiet, bool readTimeStamp, bool design
 //====================================================================================
 EventMaker::hitMapDef fei4TelEventMaker::makeEvents(std::string infilename, std::string outfilename, int lv1diff, int nevt)
 {  
-  gSystem->Load("libTree");
   TFile *infile = new TFile(infilename.c_str(), "READ");
   
   if(!infile->IsOpen())
@@ -45,8 +44,6 @@ EventMaker::hitMapDef fei4TelEventMaker::makeEvents(std::string infilename, std:
     }
     
     std::cout << "Found " << ss.str() << "\n";
-    planeCount++;
-    
     
     TTree* hits = (TTree*)infile->Get(ss.str().append("/Hits").c_str());      
     
@@ -57,33 +54,34 @@ EventMaker::hitMapDef fei4TelEventMaker::makeEvents(std::string infilename, std:
       hits->SetBranchAddress("PixY"   , hitPixY);
       hits->SetBranchAddress("Value"	, hitValue);
       hits->SetBranchAddress("Timing"	, hitTiming);
-      //hits->SetBranchAddress("HitInCluster", &hitInCluster);
-      //hits->SetBranchAddress("PosX"	, &hitPosX);
-      //hits->SetBranchAddress("PosY"	, &hitPosY);
-      //hits->SetBranchAddress("PosZ"	, &hitPosZ);
+      //hits->SetBranchAddress("HitInCluster", hitInCluster);
+      //hits->SetBranchAddress("PosX"	, hitPosX);
+      //hits->SetBranchAddress("PosY"	, hitPosY);
+      //hits->SetBranchAddress("PosZ"	, hitPosZ);
     }
     //std::cout << __LINE__ << "] " << numHits << "\n";
-    for (unsigned int e = 0; e<hits->GetEntries(); e++) 
+    for (evn=0; evn<hits->GetEntries(); evn++) 
     {
-      hits->GetEntry(e);
+      hits->GetEntry(evn);
       
-      for(unsigned int h = 0; h<numHits; h++)
+      for(int h = 0; h<numHits; h++)
       {
       	EventMaker::hitDef aHit;
       	aHit.tot = hitValue[h];
       	aHit.col = hitPixX[h];
       	aHit.row = hitPixY[h];
-      	aHit.bcid= e;
+      	aHit.bcid= evn;
       	aHit.l1id= hitTiming[h];
       
       	if(design25_) this->design25Encode(aHit);
       
       	ss_.str("");
-      	ss_ << e;
+      	ss_ << evn;
       	hitMap[string_to_int(ss_.str())][planeCount].push_back(aHit);
       }
     }
     
+    planeCount++;
   }
   
   infile->Close();

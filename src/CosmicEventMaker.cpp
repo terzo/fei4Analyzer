@@ -213,6 +213,9 @@ EventMaker::hitMapDef CosmicEventMaker::makeEvents(std::string infilename, std::
 	  aHit.row = row ;
 	  aHit.bcid= bxid;
 	  aHit.l1id= l1id;
+	  
+	  if(design25_) this->design25Encode(aHit);
+	  
 	  ss_.str("");
 	  //ss_ << bxid << oldl1id;
 	  ss_ << bxid ;
