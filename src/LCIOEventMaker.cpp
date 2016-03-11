@@ -105,4 +105,143 @@ EventMaker::hitMapDef LCIOEventMaker::makeEvents(std::string infilename, std::st
   
   return hitMap;
 }
+//===============================================================================================================
+bool LCIOEventMaker::writeEvents(hitMapDef &hitMap, std::string outfilename, int runNum)
+{
+  
+  // create a writer and open the output file
+  LCWriter* lcWrt = LCFactory::getInstance()->createLCWriter();
+  lcWrt->setCompressionLevel( 0 );
+  lcWrt->open( outfilename.c_str()  , LCIO::WRITE_NEW );
+  
+  LCRunHeaderImpl* runHdr = new LCRunHeaderImpl() ;
+  runHdr->setRunNumber( runNum ) ;      
+  
+  std::string detName("FEI4Tel")  ;
+  runHdr->setDetectorName( detName.c_str() ) ;
+  
+  //std::stringstream description ; 
+  //description << " run: " << runNum <<" just for testing lcio  - no physics !" ;
+  //runHdr->setDescription( description.str()  ) ;
+  
+  //std::string subdetName("PixelTel") ;
+  //runHdr->addActiveSubdetector( subdetName ) ;
+  int nplanes = 8;
+  std::vector<int> MaxX,MaxY,MinX,MinY;
+  for(int p=0; p<nplanes; p++)
+  {
+    MaxX.push_back(335);
+    MaxY.push_back(79);
+    MinX.push_back(0);
+    MinY.push_back(0);
+  }
+  
+  std::vector<std::string> AppliedProcessor;
+  AppliedProcessor.push_back("");
+  
+  runHdr->parameters().setValue ( "GeoID"	     , 0 );
+  runHdr->parameters().setValues ( "MaxX"	     , MaxX ) ;
+  runHdr->parameters().setValues ( "MaxY"	     , MaxY );
+  runHdr->parameters().setValues ( "MinX"	     , MinX ) ;
+  runHdr->parameters().setValues ( "MinY"	     , MinY );
+  runHdr->parameters().setValue ( "NoOfDetector"     , nplanes );
+  runHdr->parameters().setValues ( "AppliedProcessor" , std::vector<std::string>(1,"") );
+  runHdr->parameters().setValue ( "DAQHWName"	   , "EUDRB" );
+  runHdr->parameters().setValue ( "DAQSWName"	   , "EUDAQ" );
+  runHdr->parameters().setValue ( "DataType"	   , "Data" );
+  runHdr->parameters().setValue ( "DateTime"	   , "24.12.2000  23:59:59.000000000" );
+  runHdr->parameters().setValue ( "EUDRBDet"	   , "MIMOSA26" );
+  runHdr->parameters().setValue ( "EUDRBMode"	   , "ZS2" );
+  
+  lcWrt->writeRunHeader( runHdr ) ;
+  int evnum = 0;
+  time_t timer;
+  for(EventMaker::hitMapDef::iterator ev = hitMap.begin(); ev!=hitMap.end(); ++ev)
+  {
+     
+    //create the event
+    LCEventImpl*  evt = new LCEventImpl() ;
+    
+    // set the event attributes
+    evt->setRunNumber(  runNum   ) ;
+    evt->setEventNumber( evnum );        
+    evt->setDetectorName( detName );
+    evt->setRunNumber( runNum );
+    evt->setTimeStamp( int(time(&timer) * 1000000000.) );
+    evt->parameters().setValue( "EventType", 2 );
+    
+    //create a collection
+    //LCCollectionVec* zsInputCollectionVec = new LCCollectionVec( lcio::LCIO::TRACKERDATA );
+    if(evnum == 0)
+    {
+      //create a collection
+      LCCollectionVec* zsInputCollectionVec = new LCCollectionVec( EVENT::LCIO::LCGENERICOBJECT );
+    
+      zsInputCollectionVec->parameters().setValue( "DataDescription", "type:i,mode:i,spare1:i,spare2:i,spare3:i" );
+      zsInputCollectionVec->parameters().setValue( "TypeName", "Setup Description" );
+
+      for(int i=0; i<nplanes; ++i)
+      {
+        LCGenericObjectImpl *setupObj = 0;
+      	setupObj = new LCGenericObjectImpl(5,0,0);
+      	setupObj->setIntVal( 0, 102 );
+      	setupObj->setIntVal( 1, 101 );    
+      	zsInputCollectionVec->addElement( setupObj );
+      }
+      
+      evt->addCollection ( zsInputCollectionVec, "eudrbSetup" );
+    }
+    
+    //ID encoder info
+    std::string encodingString = "sensorID:5,sparsePixelType:5";
+
+    //Telescope data collection
+    LCCollectionVec *trackerDataColl = new LCCollectionVec( EVENT::LCIO::TRACKERDATA );
+
+    CellIDEncoder< TrackerDataImpl >  zsDataEncoder(encodingString, trackerDataColl);
+
+    for(std::map<int, EventMaker::hitsDef>::iterator chip=ev->second.begin(); chip!=(*ev).second.end(); ++chip)
+    { 
+      // add hit objects to the collection
+      TrackerDataImpl * zsData = new TrackerDataImpl;
+      zsDataEncoder["sparsePixelType"] = kEUTelAPIXSparsePixel;
+      
+      //rappaccio =====================================================
+      int fakechipid = (*chip).first;
+      if(fakechipid == 0) fakechipid = 2;
+      else if(fakechipid == 2) fakechipid = 0;
+      //===============================================================
+      zsDataEncoder["sensorID"] = fakechipid;
+      
+      zsDataEncoder.setCellID( zsData );
+    
+      for(unsigned int h=0; h<(*chip).second.size(); h++)
+      {  
+        zsData->chargeValues().push_back( (*chip).second[h].col  );
+	zsData->chargeValues().push_back( (*chip).second[h].row  );
+	zsData->chargeValues().push_back( (*chip).second[h].tot  );
+	//zsData->chargeValues().push_back( (*chip).second[h].chip );
+	zsData->chargeValues().push_back( fakechipid );
+	zsData->chargeValues().push_back( (*chip).second[h].l1id );
+	//(*chip).second[h].bcid 
+	//zsInputCollectionVec->addElement( zsData ) ;
+      } 
+      trackerDataColl->addElement( zsData );
+    }
+    // add the collection with a name
+    evt->addCollection(trackerDataColl,"zsdata_FEI4");
+    // write the event to the file
+    lcWrt->writeEvent( evt ) ;
+    //LCTOOLS::dumpEvent( evt ) ;
+    //delete zsInputCollectionVec;
+    delete trackerDataColl;
+    evnum++;
+  }
+  
+  delete runHdr ;
+  lcWrt->close() ;
+  delete lcWrt ;
+  
+  return true;
+}
 

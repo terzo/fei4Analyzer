@@ -346,6 +346,15 @@ int main(int argc, char **argv)
      EventMaker::hitMapDef hitMap = theEventMaker->makeEvents(infilename[i], outfilename, lv1diff, maxevents);
      
      delete theEventMaker;
+     
+     //Testing part ====================================================================
+     theEventMaker = new LCIOEventMaker(quiet, readTimeStamp, design25);
+     
+     std::string outConvertedFile = infilename[i].substr(infilename[i].find_last_of("/\\")+1, infilename[i].substr( infilename[i].find_last_of("/\\")+1 ).find_last_of(".") ) + std::string("_converted");
+     theEventMaker->writeEvents(hitMap, outConvertedFile, 266);
+     
+     delete theEventMaker;
+     //=================================================================================
   
      Clusterizer *theClusterizer = new Clusterizer();
      Clusterizer::clusterMapDef clusterMap = theClusterizer->makeCluster(hitMap, cdCol, cdRow, lv1diff);

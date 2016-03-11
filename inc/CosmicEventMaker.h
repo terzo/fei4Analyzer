@@ -33,6 +33,7 @@ class CosmicEventMaker : public EventMaker
   ~CosmicEventMaker(void                    ) {;}
   
    hitMapDef makeEvents(std::string infilename, std::string outfilename = "", int lv1diff = 1, int nevt = -1);
+   bool writeEvents(hitMapDef &hitMap, std::string outfilename = "tempLCIOout.slcio", int runNum = 0) {std::cout << "WARNING: function not implemented\n";};
    void setQuiet(bool quiet) {quiet_=quiet;}
    void setReadTimeStamp(bool readTimeStamp){readTimeStamp_=readTimeStamp;}
    
