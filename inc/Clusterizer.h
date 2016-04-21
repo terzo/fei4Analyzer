@@ -9,6 +9,7 @@
 #ifndef __CLUSTERIZER_H__
 #define __CLUSTERIZER_H__
 
+#include <cmath>
 #include <vector>
 #include <map>
 #include <stdio.h> 
