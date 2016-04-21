@@ -716,7 +716,7 @@ void Plotter::showGraph(std::vector<double> correction_factors,unsigned int fit_
       }
     }
 
-    TH1F *hr = canvas.back()->cd()->DrawFrame(lox,loy,hix+abs(hix-lox)*0.1,hiy*1.1);
+    TH1F *hr = canvas.back()->cd()->DrawFrame(lox,loy,hix+std::abs(hix-lox)*0.1,hiy*1.1);
     hr->SetTitle("");
     hr->GetXaxis()->SetTitle("Bias voltage [V]");
     hr->GetYaxis()->SetTitle("Collected charge [ke]");
@@ -770,7 +770,7 @@ void Plotter::showGraph(std::vector<double> correction_factors,unsigned int fit_
        }												  
      }													  
   
-     TH1F *hr = canvas_mod->cd()->DrawFrame(lox,loy,hix+abs(hix-lox)*0.1,hiy*1.1);
+     TH1F *hr = canvas_mod->cd()->DrawFrame(lox,loy,hix+std::abs(hix-lox)*0.1,hiy*1.1);
      hr->SetTitle("");
      hr->GetXaxis()->SetTitle("Bias voltage [V]");
      hr->GetYaxis()->SetTitle("Collected charge [ke]");
