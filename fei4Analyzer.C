@@ -20,6 +20,7 @@
 #include "fei4TelEventMaker.h"
 #include "USBpixEventMaker.h"
 #include "CosmicEventMaker.h"
+#include "tbtrackEventMaker.h"
 #include "Clusterizer.h"
 #include "Plotter.h"
 #include "TSystem.h"
@@ -39,9 +40,10 @@ void string_to_number(const S theString, N &n)
 int main(int argc, char **argv)
 {
   int skipcount=0;
-  std::vector<std::string> infilename, rootfilename;
+  std::vector<std::string> infilename, rootfilename, outConvertedFile;
   //std::string calibname = "calib.root";
   bool calibname = false;
+  bool convert = false;
   std::string outfilename;
   bool merge = false;
   int maxMerge = 1;
@@ -80,6 +82,7 @@ int main(int argc, char **argv)
 	             << "\t\t\t\t "                       << "               .dat   for CosmicGui binary files" << "\n"
 		     << "\t\t\t\t "                       << "               .slcio for EUTelescope lcio files" << "\n";
 	   std::cout << "-v\t \t \t \t:" << "verbose (debug mode)" << "\n";
+	   std::cout << "-q  filename[.slcio]\t\t:" << "convert file to a different format according to the extention (supported outputs: .slcio)" << "\n";
 	   std::cout << "-r  filename[.root]\t\t:" << "define the ROOT output file name[s]: if not set or #input<#output the output_filename[s] = input_filename[s].root" << "\n";
 	   std::cout << "-o  filename[.txt]\t\t:" << "writes out a txt log file compatible with the Timepix reconstruction software (CosmicGUI binary data only)" << "\n";
 	   std::cout << "-n  [0..1]\t\t\t:" << "specify the hit frequency for noise suppression (no noise suppression by default)" << "\n";
@@ -128,7 +131,18 @@ int main(int argc, char **argv)
 	   bunch = true;
            rootfilename.push_back( std::string(argv[++i]) );
 	   break;
-  	 }	 
+  	 }
+	 case 'q':
+	 {
+	   option = argv[i+1];
+	   while( option[0]!='-' && i<(argc-1) )
+	   {
+	      outConvertedFile.push_back( std::string(argv[++i]) );
+	      if(i<(argc-1)) option = argv[i+1];
+	   }
+	   convert=true;
+	   break;
+	 } 
   	 case 'v': 
   	 {
   	   quiet = false;
@@ -347,14 +361,24 @@ int main(int argc, char **argv)
      
      delete theEventMaker;
      
-     //Testing part ====================================================================
-     theEventMaker = new LCIOEventMaker(quiet, readTimeStamp, design25);
+     if(convert)
+     {
+        std::string out_extension = infilename[i].substr(infilename[i].find_last_of(".") + 1);
+	if(out_extension == "slcio")
+        	theEventMaker = new LCIOEventMaker(quiet, readTimeStamp, design25);
+	else if(out_extension == "root")
+		//theEventMaker = new fei4TelEventMaker(quiet, readTimeStamp, design25);
+		theEventMaker = new tbtrackEventMaker(quiet, readTimeStamp, design25);
+        
+	if(outConvertedFile.size() < i+1)
+	{
+           outConvertedFile.push_back( infilename[i].substr(infilename[i].find_last_of("/\\")+1, infilename[i].substr( infilename[i].find_last_of("/\\")+1 ).find_last_of(".") ) +
+	   std::string("_converted") );
+        }
+	theEventMaker->writeEvents(hitMap, outConvertedFile[i], 266);
      
-     std::string outConvertedFile = infilename[i].substr(infilename[i].find_last_of("/\\")+1, infilename[i].substr( infilename[i].find_last_of("/\\")+1 ).find_last_of(".") ) + std::string("_converted");
-     theEventMaker->writeEvents(hitMap, outConvertedFile, 266);
-     
-     delete theEventMaker;
-     //=================================================================================
+        delete theEventMaker;
+     }
   
      Clusterizer *theClusterizer = new Clusterizer();
      Clusterizer::clusterMapDef clusterMap = theClusterizer->makeCluster(hitMap, cdCol, cdRow, lv1diff);
