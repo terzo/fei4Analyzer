@@ -20,7 +20,7 @@ tbtrackEventMaker::tbtrackEventMaker(bool quiet, bool readTimeStamp, bool design
 //====================================================================================
 EventMaker::hitMapDef tbtrackEventMaker::makeEvents(std::string infilename, std::string outfilename, int lv1diff, int nevt)
 {
-		       
+          
    int sensorID = 0;
    EventMaker::hitDef aHit;
    aHit.col = 0;
