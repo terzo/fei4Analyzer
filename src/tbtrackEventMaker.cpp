@@ -23,8 +23,7 @@ EventMaker::hitMapDef tbtrackEventMaker::makeEvents(std::string infilename, std:
    TFile *tbtrackfile = new TFile(infilename.c_str(), "READ"); 
     
    TTree *zspix = (TTree*) tbtrackfile->Get("zspix");
-   
-     
+    
    int sensorID = 0;
    EventMaker::hitDef aHit;
    aHit.col = 0;
