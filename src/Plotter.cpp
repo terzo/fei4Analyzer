@@ -171,7 +171,7 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
   TH2::AddDirectory(kFALSE);
   Calibrator *theCalibrator = new Calibrator(calibname);
   
-  if(isQuad_)
+  if(clusterToT_.count(clusterMap.begin()->second.begin()->first) == 0 && isQuad_)
   {
      clusterMap_cs1_all_    	= addPlot(clusterMap_cs1_all_	    ,"clusterMap_cs1"	    ,80*2,0,80*2,336*2,0,336*2);	   
      clusterMap_cs2_all_    	= addPlot(clusterMap_cs2_all_	    ,"clusterMap_cs2"	    ,80*2,0,80*2,336*2,0,336*2);	   
@@ -190,6 +190,8 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
      clusterCharge_all_     = addPlot(clusterCharge_all_      ,"Qdist"        ,100,   0,  100) ;
      clusterCharge_cs1_all_ = addPlot(clusterCharge_cs1_all_  ,"QdistCS1"     ,100,   0,  100) ;
      clusterCharge_cs2_all_ = addPlot(clusterCharge_cs2_all_  ,"QdistCS2"     ,100,   0,  100) ;
+
+     std::cout << "Making new cluster histograms for quad." << std::endl;
   }
 
   for(Clusterizer::clusterMapDef::iterator ev = clusterMap.begin(); ev!=clusterMap.end(); ++ev)
@@ -216,7 +218,7 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
       
       if(clusterToT_.count((*chip).first)==0)
       {
-        std::cout << "Making new histograms for chip: " << (*chip).first << std::endl;
+        std::cout << "Making new cluster histograms for chip: " << (*chip).first << std::endl;
         
 	addPlot(clusterToT_      ,"ToTdist"  	  ,(*chip).first, 150, -0.5, 149.5);
  	addPlot(one_hitToT_      ,"ToTdistCS1"	  ,(*chip).first, 150, -0.5, 149.5);
@@ -445,7 +447,11 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 //============================================
 void Plotter::fillHitPlots(EventMaker::hitMapDef& hitMap)
 { 
-  if(isQuad_) hitMap_all_= this->addPlot(hitMap_all_, "HitMap_all",80*2,0,80*2,336*2,0,336*2);
+	if(hitMap_.count(hitMap.begin()->second.begin()->first) == 0 && isQuad_)
+	{
+		hitMap_all_= this->addPlot(hitMap_all_, "HitMap_all",80*2,0,80*2,336*2,0,336*2);
+		std::cout << "Making new hitmap histogram for quad." << std::endl;
+	}
 
   for(EventMaker::hitMapDef::iterator ev = hitMap.begin(); ev!=hitMap.end(); ++ev)
   {
@@ -454,9 +460,10 @@ void Plotter::fillHitPlots(EventMaker::hitMapDef& hitMap)
     
       if(hitMap_.count((*chip).first)==0)
       {
-        std::cout << "Making new histograms for chip: " << (*chip).first << std::endl;
+        std::cout << "Making new hitmap histogram for chip: " << (*chip).first << std::endl;
  	ss_.str("");
-	ss_ << "chip"<< (*chip).first << "_HitMap";
+        ss_ << "HitMap";
+	// ss_ << "chip"<< (*chip).first << "_HitMap";
 	int rows = 336;
 	int cols = 80;
 	if(design25_)
