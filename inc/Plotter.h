@@ -29,7 +29,7 @@ public :
     Plotter(bool quiet);
     ~Plotter(void);
 
-    void fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double noise = -1, bool calibname = "calib.root");
+    void fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double noise = -1);
     void fillHitPlots(EventMaker::hitMapDef& hitMap);
     void fitPlots(double voltage = 0, unsigned int dofit = 1);
     void writePlots(std::string rootFileName);
@@ -39,8 +39,9 @@ public :
     void setClusterCuts(int minWidthCol = 0, int minWidthRow = 0, int maxWidthCol = -1, int maxWidthRow= -1);
     void setRefDutHitLimit(int dutID, int minCluNum, int maxCluNum);
     void setRefDutHitLimit(std::map<unsigned int, std::pair<unsigned int,unsigned int> > refDutHitLimit) {refDutHitLimit_ = refDutHitLimit;};
-    void setModuleType(int module_type=0);
+    void useChargeCalibration(bool use_charge_calibration){use_charge_calibration_ = use_charge_calibration;};
     void saveClusterData(bool save_cluster_data) {save_cluster_data_ = save_cluster_data;};
+    void setModuleType(int module_type=0);
     bool isEmpty(){return empty_;};
     void showGraph(std::vector<double> correction_factor,unsigned int fit_function = 1);
 
@@ -62,9 +63,10 @@ private:
     std::stringstream  ss_;
     bool quiet_;
     bool empty_;
+    bool use_charge_calibration_;
+    bool save_cluster_data_;
     bool isQuad_;
     bool isDesign25_;
-    bool save_cluster_data_;
     double v_;
     int minWidthCol_, minWidthRow_, maxWidthCol_, maxWidthRow_;
     std::map<unsigned int,std::vector<int> > colRowCuts_;

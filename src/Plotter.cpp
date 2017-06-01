@@ -153,7 +153,7 @@ H* Plotter::addPlot(H* histo, std::string name, Int_t nbinsx, Double_t xlow, Dou
     return histo;
 }
 //==========================================CLUSTER TOT ANALYSIS=====================================
-void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double noise, bool calibname)
+void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double noise)
 {
     //if(!empty_) this->deletePlots();
 
@@ -167,7 +167,8 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 
     TH1::AddDirectory(kFALSE);
     TH2::AddDirectory(kFALSE);
-    Calibrator *theCalibrator = new Calibrator(calibname);
+
+    Calibrator *theCalibrator = new Calibrator(use_charge_calibration_);
 
     if(save_cluster_data_)
     {
@@ -201,9 +202,12 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
         clusterTotMap_cs2_all_      = addPlot(clusterTotMap_cs2_all_    ,"clusterTotMap_cs2"    ,80*2,0,80*2,336*2,0,336*2);
         clusterMeanTotMap_cs1_all_  = addPlot(clusterMeanTotMap_cs1_all_,"clusterMeanTotMap_cs1",80*2,0,80*2,336*2,0,336*2);
 
-        clusterCharge_all_          = addPlot(clusterCharge_all_      ,"Qdist"        ,100,   0,  100);
-        clusterCharge_cs1_all_      = addPlot(clusterCharge_cs1_all_  ,"QdistCS1"     ,100,   0,  100);
-        clusterCharge_cs2_all_      = addPlot(clusterCharge_cs2_all_  ,"QdistCS2"     ,100,   0,  100);
+        if(use_charge_calibration_)
+        {
+            clusterCharge_all_          = addPlot(clusterCharge_all_      ,"Qdist"        ,100,   0,  100);
+            clusterCharge_cs1_all_      = addPlot(clusterCharge_cs1_all_  ,"QdistCS1"     ,100,   0,  100);
+            clusterCharge_cs2_all_      = addPlot(clusterCharge_cs2_all_  ,"QdistCS2"     ,100,   0,  100);
+        }
     }
 
     for(Clusterizer::clusterMapDef::iterator ev = clusterMap.begin(); ev!=clusterMap.end(); ++ev)
@@ -250,10 +254,13 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
                 addPlot(clusterHolesCol_    ,"clusterHolesCol"      ,(*chip).first,cols,0.5,cols+0.5,cols,0,cols);
                 addPlot(clusterHolesRow_    ,"clusterHolesRow"      ,(*chip).first,rows,0.5,rows+0.5,rows,0,rows);
 
-                addPlot(clusterCharge_    ,"Qdist"   ,(*chip).first,100,0,100);
-                addPlot(clusterCharge_cs1_,"QdistCS1",(*chip).first,100,0,100);
-                addPlot(clusterCharge_cs2_,"QdistCS2",(*chip).first,100,0,100);
-                addPlot(clusterCharge_cs3_,"QdistCS3",(*chip).first,100,0,100);
+                if(use_charge_calibration_)
+                {
+                    addPlot(clusterCharge_    ,"Qdist"   ,(*chip).first,100,0,100);
+                    addPlot(clusterCharge_cs1_,"QdistCS1",(*chip).first,100,0,100);
+                    addPlot(clusterCharge_cs2_,"QdistCS2",(*chip).first,100,0,100);
+                    addPlot(clusterCharge_cs3_,"QdistCS3",(*chip).first,100,0,100);
+                }
             }
 
             clusterNumber_[(*chip).first]->Fill( (*chip).second.size() );
@@ -286,9 +293,11 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
                     }
 
                     int tot=(*clus).second[hit].tot;
-                    double charge = theCalibrator->calib( (*clus).second[hit] );
-                    chargeSum += charge;
                     cToT+=tot;
+                    if(use_charge_calibration_)
+                    {
+                        chargeSum += theCalibrator->calib( (*clus).second[hit] );
+                    }
 
                     rowNum[(*clus).second[hit].row]+=tot;
                     rowLvl1[(*clus).second[hit].row]+=clus->second[hit].l1id;
@@ -447,9 +456,12 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
             clusterSize_all_      ->Add( clusterSize_[(*chip).first]      );  
             clusterSizeRow_all_   ->Add( clusterSizeRow_[(*chip).first]   );  
             clusterSizeCol_all_   ->Add( clusterSizeCol_[(*chip).first]   );
-            clusterCharge_all_    ->Add( clusterCharge_[(*chip).first]    );  
-            clusterCharge_cs1_all_->Add( clusterCharge_cs1_[(*chip).first]);
-            clusterCharge_cs2_all_->Add( clusterCharge_cs2_[(*chip).first]);
+            if(use_charge_calibration_)
+            {
+                clusterCharge_all_    ->Add( clusterCharge_[(*chip).first]    );  
+                clusterCharge_cs1_all_->Add( clusterCharge_cs1_[(*chip).first]);
+                clusterCharge_cs2_all_->Add( clusterCharge_cs2_[(*chip).first]);
+            }
         }
     }
     if(isQuad_) clusterMeanTotMap_cs1_all_->Divide(clusterTotMap_cs1_all_,clusterMap_cs1_all_,1.0,1.0,"B");               
@@ -651,11 +663,14 @@ void Plotter::writePlots(std::string rootFileName)
         clusterTotMap_cs2_[(*chip).first]->Write();
         clusterMeanTotMap_cs1_[(*chip).first]->Write();
         clusterMeanTotMap_cs2_[(*chip).first]->Write();
-        clusterCharge_[(*chip).first]->Write();
-        clusterCharge_cs1_[(*chip).first]->Write();
-        clusterCharge_cs2_[(*chip).first]->Write();
-        clusterCharge_cs3_[(*chip).first]->Write();
-        
+        if(use_charge_calibration_)
+        {
+            clusterCharge_[(*chip).first]->Write();
+            clusterCharge_cs1_[(*chip).first]->Write();
+            clusterCharge_cs2_[(*chip).first]->Write();
+            clusterCharge_cs3_[(*chip).first]->Write();
+        }
+
         ss_.str("");
         ss_ << "inPixelToT";
         dir->mkdir(ss_.str().c_str())->cd();
@@ -700,9 +715,12 @@ void Plotter::writePlots(std::string rootFileName)
         clusterTotMap_cs2_all_->Write();   
         clusterMeanTotMap_cs1_all_->Write();
 
-        clusterCharge_all_->Write();
-        clusterCharge_cs1_all_->Write();
-        clusterCharge_cs2_all_->Write();
+        if(use_charge_calibration_)
+        {
+            clusterCharge_all_->Write();
+            clusterCharge_cs1_all_->Write();
+            clusterCharge_cs2_all_->Write();
+        }
     }
 
     if(save_cluster_data_)
@@ -876,10 +894,13 @@ void Plotter::deletePlots(void)
     clusterTotMap_cs2_.clear();
     clusterMeanTotMap_cs1_.clear();
     clusterMeanTotMap_cs2_.clear();
-    clusterCharge_.clear();
-    clusterCharge_cs1_.clear();
-    clusterCharge_cs2_.clear();
-    clusterCharge_cs3_.clear();
+    if(use_charge_calibration_)
+    {
+        clusterCharge_.clear();
+        clusterCharge_cs1_.clear();
+        clusterCharge_cs2_.clear();
+        clusterCharge_cs3_.clear();
+    }
     trashbin_.clear();
 
     empty_ = true;

@@ -40,8 +40,8 @@ int main(int argc, char **argv)
 {
     int skipcount=0;
     std::vector<std::string> infilename, rootfilename;
-    //std::string calibname = "calib.root";
-    bool calibname = false;
+    //std::string use_charge_calibration = "calib.root";
+    bool use_charge_calibration = false;
     std::string outfilename;
     bool merge = false;
     int maxMerge = 1;
@@ -297,13 +297,13 @@ int main(int argc, char **argv)
                     option = argv[i+1];
                     while( option[0]!='-' && i<(argc-1))
                     {
-                    calibname.push_back( std::string(argv[++i]) );
+                    use_charge_calibration.push_back( std::string(argv[++i]) );
                     if(i<(argc-1)) option = argv[i+1];
                     }
                     break;
                     */
-                    //calibname = std::string(argv[++i]);
-                    calibname = true;
+                    //use_charge_calibration = std::string(argv[++i]);
+                    use_charge_calibration = true;
                     break;
                 }
                 default: 
@@ -315,8 +315,9 @@ int main(int argc, char **argv)
     }
 
     Plotter *thePlotter = new Plotter(quiet);
-    thePlotter->setModuleType(module_type);
+    thePlotter->useChargeCalibration(use_charge_calibration);
     thePlotter->saveClusterData(save_cluster_data);
+    thePlotter->setModuleType(module_type);
 
     #pragma omp parallel for if(!bunch)
     for(unsigned int i=0; i<infilename.size(); ++i)
@@ -373,7 +374,7 @@ int main(int argc, char **argv)
             thePlotter->setRefDutHitLimit(hitsRef);
 
             thePlotter->fillHitPlots(hitMap);
-            thePlotter->fillClusterPlots(clusterMap, noise, calibname);
+            thePlotter->fillClusterPlots(clusterMap, noise);
 
             //#pragma omp critical
             if(dofit!=0) thePlotter->fitPlots(voltage, dofit);
