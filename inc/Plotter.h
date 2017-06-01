@@ -69,28 +69,36 @@ private:
     std::map<unsigned int, std::pair<unsigned int,unsigned int> > refDutHitLimit_;
 
     //single plots
-    std::map<int, TH1I*> clusterToT_, three_hitToT_, two_hitToT_, one_hitToT_, clusterSize_, clusterSizeRow_, clusterSizeCol_, clusterNumber_;
+    std::map<int, TH1I*> clusterToT_, clusterToT_cs1_, clusterToT_cs2_, clusterToT_cs3_, clusterSize_, clusterSizeRow_, clusterSizeCol_, clusterNumber_;
     std::map<int, TH1D*> clusterCharge_,clusterCharge_cs1_,clusterCharge_cs2_, clusterCharge_cs3_;
     std::map<int, TH1I*> totMax_, totMin_;
-    std::map<int, TH2I*> hitMap_, clusterMap_cs1_, clusterMap_cs2_, clusterHolesRow_, clusterHolesCol_, clusterToT_CSn_;
+    std::map<int, TH2I*> clusterToT_csn_, hitMap_, clusterMap_cs1_, clusterMap_cs2_, clusterHolesRow_, clusterHolesCol_;
     std::map<int, TH2D*> clusterMeanTotMap_cs1_, clusterMeanTotMap_cs2_, clusterTotMap_cs1_, clusterTotMap_cs2_;
     //     #chip,           CS,RowVSToT
     std::map<int, std::map<int, TH2I*> > inClusterRowToT_, inClusterColToT_, lvl1_;
+
+    // plots for quads
+    TH1I *clusterToT_all_;
+    TH1I *clusterToT_cs1_all_;
+    TH1I *clusterToT_cs2_all_;
+    TH1I *clusterToT_cs3_all_;
+    TH2I *clusterToT_csn_all_;
+
+    TH1I *totMax_all_;
+    TH1I *totMin_all_;
+
+    TH2I *hitMap_all_;
+
+    TH1I *clusterSize_all_;
+    TH1I *clusterSizeRow_all_;
+    TH1I *clusterSizeCol_all_;
 
     TH2I *clusterMap_cs1_all_;
     TH2I *clusterMap_cs2_all_;
     TH2D *clusterTotMap_cs1_all_;
     TH2D *clusterTotMap_cs2_all_;
     TH2D *clusterMeanTotMap_cs1_all_;
-    TH2I *hitMap_all_;
-    TH1I *clusterToT_all_;
-    TH1I *one_hitToT_all_;
-    TH1I *two_hitToT_all_;
-    TH1I *totMax_all_;
-    TH1I *totMin_all_;
-    TH1I *clusterSize_all_;
-    TH1I *clusterSizeRow_all_;
-    TH1I *clusterSizeCol_all_;
+    
     TH1D *clusterCharge_all_;
     TH1D *clusterCharge_cs1_all_;
     TH1D *clusterCharge_cs2_all_;

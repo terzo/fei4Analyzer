@@ -172,22 +172,25 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 
     if(clusterToT_.count(clusterMap.begin()->second.begin()->first) == 0 && isQuad_)
     {
+        clusterToT_all_             = addPlot(clusterToT_all_         ,"ToTdist"      ,150,-0.5,149.5);
+        clusterToT_cs1_all_         = addPlot(clusterToT_cs1_all_     ,"ToTdistCS1"   ,150,-0.5,149.5);
+        clusterToT_cs2_all_         = addPlot(clusterToT_cs2_all_     ,"ToTdistCS2"   ,150,-0.5,149.5);
+        clusterToT_cs3_all_         = addPlot(clusterToT_cs3_all_     ,"ToTdistCS3"   ,150,-0.5,149.5);
+        clusterToT_csn_all_         = addPlot(clusterToT_csn_all_     ,"ToTdistCSn"   ,150, -0.5, 149.5, 50, 0.5, 50.5);
+
+        totMax_all_                 = addPlot(totMax_all_             ,"ToTdistCS2_max_ToT", 150,-0.5,149.5);    
+        totMin_all_                 = addPlot(totMin_all_             ,"ToTdistCS2_min_ToT", 150,-0.5,149.5);
+
+        clusterSize_all_            = addPlot(clusterSize_all_        ,"CSdist"       , 50, 0.5, 50.5);
+        clusterSizeRow_all_         = addPlot(clusterSizeRow_all_     ,"CSdistRow"    , 50, 0.5, 50.5);
+        clusterSizeCol_all_         = addPlot(clusterSizeCol_all_     ,"CSdistCol"    , 50, 0.5, 50.5); 
+
         clusterMap_cs1_all_         = addPlot(clusterMap_cs1_all_       ,"clusterMap_cs1"       ,80*2,0,80*2,336*2,0,336*2);
         clusterMap_cs2_all_         = addPlot(clusterMap_cs2_all_       ,"clusterMap_cs2"       ,80*2,0,80*2,336*2,0,336*2);
         clusterTotMap_cs1_all_      = addPlot(clusterTotMap_cs1_all_    ,"clusterTotMap_cs1"    ,80*2,0,80*2,336*2,0,336*2);
         clusterTotMap_cs2_all_      = addPlot(clusterTotMap_cs2_all_    ,"clusterTotMap_cs2"    ,80*2,0,80*2,336*2,0,336*2);
         clusterMeanTotMap_cs1_all_  = addPlot(clusterMeanTotMap_cs1_all_,"clusterMeanTotMap_cs1",80*2,0,80*2,336*2,0,336*2);
 
-        clusterToT_all_             = addPlot(clusterToT_all_       ,"ToTdist"      ,150,-0.5,149.5);
-        one_hitToT_all_             = addPlot(one_hitToT_all_       ,"ToTdistCS1"   ,150,-0.5,149.5);
-        two_hitToT_all_             = addPlot(two_hitToT_all_       ,"ToTdistCS2"   ,150,-0.5,149.5);
-        three_hitToT_all_           = addPlot(three_hitToT_all_     ,"ToTdistCS3"   ,150,-0.5,149.5);
-
-        totMax_all_                 = addPlot(totMax_all_             ,"ToTdistCS2_LR", 150,-0.5,149.5);    
-        totMin_all_                 = addPlot(totMin_all_             ,"ToTdistCS2_UD", 150,-0.5,149.5);    
-        clusterSize_all_            = addPlot(clusterSize_all_        ,"CSdist"       , 50, 0.5, 50.5);
-        clusterSizeRow_all_         = addPlot(clusterSizeRow_all_     ,"CSdistRow"    , 50, 0.5, 50.5);
-        clusterSizeCol_all_         = addPlot(clusterSizeCol_all_     ,"CSdistCol"    , 50, 0.5, 50.5);
         clusterCharge_all_          = addPlot(clusterCharge_all_      ,"Qdist"        ,100,   0,  100);
         clusterCharge_cs1_all_      = addPlot(clusterCharge_cs1_all_  ,"QdistCS1"     ,100,   0,  100);
         clusterCharge_cs2_all_      = addPlot(clusterCharge_cs2_all_  ,"QdistCS2"     ,100,   0,  100);
@@ -215,21 +218,18 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
             {
                 std::cout << "Making new cluster histograms for chip: " << (*chip).first << std::endl;
 
-                addPlot(clusterToT_      ,"ToTdist"     ,(*chip).first, 150, -0.5, 149.5);
-                addPlot(one_hitToT_      ,"ToTdistCS1"    ,(*chip).first, 150, -0.5, 149.5);
-                addPlot(two_hitToT_      ,"ToTdistCS2"    ,(*chip).first, 150, -0.5, 149.5);
-                addPlot(three_hitToT_    ,"ToTdistCS3"    ,(*chip).first, 150, -0.5, 149.5);
+                addPlot(clusterToT_      ,"ToTdist"         ,(*chip).first, 150, -0.5, 149.5);
+                addPlot(clusterToT_cs1_  ,"ToTdistCS1"      ,(*chip).first, 150, -0.5, 149.5);
+                addPlot(clusterToT_cs2_  ,"ToTdistCS2"      ,(*chip).first, 150, -0.5, 149.5);
+                addPlot(clusterToT_cs3_  ,"ToTdistCS3"      ,(*chip).first, 150, -0.5, 149.5);
+                addPlot(clusterToT_csn_  ,"ToTdistCSn"      ,(*chip).first, 150, -0.5, 149.5, 50, 0.5, 50.5);
 
-                addPlot(totMax_          ,"ToTdistCS2_max",(*chip).first, 150, -0.5, 149.5);
-                addPlot(totMin_          ,"ToTdistCS2_min",(*chip).first, 150, -0.5, 149.5);
+                addPlot(totMax_          ,"ToTdistCS2_max_ToT"  ,(*chip).first, 150, -0.5, 149.5);
+                addPlot(totMin_          ,"ToTdistCS2_min_ToT"  ,(*chip).first, 150, -0.5, 149.5);
 
-                addPlot(clusterToT_CSn_  ,"ToTdistCSn"    ,(*chip).first, 150, -0.5, 149.5, 50, 0.5, 50.5);
-
-                addPlot(clusterSize_   ,"CSdist"        ,(*chip).first,  50,  0.5,  50.5);
-                addPlot(clusterSizeRow_,"CSdistRow"     ,(*chip).first,  50,  0.5,  50.5);
-                addPlot(clusterSizeCol_,"CSdistCol"     ,(*chip).first,  50,  0.5,  50.5);
-
-                addPlot(clusterNumber_ ,"ClusterNumber" ,(*chip).first,  50, -0.5,  49.5);
+                addPlot(clusterSize_     ,"CSdist"            ,(*chip).first,  50,  0.5,  50.5);
+                addPlot(clusterSizeRow_  ,"CSdistRow"         ,(*chip).first,  50,  0.5,  50.5);
+                addPlot(clusterSizeCol_  ,"CSdistCol"         ,(*chip).first,  50,  0.5,  50.5);
 
                 addPlot(clusterMap_cs1_       ,"clusterMap_cs1"       ,(*chip).first,cols,0,cols,rows,0,rows);
                 addPlot(clusterMap_cs2_       ,"clusterMap_cs2"       ,(*chip).first,cols,0,cols,rows,0,rows);
@@ -238,8 +238,9 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
                 addPlot(clusterMeanTotMap_cs1_,"clusterMeanTotMap_cs1",(*chip).first,cols,0,cols,rows,0,rows);
                 addPlot(clusterMeanTotMap_cs2_,"clusterMeanTotMap_cs2",(*chip).first,cols,0,cols,rows,0,rows);
 
-                addPlot(clusterHolesCol_      ,"clusterHolesCol"      ,(*chip).first,cols,0.5,cols+0.5,cols,0,cols);
-                addPlot(clusterHolesRow_      ,"clusterHolesRow"      ,(*chip).first,rows,0.5,rows+0.5,rows,0,rows);
+                addPlot(clusterNumber_      ,"ClusterNumber"        ,(*chip).first,  50, -0.5,  49.5);
+                addPlot(clusterHolesCol_    ,"clusterHolesCol"      ,(*chip).first,cols,0.5,cols+0.5,cols,0,cols);
+                addPlot(clusterHolesRow_    ,"clusterHolesRow"      ,(*chip).first,rows,0.5,rows+0.5,rows,0,rows);
 
                 addPlot(clusterCharge_    ,"Qdist"   ,(*chip).first,100,0,100);
                 addPlot(clusterCharge_cs1_,"QdistCS1",(*chip).first,100,0,100);
@@ -272,7 +273,7 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
                     if(noise > 0 && 1.*hitMap_[(*chip).first]->GetBinContent((*clus).second[hit].col+1,(*clus).second[hit].row+1)/clusterMap.size() > noise) 
                     { 
                         bad_cluster = true;
-        //std::cout << "noise suppresssed" << "\n";
+                        //std::cout << "noise suppresssed" << "\n";
                         continue;
                     }
 
@@ -325,11 +326,14 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
                 if( maxWidthCol_>0 && (colSize > maxWidthCol_ || colSize < minWidthCol_) ) bad_cluster = true;
                 if( maxWidthRow_>0 && (rowSize > maxWidthRow_ || rowSize < minWidthRow_) ) bad_cluster = true;
 
-                if(bad_cluster) continue;
+                if(bad_cluster)
+                    {
+                        continue;
+                    }
 
                 if(cSize!=0)  
-                { 
-      //     #row,tot
+                {
+                    //  #row,tot
                     for( std::map<int,int>::iterator r = rowNum.begin(); r!= rowNum.end(); ++r)
                     {  
                         if( inClusterRowToT_[(*chip).first].count(rowSize) == 0 )
@@ -344,7 +348,7 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
                         inClusterRowToT_[(*chip).first][rowSize]->Fill( r->first - minRow, r->second );
                         lvl1_[(*chip).first][rowSize]->Fill( r->first - minRow, rowLvl1[r->first]);
                     }
-      //     #col,tot
+                    //  #col,tot
                     for( std::map<int,int>::iterator c = colNum.begin(); c!= colNum.end(); ++c)
                     {  
                         if( inClusterColToT_[(*chip).first].count(colSize) == 0 )
@@ -361,13 +365,13 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
                     clusterSizeCol_[(*chip).first]->Fill( colSize );
                     clusterHolesRow_[(*chip).first]->Fill( rowSize , rowSize - rowNum.size() );
                     clusterHolesCol_[(*chip).first]->Fill( colSize , colSize - colNum.size() );
-                    clusterToT_CSn_[(*chip).first]->Fill(cToT, cSize);
+                    clusterToT_csn_[(*chip).first]->Fill(cToT, cSize);
                     clusterToT_[(*chip).first]->Fill(cToT);
                     if(chargeSum !=0 ) clusterCharge_[(*chip).first]->Fill(chargeSum);
 
                     if( cSize==1 ) 
                     {
-                        one_hitToT_[(*chip).first]->Fill(cToT);
+                        clusterToT_cs1_[(*chip).first]->Fill(cToT);
                         if(chargeSum !=0 )clusterCharge_cs1_[(*chip).first]->Fill(chargeSum);
 
                         clusterMap_cs1_[(*chip).first]->Fill(maxTotCol, maxTotRow);
@@ -375,7 +379,7 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
                     }
                     if( cSize==2 ) 
                     {
-                        two_hitToT_[(*chip).first]->Fill(cToT);
+                        clusterToT_cs2_[(*chip).first]->Fill(cToT);
                         if(chargeSum !=0 ) clusterCharge_cs2_[(*chip).first]->Fill(chargeSum);
 
                         totMax_[(*chip).first]->Fill(maxTot);
@@ -386,7 +390,7 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
                     }
                     if( cSize==3 ) 
                     {
-                        three_hitToT_[(*chip).first]->Fill(cToT);
+                        clusterToT_cs3_[(*chip).first]->Fill(cToT);
                         if(chargeSum !=0 ) clusterCharge_cs3_[(*chip).first]->Fill(chargeSum); 
                     }
                     if(isQuad_)
@@ -412,19 +416,19 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
     }
 
     for(std::map<int, TH1I*>::iterator chip=clusterToT_.begin(); chip!=clusterToT_.end(); ++chip)
-    {   
-
+    {
         clusterMeanTotMap_cs1_[(*chip).first]->Divide(clusterTotMap_cs1_[(*chip).first],clusterMap_cs1_[(*chip).first],1.0,1.0,"B");
         clusterMeanTotMap_cs2_[(*chip).first]->Divide(clusterTotMap_cs2_[(*chip).first],clusterMap_cs2_[(*chip).first],1.0,1.0,"B");
 
-        if(isQuad_)                 
-        { 
-
-            clusterToT_all_       ->Add( (*chip).second         );
-            one_hitToT_all_       ->Add( one_hitToT_[(*chip).first]       );
-            two_hitToT_all_       ->Add( two_hitToT_[(*chip).first]       );
-            totMax_all_       ->Add( totMax_[(*chip).first]       );  
-            totMin_all_       ->Add( totMin_[(*chip).first]       );  
+        if(isQuad_)
+        {
+            clusterToT_all_       ->Add( (*chip).second                   );
+            clusterToT_cs1_all_   ->Add( clusterToT_cs1_[(*chip).first]   );
+            clusterToT_cs2_all_   ->Add( clusterToT_cs2_[(*chip).first]   );
+            clusterToT_cs3_all_   ->Add( clusterToT_cs3_[(*chip).first]   );
+            clusterToT_csn_all_   ->Add( clusterToT_csn_[(*chip).first]   );
+            totMax_all_           ->Add( totMax_[(*chip).first]           );  
+            totMin_all_           ->Add( totMin_[(*chip).first]           );  
             clusterSize_all_      ->Add( clusterSize_[(*chip).first]      );  
             clusterSizeRow_all_   ->Add( clusterSizeRow_[(*chip).first]   );  
             clusterSizeCol_all_   ->Add( clusterSizeCol_[(*chip).first]   );
@@ -439,12 +443,12 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
     delete theCalibrator;
 }
 
-//============================================
+//=========================================================================
 void Plotter::fillHitPlots(EventMaker::hitMapDef& hitMap)
 { 
     if(hitMap_.count(hitMap.begin()->second.begin()->first) == 0 && isQuad_)
     {
-        hitMap_all_= this->addPlot(hitMap_all_, "HitMap_all",80*2,0,80*2,336*2,0,336*2);
+        hitMap_all_= this->addPlot(hitMap_all_,"HitMap_all",80*2,0,80*2,336*2,0,336*2);
         std::cout << "Making new hitmap histogram for quad." << std::endl;
     }
 
@@ -457,7 +461,7 @@ void Plotter::fillHitPlots(EventMaker::hitMapDef& hitMap)
                 std::cout << "Making new hitmap histogram for chip: " << (*chip).first << std::endl;
                 ss_.str("");
                 ss_ << "HitMap";
-  // ss_ << "chip"<< (*chip).first << "_HitMap";
+                // ss_ << "chip"<< (*chip).first << "_HitMap";
                 int rows = 336;
                 int cols = 80;
                 if(design25_)
@@ -484,9 +488,8 @@ void Plotter::fillHitPlots(EventMaker::hitMapDef& hitMap)
             } 
         }
     }
-
 }
-//========================================================================
+//=========================================================================
 bool Plotter::outOfLimits(int dutID, int &col, int &row)   
 {
     bool out=false;
@@ -496,7 +499,7 @@ bool Plotter::outOfLimits(int dutID, int &col, int &row)
         {
             if(!borders_)
             {
-        //internal frame
+                //internal frame
                 if( colRowCuts_[dutID][0] > 0 && col < colRowCuts_[dutID][0] ) out = true;
                 if( colRowCuts_[dutID][1] > 0 && row < colRowCuts_[dutID][1] ) out = true;
                 if( colRowCuts_[dutID][2] > 0 && col > colRowCuts_[dutID][2] ) out = true;
@@ -505,7 +508,7 @@ bool Plotter::outOfLimits(int dutID, int &col, int &row)
             }
             else
             {
-        //external frame
+                //external frame
                 if( colRowCuts_[dutID][0] > 0 && colRowCuts_[dutID][2] > 0 && colRowCuts_[dutID][1] > 0 && colRowCuts_[dutID][3] > 0)
                 {
                     if( col > colRowCuts_[dutID][0] && col < colRowCuts_[dutID][2] && row > colRowCuts_[dutID][1] && row < colRowCuts_[dutID][3]) out = true;
@@ -523,7 +526,7 @@ void Plotter::quadEncode(const int chip, int &col, int &row)
         col = col;
         row = 335-row;
     }
-    if(chip == 1)
+    if(chip == 3)
     {
         col += 80;
         row = 335-row;
@@ -533,7 +536,7 @@ void Plotter::quadEncode(const int chip, int &col, int &row)
         col = 159 - col;
         row += 336;
     }
-    if(chip == 3)
+    if(chip == 1)
     {
         col = 79 - col;
         row += 336;
@@ -559,16 +562,19 @@ void Plotter::setModuleType(int module_type)
 //=========================FIT HISTOS=========================================
 void Plotter::fitPlots(double voltage, unsigned int dofit)
 {
-    if(voltage == 0) v_++;
-    else             v_=voltage;
+    if(voltage == 0)
+    {
+        v_++;
+    }
+    else v_=voltage;
     
     if(dofit>0)
     {
         for(std::map<int, TH1I*>::iterator chip=clusterToT_.begin(); chip!=clusterToT_.end(); ++chip)
         {   
             ToT_all_[chip->first][v_] = theFitter_->fit( (*chip).second     );
-            ToT_cs1_[chip->first][v_] = theFitter_->fit( two_hitToT_[(*chip).first]    );
-            ToT_cs2_[chip->first][v_] = theFitter_->fit( one_hitToT_[(*chip).first]    );
+            ToT_cs1_[chip->first][v_] = theFitter_->fit( clusterToT_cs2_[(*chip).first]    );
+            ToT_cs2_[chip->first][v_] = theFitter_->fit( clusterToT_cs1_[(*chip).first]    );
             if(dofit>1)
             {
                 theFitter_->fit( clusterCharge_[(*chip).first]     );
@@ -579,8 +585,8 @@ void Plotter::fitPlots(double voltage, unsigned int dofit)
         if(isQuad_)
         {
             ToT_mod_all_[v_] = theFitter_->fit( clusterToT_all_ );
-            ToT_mod_cs1_[v_] = theFitter_->fit( one_hitToT_all_ );
-            ToT_mod_cs2_[v_] = theFitter_->fit( two_hitToT_all_ );
+            ToT_mod_cs1_[v_] = theFitter_->fit( clusterToT_cs1_all_ );
+            ToT_mod_cs2_[v_] = theFitter_->fit( clusterToT_cs2_all_ );
             if(dofit>1)
             {
                 theFitter_->fit( clusterCharge_all_     );
@@ -604,19 +610,22 @@ void Plotter::writePlots(std::string rootFileName)
         dir->cd();
 
         (*chip).second->Write();
-        one_hitToT_[(*chip).first]->Write();
-        two_hitToT_[(*chip).first]->Write();
-        three_hitToT_[(*chip).first]->Write();
-        clusterToT_CSn_[(*chip).first]->Write();
+        clusterToT_cs1_[(*chip).first]->Write();
+        clusterToT_cs2_[(*chip).first]->Write();
+        clusterToT_cs3_[(*chip).first]->Write();
+        clusterToT_csn_[(*chip).first]->Write();
+
         clusterNumber_[(*chip).first]->Write();
         clusterSize_[(*chip).first]->Write();
         clusterSizeRow_[(*chip).first]->Write();
         clusterSizeCol_[(*chip).first]->Write();
         clusterHolesRow_[(*chip).first]->Write();
         clusterHolesCol_[(*chip).first]->Write();
+
         totMax_[(*chip).first]->Write();
         totMin_[(*chip).first]->Write();
         hitMap_[(*chip).first]->Write();
+
         clusterMap_cs1_[(*chip).first]->Write();
         clusterMap_cs2_[(*chip).first]->Write();
         clusterTotMap_cs1_[(*chip).first]->Write();
@@ -653,21 +662,25 @@ void Plotter::writePlots(std::string rootFileName)
         outRootFile.cd();
 
         clusterToT_all_->Write();
-        one_hitToT_all_->Write();
-        two_hitToT_all_->Write();
-        three_hitToT_all_->Write();
+        clusterToT_cs1_all_->Write();
+        clusterToT_cs2_all_->Write();
+        clusterToT_cs3_all_->Write();
+        clusterToT_csn_all_->Write();
+
         totMax_all_->Write();
         totMin_all_->Write();
-        hitMap_all_->Write();
+
         clusterSize_all_->Write();
         clusterSizeRow_all_->Write();
         clusterSizeCol_all_->Write();
-        
+
+        hitMap_all_->Write();
         clusterMap_cs1_all_->Write();   
         clusterMap_cs2_all_->Write();   
         clusterTotMap_cs1_all_->Write();    
         clusterTotMap_cs2_all_->Write();   
         clusterMeanTotMap_cs1_all_->Write();
+
         clusterCharge_all_->Write();
         clusterCharge_cs1_all_->Write();
         clusterCharge_cs2_all_->Write();
@@ -816,16 +829,16 @@ void Plotter::deletePlots(void)
     } 
 
     clusterToT_.clear();
-    one_hitToT_.clear();
-    two_hitToT_.clear();
-    three_hitToT_.clear();
+    clusterToT_cs1_.clear();
+    clusterToT_cs2_.clear();
+    clusterToT_cs3_.clear();
     clusterSize_.clear();
     clusterNumber_.clear();
     clusterSizeRow_.clear();
     clusterSizeCol_.clear();
     clusterHolesRow_.clear();
     clusterHolesCol_.clear();
-    clusterToT_CSn_.clear();
+    clusterToT_csn_.clear();
     inClusterRowToT_.clear();
     inClusterColToT_.clear();
     lvl1_.clear();
