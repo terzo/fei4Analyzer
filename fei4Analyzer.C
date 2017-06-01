@@ -62,6 +62,7 @@ int main(int argc, char **argv)
     int maxevents = -1;
     unsigned int dofit = 1;
     bool design25=false;
+    bool save_cluster_data=false;
     std::map<unsigned int,std::pair<unsigned int,unsigned int> > hitsRef;
 
     gSystem->Load("libTree");
@@ -106,6 +107,7 @@ int main(int argc, char **argv)
                     std::cout << "-s  [0..inf]\t\t\t:" << "skip the first n events (NOT IMPLEMENTED)" << "\n";
                     std::cout << "-b  filename[.root]\t\t:" << "merge the input files and perform a single analysis for the full bunch, result are saved in 'filename.root'" << "\n";
                     std::cout << "-dh id min max\t\t\t:" << "min and max number of clusters on the detector 'id' to accept an event" << "\n";
+                    std::cout << "-scd\t \t \t \t:" << "save cluster data in a ROOT TTree" << "\n";
                     std::cout <<  std::endl;
                     std::cout << "STControl quad module analysis example:" << std::endl;
                     std::cout << "\tfei4Analyzer -m 4 -r root_outputfile.root -i stcontrol_rawfile.raw -l 2" << std::endl;      
@@ -174,6 +176,14 @@ int main(int argc, char **argv)
                 }
                 case 's': 
                 {
+                    if(option[2] == 'c')
+                    {
+                        if(option[3] == 'd')
+                        {
+                            save_cluster_data=true;
+                            break;
+                        }
+                    }
                     string_to_number(argv[++i], skipcount);
                     break;
                 }
@@ -283,16 +293,16 @@ int main(int argc, char **argv)
                 }
                 case 'k':
                 {
-                /*
-                option = argv[i+1];
-                while( option[0]!='-' && i<(argc-1))
-                {
-                calibname.push_back( std::string(argv[++i]) );
-                if(i<(argc-1)) option = argv[i+1];
-                }
-                break;
-                */
-                //calibname = std::string(argv[++i]);
+                    /*
+                    option = argv[i+1];
+                    while( option[0]!='-' && i<(argc-1))
+                    {
+                    calibname.push_back( std::string(argv[++i]) );
+                    if(i<(argc-1)) option = argv[i+1];
+                    }
+                    break;
+                    */
+                    //calibname = std::string(argv[++i]);
                     calibname = true;
                     break;
                 }
@@ -304,7 +314,10 @@ int main(int argc, char **argv)
         }
     }
 
-    Plotter *thePlotter = new Plotter(quiet, module_type);
+    Plotter *thePlotter = new Plotter(quiet);
+    thePlotter->setModuleType(module_type);
+    thePlotter->saveClusterData(save_cluster_data);
+
     #pragma omp parallel for if(!bunch)
     for(unsigned int i=0; i<infilename.size(); ++i)
     {
@@ -384,5 +397,4 @@ int main(int argc, char **argv)
     }
     if(dofit) thePlotter->showGraph(correction_factors, fitFunction);
     delete thePlotter;
-
 }

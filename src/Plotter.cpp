@@ -8,9 +8,8 @@
 
 #include "Plotter.h"
 
-Plotter::Plotter(bool quiet, int module_type)
+Plotter::Plotter(bool quiet)
 {
-    this->setModuleType(module_type);
     theFitter_ = new Fitter(quiet);
     quiet_ = quiet;
     empty_ = true;
@@ -160,7 +159,7 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 
     int cols = 80;
     int rows = 336;
-    if(design25_)
+    if(isDesign25_)
     {
         cols /=2;
         rows *=2;
@@ -170,8 +169,19 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
     TH2::AddDirectory(kFALSE);
     Calibrator *theCalibrator = new Calibrator(calibname);
 
+    if(save_cluster_data_)
+    {
+        tree_ = new TTree("Cluster data","Cluster data");
+        trashbin_.push_back(tree_);
+        tree_->Branch("clusterCol", &cCol, "clusterCol/I");
+        tree_->Branch("clusterRow", &cRow, "clusterRow/I");
+        tree_->Branch("clusterToT", &cToT, "clusterToT/I");
+    }
+
     if(clusterToT_.count(clusterMap.begin()->second.begin()->first) == 0 && isQuad_)
     {
+        std::cout << "Making new cluster histograms for quad." << std::endl;
+
         clusterToT_all_             = addPlot(clusterToT_all_         ,"ToTdist"      ,150,-0.5,149.5);
         clusterToT_cs1_all_         = addPlot(clusterToT_cs1_all_     ,"ToTdistCS1"   ,150,-0.5,149.5);
         clusterToT_cs2_all_         = addPlot(clusterToT_cs2_all_     ,"ToTdistCS2"   ,150,-0.5,149.5);
@@ -194,8 +204,6 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
         clusterCharge_all_          = addPlot(clusterCharge_all_      ,"Qdist"        ,100,   0,  100);
         clusterCharge_cs1_all_      = addPlot(clusterCharge_cs1_all_  ,"QdistCS1"     ,100,   0,  100);
         clusterCharge_cs2_all_      = addPlot(clusterCharge_cs2_all_  ,"QdistCS2"     ,100,   0,  100);
-
-        std::cout << "Making new cluster histograms for quad." << std::endl;
     }
 
     for(Clusterizer::clusterMapDef::iterator ev = clusterMap.begin(); ev!=clusterMap.end(); ++ev)
@@ -252,7 +260,7 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 
             for( Clusterizer::clustersDef::iterator clus=(*chip).second.begin(); clus!=(*chip).second.end(); ++clus )
             {
-                int cToT=0;
+                cToT=0;
                 double chargeSum = 0;
                 int maxRow, maxCol, minRow, minCol, maxRowTot, minRowTot , maxColTot, minColTot, maxTot, minTot, maxTotRow, minTotRow, maxTotCol, minTotCol;
                 maxRow=minRow=maxTotRow=minTotRow= (*clus).second[0].row;
@@ -320,6 +328,9 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
                     } 
                 }
 
+                cCol = maxTotCol;
+                cRow = maxTotRow;
+
                 int rowSize = maxRow-minRow+1;
                 int colSize = maxCol-minCol+1;
 
@@ -330,6 +341,8 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
                     {
                         continue;
                     }
+
+
 
                 if(cSize!=0)  
                 {
@@ -395,19 +408,21 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
                     }
                     if(isQuad_)
                     {
-                        int col = maxTotCol;
-                        int row = maxTotRow;
-                        this->quadEncode((*chip).first, col, row);
+                        this->quadEncode((*chip).first, cCol, cRow);
                         if( cSize==1 )
                         {
-                            clusterMap_cs1_all_->Fill(col, row);     
-                            clusterTotMap_cs1_all_->Fill(col, row,cToT);
+                            clusterMap_cs1_all_->Fill(cCol, cRow);     
+                            clusterTotMap_cs1_all_->Fill(cCol, cRow,cToT);
                         }
                         if( cSize==2 )
                         {
-                            clusterMap_cs2_all_->Fill(col, row);
-                            clusterTotMap_cs2_all_->Fill(col, row,cToT);
+                            clusterMap_cs2_all_->Fill(cCol, cRow);
+                            clusterTotMap_cs2_all_->Fill(cCol, cRow,cToT);
                         }
+                    }
+                    if(save_cluster_data_)
+                    {
+                        tree_->Fill();
                     }
                 }
                 else std::cout << "WARNING: cluster size 0" << std::endl;
@@ -464,7 +479,7 @@ void Plotter::fillHitPlots(EventMaker::hitMapDef& hitMap)
                 // ss_ << "chip"<< (*chip).first << "_HitMap";
                 int rows = 336;
                 int cols = 80;
-                if(design25_)
+                if(isDesign25_)
                 {
                     rows *=2;
                     cols /=2;
@@ -545,19 +560,23 @@ void Plotter::quadEncode(const int chip, int &col, int &row)
 //==================================================================
 void Plotter::setModuleType(int module_type)
 {
+    isQuad_=false;
+    isDesign25_ = false;
+
     if(module_type == 4) 
     { 
         std::cout << "Quad module analysis" << std::endl;
         isQuad_=true ;
     }
-    else isQuad_=false;
-
-    if(module_type == 25)
+    else if(module_type == 25)
     {
         std::cout << "FE-I4 with 500x25um arrangment analysis" << std::endl;
-        design25_ = true;
+        isDesign25_ = true;
     }
-    else design25_ = false;
+    else 
+    {
+        std::cout << "FE-I4 single chip analysis" << std::endl;
+    }
 }
 //=========================FIT HISTOS=========================================
 void Plotter::fitPlots(double voltage, unsigned int dofit)
@@ -684,6 +703,12 @@ void Plotter::writePlots(std::string rootFileName)
         clusterCharge_all_->Write();
         clusterCharge_cs1_all_->Write();
         clusterCharge_cs2_all_->Write();
+    }
+
+    if(save_cluster_data_)
+    {
+        outRootFile.cd();
+        tree_->Write();
     }
 
     outRootFile.Close();

@@ -17,6 +17,7 @@
 #include <TH2.h>
 #include <TF1.h>
 #include <TFile.h>
+#include <TTree.h>
 
 #include "Clusterizer.h"
 #include "Calibrator.h"
@@ -24,8 +25,8 @@
 
 class Plotter
 {
-    public :
-    Plotter(bool quiet, int module_type=0);
+public :
+    Plotter(bool quiet);
     ~Plotter(void);
 
     void fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double noise = -1, bool calibname = "calib.root");
@@ -37,14 +38,14 @@ class Plotter
     void setClusterCuts(int colRowCluCuts[4]);
     void setClusterCuts(int minWidthCol = 0, int minWidthRow = 0, int maxWidthCol = -1, int maxWidthRow= -1);
     void setRefDutHitLimit(int dutID, int minCluNum, int maxCluNum);
-    void setRefDutHitLimit(std::map<unsigned int, std::pair<unsigned int,unsigned int> > refDutHitLimit) {refDutHitLimit_ = refDutHitLimit;}
-    void setModuleType(int module_type);
-    bool isEmpty(){return empty_;}
+    void setRefDutHitLimit(std::map<unsigned int, std::pair<unsigned int,unsigned int> > refDutHitLimit) {refDutHitLimit_ = refDutHitLimit;};
+    void setModuleType(int module_type=0);
+    void saveClusterData(bool save_cluster_data) {save_cluster_data_ = save_cluster_data;};
+    bool isEmpty(){return empty_;};
     void showGraph(std::vector<double> correction_factor,unsigned int fit_function = 1);
 
 
 private:
-
     void quadEncode(const int chip, int &col, int &row);
     void deletePlots();
     bool outOfLimits(int dutID, int &col,int &row);
@@ -59,14 +60,19 @@ private:
     H* addPlot(H* histo, std::string name, Int_t nbinsx, Double_t xlow, Double_t xup, Int_t nbinsy, Double_t ylow, Double_t yup);
 
     std::stringstream  ss_;
-    bool isQuad_;
     bool quiet_;
     bool empty_;
+    bool isQuad_;
+    bool isDesign25_;
+    bool save_cluster_data_;
     double v_;
     int minWidthCol_, minWidthRow_, maxWidthCol_, maxWidthRow_;
     std::map<unsigned int,std::vector<int> > colRowCuts_;
     bool borders_;
     std::map<unsigned int, std::pair<unsigned int,unsigned int> > refDutHitLimit_;
+
+    // variables for plot filling
+    int cCol,cRow,cToT;
 
     //single plots
     std::map<int, TH1I*> clusterToT_, clusterToT_cs1_, clusterToT_cs2_, clusterToT_cs3_, clusterSize_, clusterSizeRow_, clusterSizeCol_, clusterNumber_;
@@ -103,8 +109,10 @@ private:
     TH1D *clusterCharge_cs1_all_;
     TH1D *clusterCharge_cs2_all_;
 
-    bool design25_;
+    // tree for cluster data
+    TTree *tree_;
 
+    // trashbin
     std::vector<TObject*> trashbin_;
 
     //batch vectors
@@ -115,7 +123,6 @@ private:
     std::map<double,Fitter::fitResultDef> ToT_mod_all_;
     std::map<double,Fitter::fitResultDef> ToT_mod_cs1_;
     std::map<double,Fitter::fitResultDef> ToT_mod_cs2_;
-
 
     Fitter *theFitter_;
 };
