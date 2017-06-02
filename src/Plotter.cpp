@@ -172,7 +172,7 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 
     if(save_cluster_data_)
     {
-        tree_ = new TTree("Cluster data","Cluster data");
+        tree_ = new TTree("cluster_data","cluster_data");
         trashbin_.push_back(tree_);
         tree_->Branch("clusterCol", &cCol, "clusterCol/I");
         tree_->Branch("clusterRow", &cRow, "clusterRow/I");

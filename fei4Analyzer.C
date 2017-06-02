@@ -181,6 +181,7 @@ int main(int argc, char **argv)
                         if(option[3] == 'd')
                         {
                             save_cluster_data=true;
+                            std::cout << "Saving cluster data." << std::endl;
                             break;
                         }
                     }
