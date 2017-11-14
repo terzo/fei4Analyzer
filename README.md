@@ -24,4 +24,5 @@ You can explore the options calling the help:
 $ fei4analyzer -h
 
 The fei4analyzer also uses open omp, to install on MAC OSX you need clang-omp. In case you are a MAC user check Makefile_mac to substitute the default Makefile.
-If you are a Windows user you are not supported. 
+
+If you are a Windows user you are not supported.
