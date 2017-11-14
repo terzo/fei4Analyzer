@@ -38,7 +38,7 @@ EventMaker::hitMapDef LCIOEventMaker::makeEvents(std::string infilename, std::st
   }
   catch( IOException& e) 
   {
-     std::cout << e.what() << endl ;
+      std::cout << e.what() << std::endl ;
      exit(1) ;
   }
   //if( skip > 1 ) 
