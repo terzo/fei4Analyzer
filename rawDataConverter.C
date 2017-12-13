@@ -90,14 +90,9 @@ int main(int argc, char **argv)
      for(unsigned int i=0; i<infilename.size(); ++i)
      {
      	     EventMaker *theEventMaker;
-     
-     	     double voltage = 0;
-     
-     	     boost::regex expression("(\\d+)V");
-     	     boost::match_results<std::string::const_iterator> what;
-     	     if(regex_search(infilename[i], what, expression, boost::match_default)) string_to_number(what[1], voltage);
      	     	  
      	     std::string extension = infilename[i].substr(infilename[i].find_last_of(".") + 1); 
+ 
      	     if ( extension == "dat")
      	     		theEventMaker = new CosmicEventMaker(quiet, readTimeStamp, design25);
      	     else if(extension == "slcio")
@@ -124,7 +119,7 @@ int main(int argc, char **argv)
      	     //if(design25) theEventMaker->setDesign25();
      	     std::cout << "Reading file: " << infilename[i] << std::endl;
      
-     	     EventMaker::hitMapDef hitMap = theEventMaker->makeEvents(infilename[i], outfilename, lv1diff, maxevents);
+     	     EventMaker::hitMapDef hitMap = theEventMaker->makeEvents(infilename[i], "", lv1diff, maxevents);
      
      	     delete theEventMaker;
      
@@ -133,11 +128,11 @@ int main(int argc, char **argv)
 	     extension = infilename[i].substr(infilename[i].find_last_of(".") + 1);
      	     
 	     if ( extension == "dat")
-	   		theConverter = new CosmicConverter(quiet, readTimeStamp, design25);
+	   		theConverter = new CosmicEventMaker(quiet, readTimeStamp, design25);
 	     else if(extension == "slcio")
 	     {
 	     		#ifdef USE_LCIO
-	     		theConverter = new LCIOConverter(quiet, readTimeStamp, design25);
+	     		theConverter = new LCIOEventMaker(quiet, readTimeStamp, design25);
 	     		#else
 	     		std::cout << "ERROR: variable USE_LCIO not defined" << std::endl;
 	     		exit(0);
@@ -150,15 +145,16 @@ int main(int argc, char **argv)
 	     			std::cout << "Multi file parallel processing not allowd with TFiles\n";
 	     			continue;
 	     		}
-	     		theConverter = new fei4TelConverter(quiet, readTimeStamp, design25);
+	     		theConverter = new fei4TelEventMaker(quiet, readTimeStamp, design25);
 	     }
 	     else      
-	     		theConverter = new USBpixConverter(quiet, readTimeStamp, design25);
+	     		theConverter = new USBpixEventMaker(quiet, readTimeStamp, design25);
 	     	
-	     std::cout << "Writing file: " << outfilename[i] << std::endl;
+	     std::cout << "Writing file: " << outfilename << std::endl;
 
-	     theConverter->writeEvents(hitMap, outfilename[i]);
+	     theConverter->writeEvents(hitMap, outfilename);
 
 	     delete theConverter;
      }
   }
+}
