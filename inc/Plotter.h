@@ -101,6 +101,7 @@ private:
     TH1I *clusterSizeRow_all_;
     TH1I *clusterSizeCol_all_;
 
+    TH2I *clusterMap_all_;
     TH2I *clusterMap_cs1_all_;
     TH2I *clusterMap_cs2_all_;
     TH2D *clusterTotMap_cs1_all_;

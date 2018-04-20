@@ -183,19 +183,20 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
     {
         std::cout << "Making new cluster histograms for quad." << std::endl;
 
-        clusterToT_all_             = addPlot(clusterToT_all_         ,"ToTdist"      ,150,-0.5,149.5);
-        clusterToT_cs1_all_         = addPlot(clusterToT_cs1_all_     ,"ToTdistCS1"   ,150,-0.5,149.5);
-        clusterToT_cs2_all_         = addPlot(clusterToT_cs2_all_     ,"ToTdistCS2"   ,150,-0.5,149.5);
-        clusterToT_cs3_all_         = addPlot(clusterToT_cs3_all_     ,"ToTdistCS3"   ,150,-0.5,149.5);
-        clusterToT_csn_all_         = addPlot(clusterToT_csn_all_     ,"ToTdistCSn"   ,150, -0.5, 149.5, 50, 0.5, 50.5);
+        clusterToT_all_             = addPlot(clusterToT_all_         ,"ToTdist"      ,80,-0.5,79.5);
+        clusterToT_cs1_all_         = addPlot(clusterToT_cs1_all_     ,"ToTdistCS1"   ,20,-0.5,19.5);
+        clusterToT_cs2_all_         = addPlot(clusterToT_cs2_all_     ,"ToTdistCS2"   ,40,-0.5,39.5);
+        clusterToT_cs3_all_         = addPlot(clusterToT_cs3_all_     ,"ToTdistCS3"   ,60,-0.5,59.5);
+        clusterToT_csn_all_         = addPlot(clusterToT_csn_all_     ,"ToTdistCSn"   ,80, -0.5, 79.5, 30, 0.5, 30.5);
 
         totMax_all_                 = addPlot(totMax_all_             ,"ToTdistCS2_max_ToT", 150,-0.5,149.5);    
         totMin_all_                 = addPlot(totMin_all_             ,"ToTdistCS2_min_ToT", 150,-0.5,149.5);
 
-        clusterSize_all_            = addPlot(clusterSize_all_        ,"CSdist"       , 50, 0.5, 50.5);
-        clusterSizeRow_all_         = addPlot(clusterSizeRow_all_     ,"CSdistRow"    , 50, 0.5, 50.5);
-        clusterSizeCol_all_         = addPlot(clusterSizeCol_all_     ,"CSdistCol"    , 50, 0.5, 50.5); 
+        clusterSize_all_            = addPlot(clusterSize_all_        ,"CSdist"       , 30, 0.5, 30.5);
+        clusterSizeRow_all_         = addPlot(clusterSizeRow_all_     ,"CSdistRow"    , 30, 0.5, 30.5);
+        clusterSizeCol_all_         = addPlot(clusterSizeCol_all_     ,"CSdistCol"    , 30, 0.5, 30.5); 
 
+        clusterMap_all_             = addPlot(clusterMap_all_           ,"clusterMap_all"       ,80*2,0,80*2,336*2,0,336*2);
         clusterMap_cs1_all_         = addPlot(clusterMap_cs1_all_       ,"clusterMap_cs1"       ,80*2,0,80*2,336*2,0,336*2);
         clusterMap_cs2_all_         = addPlot(clusterMap_cs2_all_       ,"clusterMap_cs2"       ,80*2,0,80*2,336*2,0,336*2);
         clusterTotMap_cs1_all_      = addPlot(clusterTotMap_cs1_all_    ,"clusterTotMap_cs1"    ,80*2,0,80*2,336*2,0,336*2);
@@ -230,18 +231,18 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
             {
                 std::cout << "Making new cluster histograms for chip: " << (*chip).first << std::endl;
 
-                addPlot(clusterToT_      ,"ToTdist"         ,(*chip).first, 150, -0.5, 149.5);
-                addPlot(clusterToT_cs1_  ,"ToTdistCS1"      ,(*chip).first, 150, -0.5, 149.5);
-                addPlot(clusterToT_cs2_  ,"ToTdistCS2"      ,(*chip).first, 150, -0.5, 149.5);
-                addPlot(clusterToT_cs3_  ,"ToTdistCS3"      ,(*chip).first, 150, -0.5, 149.5);
-                addPlot(clusterToT_csn_  ,"ToTdistCSn"      ,(*chip).first, 150, -0.5, 149.5, 50, 0.5, 50.5);
+                addPlot(clusterToT_      ,"ToTdist"         ,(*chip).first, 80,-0.5,79.5);
+                addPlot(clusterToT_cs1_  ,"ToTdistCS1"      ,(*chip).first, 20,-0.5,19.5);
+                addPlot(clusterToT_cs2_  ,"ToTdistCS2"      ,(*chip).first, 40,-0.5,39.5);
+                addPlot(clusterToT_cs3_  ,"ToTdistCS3"      ,(*chip).first, 60,-0.5,59.5);
+                addPlot(clusterToT_csn_  ,"ToTdistCSn"      ,(*chip).first, 80, -0.5, 79.5, 30, 0.5, 30.5);
 
                 addPlot(totMax_          ,"ToTdistCS2_max_ToT"  ,(*chip).first, 150, -0.5, 149.5);
                 addPlot(totMin_          ,"ToTdistCS2_min_ToT"  ,(*chip).first, 150, -0.5, 149.5);
 
-                addPlot(clusterSize_     ,"CSdist"            ,(*chip).first,  50,  0.5,  50.5);
-                addPlot(clusterSizeRow_  ,"CSdistRow"         ,(*chip).first,  50,  0.5,  50.5);
-                addPlot(clusterSizeCol_  ,"CSdistCol"         ,(*chip).first,  50,  0.5,  50.5);
+                addPlot(clusterSize_     ,"CSdist"            ,(*chip).first,  30,  0.5,  30.5);
+                addPlot(clusterSizeRow_  ,"CSdistRow"         ,(*chip).first,  30,  0.5,  30.5);
+                addPlot(clusterSizeCol_  ,"CSdistCol"         ,(*chip).first,  30,  0.5,  30.5);
 
                 addPlot(clusterMap_cs1_       ,"clusterMap_cs1"       ,(*chip).first,cols,0,cols,rows,0,rows);
                 addPlot(clusterMap_cs2_       ,"clusterMap_cs2"       ,(*chip).first,cols,0,cols,rows,0,rows);
@@ -413,20 +414,22 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
                     if( cSize==3 ) 
                     {
                         clusterToT_cs3_[(*chip).first]->Fill(cToT);
-                        if(chargeSum !=0 ) clusterCharge_cs3_[(*chip).first]->Fill(chargeSum); 
+                        if(chargeSum !=0 ) clusterCharge_cs3_[(*chip).first]->Fill(chargeSum);
                     }
                     if(isQuad_)
                     {
                         this->quadEncode((*chip).first, cCol, cRow);
+                        clusterMap_all_->Fill(cCol, cRow);
+
                         if( cSize==1 )
                         {
-                            clusterMap_cs1_all_->Fill(cCol, cRow);     
-                            clusterTotMap_cs1_all_->Fill(cCol, cRow,cToT);
+                            clusterMap_cs1_all_->Fill(cCol, cRow);
+                            clusterTotMap_cs1_all_->Fill(cCol, cRow, cToT);
                         }
                         if( cSize==2 )
                         {
                             clusterMap_cs2_all_->Fill(cCol, cRow);
-                            clusterTotMap_cs2_all_->Fill(cCol, cRow,cToT);
+                            clusterTotMap_cs2_all_->Fill(cCol, cRow, cToT);
                         }
                     }
                     if(save_cluster_data_)
@@ -726,6 +729,7 @@ void Plotter::writePlots(std::string rootFileName)
         clusterSizeCol_all_->Write();
 
         hitMap_all_->Write();
+        clusterMap_all_->Write(); 
         clusterMap_cs1_all_->Write();   
         clusterMap_cs2_all_->Write();   
         clusterTotMap_cs1_all_->Write();    
