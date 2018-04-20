@@ -439,26 +439,43 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
         }
     }
 
+    clusterToT_all_       ->Reset();
+    clusterToT_cs1_all_   ->Reset();
+    clusterToT_cs2_all_   ->Reset();
+    clusterToT_cs3_all_   ->Reset();
+    clusterToT_csn_all_   ->Reset();
+    totMax_all_           ->Reset();
+    totMin_all_           ->Reset();
+    clusterSize_all_      ->Reset();
+    clusterSizeRow_all_   ->Reset();
+    clusterSizeCol_all_   ->Reset();
+    if(use_charge_calibration_)
+    {
+        clusterCharge_all_      ->Reset();
+        clusterCharge_cs1_all_  ->Reset();
+        clusterCharge_cs2_all_  ->Reset();
+    }
+
     for(std::map<int, TH1I*>::iterator chip=clusterToT_.begin(); chip!=clusterToT_.end(); ++chip)
     {
         clusterMeanTotMap_cs1_[(*chip).first]->Divide(clusterTotMap_cs1_[(*chip).first],clusterMap_cs1_[(*chip).first],1.0,1.0,"B");
         clusterMeanTotMap_cs2_[(*chip).first]->Divide(clusterTotMap_cs2_[(*chip).first],clusterMap_cs2_[(*chip).first],1.0,1.0,"B");
 
         if(isQuad_)
-        {
+        {            
             clusterToT_all_       ->Add( (*chip).second                   );
             clusterToT_cs1_all_   ->Add( clusterToT_cs1_[(*chip).first]   );
             clusterToT_cs2_all_   ->Add( clusterToT_cs2_[(*chip).first]   );
             clusterToT_cs3_all_   ->Add( clusterToT_cs3_[(*chip).first]   );
             clusterToT_csn_all_   ->Add( clusterToT_csn_[(*chip).first]   );
-            totMax_all_           ->Add( totMax_[(*chip).first]           );  
-            totMin_all_           ->Add( totMin_[(*chip).first]           );  
-            clusterSize_all_      ->Add( clusterSize_[(*chip).first]      );  
-            clusterSizeRow_all_   ->Add( clusterSizeRow_[(*chip).first]   );  
+            totMax_all_           ->Add( totMax_[(*chip).first]           );
+            totMin_all_           ->Add( totMin_[(*chip).first]           );
+            clusterSize_all_      ->Add( clusterSize_[(*chip).first]      );
+            clusterSizeRow_all_   ->Add( clusterSizeRow_[(*chip).first]   );
             clusterSizeCol_all_   ->Add( clusterSizeCol_[(*chip).first]   );
             if(use_charge_calibration_)
             {
-                clusterCharge_all_    ->Add( clusterCharge_[(*chip).first]    );  
+                clusterCharge_all_    ->Add( clusterCharge_[(*chip).first]    );
                 clusterCharge_cs1_all_->Add( clusterCharge_cs1_[(*chip).first]);
                 clusterCharge_cs2_all_->Add( clusterCharge_cs2_[(*chip).first]);
             }
