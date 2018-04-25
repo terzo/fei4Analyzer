@@ -30,7 +30,7 @@ EventMaker::hitMapDef USBpixEventMaker::makeEvents(std::string infilename, std::
   }
   char line[2000];
 
-  ofstream logFile;
+  std::ofstream logFile;
   TString logFileName = outfilename.c_str();
   logFile.open(logFileName.Data());
   std::string logString;
