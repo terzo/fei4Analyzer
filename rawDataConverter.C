@@ -27,7 +27,7 @@ void string_to_number(const S theString, N &n)
   data_s.str(theString)	  ;
   data_s >> n		  ;
 }
-=
+
 int main(int argc, char **argv) {
     int skipcount = 0;
     std::vector<std::string> infilename, rootfilename;
