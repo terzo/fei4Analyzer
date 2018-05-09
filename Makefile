@@ -1,4 +1,4 @@
-EXELIST = fei4Analyzer 
+EXELIST = fei4Analyzer rawDataConverter
 
 CC = /usr/local/opt/llvm/bin/clang
 
@@ -20,11 +20,12 @@ ifdef USE_LCIO
  ENVVAR = -D USE_LCIO
 endif
 
+<<<<<<< HEAD
 #XERCES-C-INC = /usr/include/xercesc
 #XERCES-C-LIB = /usr/lib
 
-BOOSTINC    = /opt/local/include
-BOOSTLIB    = /opt/local/lib
+BOOSTINC    = /cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/boost/boost-1.62.0-python2.7-x86_64-slc6-gcc62/include/boost-1_62
+BOOSTLIB    = /cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/boost/boost-1.62.0-python2.7-x86_64-slc6-gcc62/lib
 
 OPTIMIZER_FLAGS = -O3 -Wall -Wextra  -fopenmp
 
@@ -34,7 +35,7 @@ INCFLAGS = -I$(INCDIR)            \
 -I/usr/local/opt/llvm/include\
 	   `root-config --cflags`
 	   
-LIBFLAGS = -lc++ -lMinuit -L/usr/local/opt/llvm/lib -lboost_regex-mt -L$(BOOSTLIB) $(LCIOLIBS) `root-config --libs`
+LIBFLAGS = -lMinuit -fopenmp -lboost_regex-gcc62-mt-1_62 -L$(BOOSTLIB) $(LCIOLIBS) `root-config --libs`
 	   
 CCFLAGS = $(INCFLAGS) $(OPTIMIZER_FLAGS)
 
@@ -65,6 +66,27 @@ dependencies :
 	  ${CC} -MM $(SRCDIR)/*.cpp $(CCFLAGS) | sed 's/.*\.o:/$(OBJDIR)\/&/' >  dependencies
         else
 	 @${CC} -MM $(SRCDIR)/*.cpp $(CCFLAGS) | sed 's/.*\.o:/$(OBJDIR)\/&/' >  dependencies
+        endif
+#--------------------------------------------------------------------------------------------------------#
+rawDataConverter : rawDataConverter.C                                            \
+	       $(OBJS)  					      \
+               inc/ANSIColors.h 				 \
+               inc/macros.h
+	@      echo " "
+	@echo '            [0;31m[1m[7mCompiling[0m [0;36m[1m[7m$< [0m'
+        ifdef CPPVERBOSE
+	  $(CC)    -o $@					   \
+	           $<                                      \
+		   $(OBJS)					\
+		   $(CCFLAGS)		                   \
+		   $(LIBFLAGS)  			\
+		   $(ENVVAR)
+        else
+	 @$(CC) -o $@					   \
+	           $<                                      \
+		   $(OBJS)					\
+		   $(CCFLAGS)		                   \
+		   $(LIBFLAGS)		   
         endif
 #--------------------------------------------------------------------------------------------------------#
 fei4Analyzer : fei4Analyzer.C                                            \
