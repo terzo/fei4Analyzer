@@ -4,13 +4,15 @@ if(APPLE)
 add_definitions(-DAPPLE)
     SET( CMAKE_CXX_COMPILER "/usr/local/opt/llvm/bin/clang" )
     SET(CMAKE_C_COMPILER "/usr/local/opt/llvm/bin/clang")
+    SET(STDLIB_FLAGS "-stdlib=libc++")
+    SET(LINK_LIBS "-lc++")
 elseif("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
     ADD_DEFINITIONS(-DLINUX)
 endif()
 
 project(fei4Analyzer)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11  -fopenmp -stdlib=libc++")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14  -fopenmp ${STDLIB_FLAGS}")
 
 # include directories
 INCLUDE_DIRECTORIES( ./inc /opt/local/include )
@@ -44,6 +46,8 @@ set(CMAKE_EXE_LINKER_FLAGS "${ROOT_LD_FLAGS}")
 #    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 #ENDIF()
 
+SET(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/boost/boost-1.62.0-python2.7-x86_64-slc6-gcc62/include")
+SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "/cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/boost/boost-1.62.0-python2.7-x86_64-slc6-gcc62/lib")
 find_package(Boost COMPONENTS regex)
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 
@@ -58,12 +62,12 @@ INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 #    endif()
 #endif()
 
-SET(LCIO_DIR /usr/local/opt/llvm/lib /Users/terzo/programs/lcio/v01-60/)
+SET(LCIO_DIR /nfs/pic.es/user/s/sterzo/LCIO)
 INCLUDE_DIRECTORIES(${LCIO_DIR}/include/)
 ADD_DEFINITIONS(-DUSE_LCIO)
 
-LINK_DIRECTORIES(${LCIO_DIR}/src/)
+LINK_DIRECTORIES(${LCIO_DIR}/lib)
 
 add_executable(fei4Analyzer ${SOURCE_FILES})
-target_link_libraries(fei4Analyzer Boost::regex -lsio -lz -llcio -lc++ -lMinuit)
+target_link_libraries(fei4Analyzer Boost::regex -lsio -lz -llcio -lMinuit ${LINK_LIBS})
 
