@@ -11,14 +11,14 @@ elseif("${CMAKE_SYSTEM_NAME}" MATCHES "Linux")
 endif()
 
 project(fei4Analyzer)
+project(rawDataConverter)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14  -fopenmp ${STDLIB_FLAGS}")
 
 # include directories
 INCLUDE_DIRECTORIES( ./inc /opt/local/include )
 
-set(SOURCE_FILES fei4Analyzer.C
-                inc/EventMaker.h        src/EventMaker.cpp
+set(SOURCE_FILES inc/EventMaker.h        src/EventMaker.cpp
                 inc/USBpixEventMaker.h  src/USBpixEventMaker.cpp
                 inc/CosmicEventMaker.h  src/CosmicEventMaker.cpp
                 inc/LCIOEventMaker.h    src/LCIOEventMaker.cpp
@@ -62,12 +62,18 @@ INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 #    endif()
 #endif()
 
+#SET(LCIO_DIR /Users/terzo/programs/lcio/v01-60)
 SET(LCIO_DIR /nfs/pic.es/user/s/sterzo/LCIO)
-INCLUDE_DIRECTORIES(${LCIO_DIR}/include/)
+INCLUDE_DIRECTORIES(${LCIO_DIR}/include)
 ADD_DEFINITIONS(-DUSE_LCIO)
 
+#LINK_DIRECTORIES(${LCIO_DIR}/lib /usr/local/opt/llvm/lib)
 LINK_DIRECTORIES(${LCIO_DIR}/lib)
 
-add_executable(fei4Analyzer ${SOURCE_FILES})
+add_executable(fei4Analyzer fei4Analyzer.C ${SOURCE_FILES})
+#target_link_libraries(fei4Analyzer Boost::regex -lsio -lz -llcio -lc++ -lMinuit)
 target_link_libraries(fei4Analyzer Boost::regex -lsio -lz -llcio -lMinuit ${LINK_LIBS})
 
+add_executable(rawDataConverter rawDataConverter.C ${SOURCE_FILES})
+#target_link_libraries(rawDataConverter Boost::regex -lsio -lz -llcio -lc++ -lMinuit)
+target_link_libraries(rawDataConverter Boost::regex -lsio -lz -llcio -lMinuit ${LINK_LIBS})

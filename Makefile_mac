@@ -34,7 +34,7 @@ INCFLAGS = -I$(INCDIR)            \
 -I/usr/local/opt/llvm/include\
 	   `root-config --cflags`
 	   
-LIBFLAGS = -lc++ -lMinuit -L/usr/local/opt/llvm/lib -lboost_regex-mt -L$(BOOSTLIB) $(LCIOLIBS) `root-config --libs`
+LIBFLAGS = -lc++ -L/usr/local/opt/llvm/lib -lMinuit -fopenmp -lboost_regex-mt -L$(BOOSTLIB) $(LCIOLIBS) `root-config --libs`
 	   
 CCFLAGS = $(INCFLAGS) $(OPTIMIZER_FLAGS)
 

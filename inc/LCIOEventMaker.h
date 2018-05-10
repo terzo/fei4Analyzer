@@ -40,6 +40,7 @@
 #include "IO/LCReader.h"
 #include "EVENT/LCRunHeader.h"
 #include "IOIMPL/LCFactory.h"
+#include "EVENT/LCParameters.h"
 
 #include "UTIL/CellIDDecoder.h"
 #include "UTIL/CellIDEncoder.h"
@@ -50,6 +51,7 @@
 #include "IMPL/LCEventImpl.h"
 #include "IMPL/LCRunHeaderImpl.h"
 #include "IMPL/LCGenericObjectImpl.h"
+#include "IMPL/LCParametersImpl.h"
 
 //==================================================
 
@@ -69,7 +71,7 @@ class LCIOEventMaker : public EventMaker
    void setDesign25(void){design25_=true;}
    
    const static int kEUTelAPIXSparsePixel = 2;
-   const static int kElements = 5;
+   const static int kElements = 4;
    
  private:
     

@@ -1,6 +1,6 @@
 EXELIST = fei4Analyzer rawDataConverter
 
-CC = g++
+CC = /usr/local/opt/llvm/bin/clang
 
 SRCDIR  = src
 INCDIR  = inc
@@ -11,7 +11,7 @@ else
  BINDIR  = ./bin/
 endif
 
-OBJS = obj/EventMaker.o	obj/USBpixEventMaker.o obj/CosmicEventMaker.o obj/Clusterizer.o obj/Plotter.o obj/Calibrator.o obj/Fitter.o obj/fei4TelEventMaker.o
+OBJS = obj/EventMaker.o	obj/USBpixEventMaker.o obj/CosmicEventMaker.o obj/Clusterizer.o obj/Plotter.o obj/Calibrator.o obj/Fitter.o obj/fei4TelEventMaker.o obj/tbtrackEventMaker.o
 
 ifdef USE_LCIO
  LCIOINC= -I$(USE_LCIO)/include  -I$(USE_LCIO)/sio/include
@@ -20,14 +20,19 @@ ifdef USE_LCIO
  ENVVAR = -D USE_LCIO
 endif
 
+<<<<<<< HEAD
+#XERCES-C-INC = /usr/include/xercesc
+#XERCES-C-LIB = /usr/lib
+
 BOOSTINC    = /cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/boost/boost-1.62.0-python2.7-x86_64-slc6-gcc62/include/boost-1_62
 BOOSTLIB    = /cvmfs/atlas.cern.ch/repo/ATLASLocalRootBase/x86_64/boost/boost-1.62.0-python2.7-x86_64-slc6-gcc62/lib
 
-OPTIMIZER_FLAGS = -O3 -Wall -Wextra
+OPTIMIZER_FLAGS = -O3 -Wall -Wextra  -fopenmp
 
 INCFLAGS = -I$(INCDIR)            \
            -I$(BOOSTINC)            \
 	   $(LCIOINC) 	\
+-I/usr/local/opt/llvm/include\
 	   `root-config --cflags`
 	   
 LIBFLAGS = -lMinuit -fopenmp -lboost_regex-gcc62-mt-1_62 -L$(BOOSTLIB) $(LCIOLIBS) `root-config --libs`
@@ -203,7 +208,27 @@ obj/fei4TelEventMaker.o : src/fei4TelEventMaker.cpp     \
 	              $<  	      \
 		      $(CCFLAGS)                              \
 		      `root-config --cflags`
-        endif		
+        endif
+#--------------------------------------------------------------------------------------------------------#
+obj/tbtrackEventMaker.o : src/tbtrackEventMaker.cpp     \
+                          inc/tbtrackEventMaker.h     \
+                          inc/EventMaker.h     \
+                          inc/macros.h  	  \
+		          inc/ANSIColors.h     \
+		          inc/FormattedRecord.hh
+	@echo " "
+	@echo '            [0;31m[1m[7mCompiling[0m [0;36m[1m[7m$< [0m'
+        ifdef CPPVERBOSE
+	  $(CC) -c -o $@              \
+	              $<  	      \
+		      $(CCFLAGS)                              \
+		      `root-config --cflags`
+        else
+	 @$(CC) -c -o $@              \
+	              $<  	      \
+		      $(CCFLAGS)                              \
+		      `root-config --cflags`
+        endif
 #--------------------------------------------------------------------------------------------------------#
 obj/Clusterizer.o : src/Clusterizer.cpp     \
                    inc/Clusterizer.h	\
