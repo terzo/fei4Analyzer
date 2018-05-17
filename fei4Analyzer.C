@@ -85,8 +85,10 @@ int main(int argc, char **argv)
                     std::cout << "-o  filename[.txt]\t\t:" << "writes out a txt log file compatible with the Timepix reconstruction software (CosmicGUI binary data only)" << "\n";
                     std::cout << "-n  [0..1]\t\t\t:" << "specify the hit frequency for noise suppression (no noise suppression by default)" << "\n";
                     std::cout << "-g  [0..inf]\t\t\t:" << "correct the charge in the temporary output plots by the specified factor" << "\n";
-                    std::cout << "-m  [4,25]\t\t\t:" << "define module type:  4-> quad module, \n"
-                    << "\t\t\t\t "         << "                    25-> 500x25um FE-I4 pitch arrangement" << "\n";
+                    std::cout << "-m  [4,25,50]\t\t\t:" << "define module type:  4-> quad module, \n"
+                                              << "\t\t\t\t "         << "                    25-> 500x25um FE-I4 pitch arrangement\n"
+                                              << "\t\t\t\t "         << "                    50-> 50x50um RD53A pitch arrangement"
+                                              << "\n";
                     std::cout << "-t\t \t \t \t:" << "read timestaps (for ComsicGUI test beam applications only)" << "\n";
                     std::cout << "-f  [0..2]\t\t\t:"  << "0-> doesn't perform langaus fits (faster), " << "\n"
                     << "\t\t\t\t "          << "1-> perform langaus fits for ToT plots only (default), " << "\n"
@@ -155,6 +157,7 @@ int main(int argc, char **argv)
                 {
                     string_to_number(argv[++i], module_type);
                     if (module_type == 25) design25 = true;
+                    else if(module_type == 50) std::cout << "RD53A support is experimental!\n";
                     break;
                 } 
                 case 'n': 

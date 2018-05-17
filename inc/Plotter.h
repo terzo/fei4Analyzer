@@ -67,6 +67,8 @@ private:
     bool save_cluster_data_;
     bool isQuad_;
     bool isDesign25_;
+    bool isRD53_;
+    int cols_,rows_;
     double v_;
     int minWidthCol_, minWidthRow_, maxWidthCol_, maxWidthRow_;
     std::map<unsigned int,std::vector<int> > colRowCuts_;

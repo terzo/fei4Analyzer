@@ -17,6 +17,9 @@ Plotter::Plotter(bool quiet)
     v_=0;
     refDutHitLimit_.clear();
     colRowCuts_.clear();
+
+    cols_ = 80;
+    rows_ = 336;
     
     //define root style
     TStyle *terzo_stile  = new TStyle("terzo_stile","terzo stile");
@@ -157,13 +160,8 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
 {
     //if(!empty_) this->deletePlots();
 
-    int cols = 80;
-    int rows = 336;
-    if(isDesign25_)
-    {
-        cols /=2;
-        rows *=2;
-    }
+    int cols = cols_;
+    int rows = rows_;
 
     TH1::AddDirectory(kFALSE);
     TH2::AddDirectory(kFALSE);
@@ -196,11 +194,11 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
         clusterSizeRow_all_         = addPlot(clusterSizeRow_all_     ,"CSdistRow"    , 50, 0.5, 50.5);
         clusterSizeCol_all_         = addPlot(clusterSizeCol_all_     ,"CSdistCol"    , 50, 0.5, 50.5); 
 
-        clusterMap_cs1_all_         = addPlot(clusterMap_cs1_all_       ,"clusterMap_cs1"       ,80*2,0,80*2,336*2,0,336*2);
-        clusterMap_cs2_all_         = addPlot(clusterMap_cs2_all_       ,"clusterMap_cs2"       ,80*2,0,80*2,336*2,0,336*2);
-        clusterTotMap_cs1_all_      = addPlot(clusterTotMap_cs1_all_    ,"clusterTotMap_cs1"    ,80*2,0,80*2,336*2,0,336*2);
-        clusterTotMap_cs2_all_      = addPlot(clusterTotMap_cs2_all_    ,"clusterTotMap_cs2"    ,80*2,0,80*2,336*2,0,336*2);
-        clusterMeanTotMap_cs1_all_  = addPlot(clusterMeanTotMap_cs1_all_,"clusterMeanTotMap_cs1",80*2,0,80*2,336*2,0,336*2);
+        clusterMap_cs1_all_         = addPlot(clusterMap_cs1_all_       ,"clusterMap_cs1"       ,cols*2,0,cols*2,rows*2,0,rows*2);
+        clusterMap_cs2_all_         = addPlot(clusterMap_cs2_all_       ,"clusterMap_cs2"       ,cols*2,0,cols*2,rows*2,0,rows*2);
+        clusterTotMap_cs1_all_      = addPlot(clusterTotMap_cs1_all_    ,"clusterTotMap_cs1"    ,cols*2,0,cols*2,rows*2,0,rows*2);
+        clusterTotMap_cs2_all_      = addPlot(clusterTotMap_cs2_all_    ,"clusterTotMap_cs2"    ,cols*2,0,cols*2,rows*2,0,rows*2);
+        clusterMeanTotMap_cs1_all_  = addPlot(clusterMeanTotMap_cs1_all_,"clusterMeanTotMap_cs1",cols*2,0,cols*2,rows*2,0,rows*2);
 
         if(use_charge_calibration_)
         {
@@ -475,7 +473,7 @@ void Plotter::fillHitPlots(EventMaker::hitMapDef& hitMap)
 { 
     if(hitMap_.count(hitMap.begin()->second.begin()->first) == 0 && isQuad_)
     {
-        hitMap_all_= this->addPlot(hitMap_all_,"HitMap_all",80*2,0,80*2,336*2,0,336*2);
+        hitMap_all_= this->addPlot(hitMap_all_,"HitMap_all",cols_*2,0,cols_*2,rows_*2,0,rows_*2);
         std::cout << "Making new hitmap histogram for quad." << std::endl;
     }
 
@@ -489,13 +487,8 @@ void Plotter::fillHitPlots(EventMaker::hitMapDef& hitMap)
                 ss_.str("");
                 ss_ << "HitMap";
                 // ss_ << "chip"<< (*chip).first << "_HitMap";
-                int rows = 336;
-                int cols = 80;
-                if(isDesign25_)
-                {
-                    rows *=2;
-                    cols /=2;
-                }
+                int rows = rows_;
+                int cols = cols_;
                 addPlot(hitMap_, ss_.str().c_str(), (*chip).first,cols,0,cols,rows,0,rows);
             }
 
@@ -551,22 +544,22 @@ void Plotter::quadEncode(const int chip, int &col, int &row)
     if(chip == 0)
     { 
         col = col;
-        row = 335-row;
+        row = rows_ -1 -row;
     }
     if(chip == 3)
     {
-        col += 80;
-        row = 335-row;
+        col += cols_;
+        row = rows_ -1 -row;
     }
     if(chip == 2)
     {
-        col = 159 - col;
-        row += 336;
+        col = 2*cols_ -1 - col;
+        row += rows_;
     }
     if(chip == 1)
     {
-        col = 79 - col;
-        row += 336;
+        col = cols_ -1 - col;
+        row += rows_;
     }
 }
 //==================================================================
@@ -574,6 +567,7 @@ void Plotter::setModuleType(int module_type)
 {
     isQuad_=false;
     isDesign25_ = false;
+    isRD53_ = false;
 
     if(module_type == 4) 
     { 
@@ -584,6 +578,15 @@ void Plotter::setModuleType(int module_type)
     {
         std::cout << "FE-I4 with 500x25um arrangment analysis" << std::endl;
         isDesign25_ = true;
+        cols_ /= 2;
+        rows_ *= 2;
+    }
+    else if(module_type == 50)
+    {
+        std::cout << "RD53A with 50x50um arrangment analysis" << std::endl;
+        isRD53_ = true;
+        cols_ = 400;
+        rows_ = 192;
     }
     else 
     {
