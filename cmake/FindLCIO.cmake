@@ -28,10 +28,21 @@ FIND_LIBRARY(LCIO_LIBRARY
   $ENV{LCIO}/lib
   )
 
+SET(SIO_LIBNAME libsio.dylib)
+
+FIND_LIBRARY(SIO_LIBRARY
+        NAMES ${SIO_LIBNAME}
+        PATHS /usr/lib
+        /usr/local/lib
+        /opt/local/lib
+        /sw/lib
+        $ENV{LCIO}/lib
+        )
+
 IF (LCIO_LIBRARY)
   IF(LCIO_INCLUDE_DIR)
     SET(LCIO_FOUND TRUE)
-    MESSAGE(STATUS "Found lcio: ${LCIO_INCLUDE_DIR}, ${LCIO_LIBRARY}")
+    MESSAGE(STATUS "Found lcio: ${LCIO_INCLUDE_DIR}, ${LCIO_LIBRARY}, ${SIO_LIBRARY}")
   ELSE(LCIO_INCLUDE_DIR)
     SET(LCIO_FOUND FALSE)
     MESSAGE(STATUS "lcio headers NOT FOUND. Please refer to the documentation for instructions.")
