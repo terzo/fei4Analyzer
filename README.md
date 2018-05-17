@@ -14,12 +14,12 @@ BOOSTLIB = /usr/lib/
 
 For ROOT any version should be fine. Check that the command root-config exists (but it should if root works).
 
-Once everything is set up:  
+Once everything is set up (no more supported):  
 $ source setup.sh  
 $ make  
 $ make install  
 
-or with CMAKE:  
+or with CMAKE (officially supported):  
 $ source setup.sh  
 $ mkdir build  
 $ cd build  
