@@ -28,6 +28,7 @@ $ mkdir build
 $ cd build
 $ cmake ..
 $ make -j4
+$ make install
 
 You can explore the options calling the help:
 $ fei4analyzer -h
