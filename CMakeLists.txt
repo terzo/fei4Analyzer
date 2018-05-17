@@ -72,3 +72,7 @@ target_link_libraries(fei4Analyzer Boost::regex -lz -lMinuit ${LINK_LIBS} ${LCIO
 
 add_executable(rawDataConverter rawDataConverter.C ${SOURCE_FILES})
 target_link_libraries(rawDataConverter Boost::regex -lz -lMinuit ${LINK_LIBS} ${LCIO_LIBS})
+
+SET(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR})
+INSTALL(TARGETS fei4Analyzer rawDataConverter
+        DESTINATION bin)
