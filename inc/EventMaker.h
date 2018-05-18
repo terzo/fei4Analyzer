@@ -19,6 +19,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <time.h>
 
 #include "FormattedRecord.hh"
 #include "macros.h"
@@ -47,6 +48,7 @@ class EventMaker
    virtual ~EventMaker(void                    ) {;}
   
    virtual hitMapDef makeEvents(std::string infilename, std::string outfilename = "", int lv1diff = 1, int nevt = -1) = 0;
+   virtual bool writeEvents(hitMapDef &hitMap, std::string outfilename = "tempLCIOout.slcio", int runNum = 0) = 0;
    void setQuiet(bool quiet) {quiet_=quiet;}
    void setReadTimeStamp(bool readTimeStamp){readTimeStamp_=readTimeStamp;}
    void setDesign25(void){design25_=true;}

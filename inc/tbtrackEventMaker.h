@@ -42,8 +42,9 @@ class tbtrackEventMaker : public EventMaker
   ~tbtrackEventMaker(void                    ) {;}
   
    hitMapDef makeEvents(std::string infilename, std::string outfilename = "", int lv1diff = 1, int nevt = -1);
-   bool writeEvents(hitMapDef &hitMap, std::string outfilename, int runNum);
-   void setQuiet(bool quiet) {quiet_=quiet;}
+
+    bool writeEvents(hitMapDef &hitMap, std::string outfilename, int runNum);
+    void setQuiet(bool quiet) {quiet_=quiet;}
    void setReadTimeStamp(bool readTimeStamp){readTimeStamp_=readTimeStamp;}
    void setDesign25(void){design25_=true;}
    

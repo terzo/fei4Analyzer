@@ -20,7 +20,10 @@ tbtrackEventMaker::tbtrackEventMaker(bool quiet, bool readTimeStamp, bool design
 //====================================================================================
 EventMaker::hitMapDef tbtrackEventMaker::makeEvents(std::string infilename, std::string outfilename, int lv1diff, int nevt)
 {
-          
+   TFile *tbtrackfile = new TFile(infilename.c_str(), "READ"); 
+    
+   TTree *zspix = (TTree*) tbtrackfile->Get("zspix");
+    
    int sensorID = 0;
    EventMaker::hitDef aHit;
    aHit.col = 0;
@@ -31,7 +34,16 @@ EventMaker::hitMapDef tbtrackEventMaker::makeEvents(std::string infilename, std:
    aHit.bcid= evn;//bcid;
    if(design25_) this->design25Encode(aHit);
    hitMap[evn][sensorID].push_back(aHit);
+   
+   tbtrackfile->Close();
+   delete tbtrackfile;
   
    return hitMap;
 }
 
+//====================================================================================
+bool  tbtrackEventMaker::writeEvents(hitMapDef &hitMap, std::string outfilename, int runNum)
+{ 
+
+  return true;
+}

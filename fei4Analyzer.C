@@ -20,6 +20,7 @@
 #include "fei4TelEventMaker.h"
 #include "USBpixEventMaker.h"
 #include "CosmicEventMaker.h"
+#include "tbtrackEventMaker.h"
 #include "Clusterizer.h"
 #include "Plotter.h"
 #include "TSystem.h"

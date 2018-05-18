@@ -38,14 +38,21 @@
 #include "lcio.h"
 
 #include "IO/LCReader.h"
-#include "IMPL/LCTOOLS.h"
 #include "EVENT/LCRunHeader.h"
 #include "IOIMPL/LCFactory.h"
-#include "IMPL/TrackerDataImpl.h"
+#include "EVENT/LCParameters.h"
 
 #include "UTIL/CellIDDecoder.h"
+#include "UTIL/CellIDEncoder.h"
 
+#include "IMPL/LCTOOLS.h"
 #include "IMPL/LCCollectionVec.h"
+#include "IMPL/TrackerDataImpl.h"
+#include "IMPL/LCEventImpl.h"
+#include "IMPL/LCRunHeaderImpl.h"
+#include "IMPL/LCGenericObjectImpl.h"
+#include "IMPL/LCParametersImpl.h"
+
 //==================================================
 
 using namespace lcio ;
@@ -58,12 +65,13 @@ class LCIOEventMaker : public EventMaker
   ~LCIOEventMaker(void                    ) {;}
   
    hitMapDef makeEvents(std::string infilename, std::string outfilename = "", int lv1diff = 1, int nevt = -1);
+   bool writeEvents(hitMapDef &hitMap, std::string outfilename = "tempLCIOout.slcio", int runNum = 0);
    void setQuiet(bool quiet) {quiet_=quiet;}
    void setReadTimeStamp(bool readTimeStamp){readTimeStamp_=readTimeStamp;}
    void setDesign25(void){design25_=true;}
    
    const static int kEUTelAPIXSparsePixel = 2;
-   const static int kElements = 5;
+   const static int kElements = 4;
    
  private:
     
