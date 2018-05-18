@@ -440,22 +440,23 @@ void Plotter::fillClusterPlots(Clusterizer::clusterMapDef &clusterMap, double no
         }
     }
 
-//    clusterToT_all_       ->Reset();
-//    clusterToT_cs1_all_   ->Reset();
-//    clusterToT_cs2_all_   ->Reset();
-//    clusterToT_cs3_all_   ->Reset();
-//    clusterToT_csn_all_   ->Reset();
-//    totMax_all_           ->Reset();
-//    totMin_all_           ->Reset();
-//    clusterSize_all_      ->Reset();
-//    clusterSizeRow_all_   ->Reset();
-//    clusterSizeCol_all_   ->Reset();
+    if(isQuad_) {
+        clusterToT_all_->Reset();
+        clusterToT_cs1_all_->Reset();
+        clusterToT_cs2_all_->Reset();
+        clusterToT_cs3_all_->Reset();
+        clusterToT_csn_all_->Reset();
+        totMax_all_->Reset();
+        totMin_all_->Reset();
+        clusterSize_all_->Reset();
+        clusterSizeRow_all_->Reset();
+        clusterSizeCol_all_->Reset();
 
-    if(use_charge_calibration_)
-    {
-//        clusterCharge_all_      ->Reset();
-//        clusterCharge_cs1_all_  ->Reset();
-//        clusterCharge_cs2_all_  ->Reset();
+        if (use_charge_calibration_) {
+            clusterCharge_all_->Reset();
+            clusterCharge_cs1_all_->Reset();
+            clusterCharge_cs2_all_->Reset();
+        }
     }
 
     for(std::map<int, TH1I*>::iterator chip=clusterToT_.begin(); chip!=clusterToT_.end(); ++chip)
