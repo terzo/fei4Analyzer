@@ -91,7 +91,7 @@ int main(int argc, char **argv)
                                               << "\t\t\t\t "         << "                    25-> 500x25um FE-I4 pitch arrangement\n"
                                               << "\t\t\t\t "         << "                    50-> 50x50um RD53A pitch arrangement (same as -S 192 400)"
                                               << "\n";
-                    std::cout << "-S [rows cols]\t\t\t:" << "specify the number of rows and columns of the sensor (does overrides option -m 50)\n";
+                    std::cout << "-S [rows cols]\t\t\t:" << "specify the number of rows and columns of the sensor\n";
                     std::cout << "-t\t \t \t \t:" << "read timestaps (for ComsicGUI test beam applications only)" << "\n";
                     std::cout << "-f  [0..2]\t\t\t:"  << "0-> doesn't perform langaus fits (faster), " << "\n"
                     << "\t\t\t\t "          << "1-> perform langaus fits for ToT plots only (default), " << "\n"
@@ -330,8 +330,11 @@ int main(int argc, char **argv)
     Plotter *thePlotter = new Plotter(quiet);
     thePlotter->useChargeCalibration(use_charge_calibration);
     thePlotter->saveClusterData(save_cluster_data);
-    thePlotter->setModuleType(module_type);
+    if(module_type == 50) rowCol_size = std::make_pair(192,400);
+    else rowCol_size = std::make_pair(336,80);
     thePlotter->setNRowCols(rowCol_size.first,rowCol_size.second);
+    thePlotter->setModuleType(module_type);
+
 
     #pragma omp parallel for if(!bunch)
     for(unsigned int i=0; i<infilename.size(); ++i)
