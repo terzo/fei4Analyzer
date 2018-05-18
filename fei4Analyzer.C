@@ -49,6 +49,7 @@ int main(int argc, char **argv)
     std::string option;
     int module_type = 0;
     bool readTimeStamp = false;
+    std::pair<int,int> rowCol_size = std::make_pair(336,80);
     bool quiet = true;
     bool bunch = false;
     bool borders = false;
@@ -88,8 +89,9 @@ int main(int argc, char **argv)
                     std::cout << "-g  [0..inf]\t\t\t:" << "correct the charge in the temporary output plots by the specified factor" << "\n";
                     std::cout << "-m  [4,25,50]\t\t\t:" << "define module type:  4-> quad module, \n"
                                               << "\t\t\t\t "         << "                    25-> 500x25um FE-I4 pitch arrangement\n"
-                                              << "\t\t\t\t "         << "                    50-> 50x50um RD53A pitch arrangement"
+                                              << "\t\t\t\t "         << "                    50-> 50x50um RD53A pitch arrangement (same as -S 192 400)"
                                               << "\n";
+                    std::cout << "-S [rows cols]\t\t\t:" << "specify the number of rows and columns of the sensor (does overrides option -m 50)\n";
                     std::cout << "-t\t \t \t \t:" << "read timestaps (for ComsicGUI test beam applications only)" << "\n";
                     std::cout << "-f  [0..2]\t\t\t:"  << "0-> doesn't perform langaus fits (faster), " << "\n"
                     << "\t\t\t\t "          << "1-> perform langaus fits for ToT plots only (default), " << "\n"
@@ -190,6 +192,12 @@ int main(int argc, char **argv)
                         }
                     }
                     string_to_number(argv[++i], skipcount);
+                    break;
+                }
+                case 'S':
+                {
+                    string_to_number(argv[++i], rowCol_size.first);
+                    string_to_number(argv[++i], rowCol_size.second);
                     break;
                 }
                 case 'd': 
@@ -323,6 +331,7 @@ int main(int argc, char **argv)
     thePlotter->useChargeCalibration(use_charge_calibration);
     thePlotter->saveClusterData(save_cluster_data);
     thePlotter->setModuleType(module_type);
+    thePlotter->setNRowCols(rowCol_size.first,rowCol_size.second);
 
     #pragma omp parallel for if(!bunch)
     for(unsigned int i=0; i<infilename.size(); ++i)
