@@ -42,6 +42,7 @@ public :
     void useChargeCalibration(bool use_charge_calibration){use_charge_calibration_ = use_charge_calibration;};
     void saveClusterData(bool save_cluster_data) {save_cluster_data_ = save_cluster_data;};
     void setModuleType(int module_type=0);
+    void setNRowCols(const int num_rows, const int num_cols);
     bool isEmpty(){return empty_;};
     void showGraph(std::vector<double> correction_factor,unsigned int fit_function = 1);
 

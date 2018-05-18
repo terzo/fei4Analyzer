@@ -591,29 +591,37 @@ void Plotter::setModuleType(int module_type)
     isDesign25_ = false;
     isRD53_ = false;
 
-    if(module_type == 4) 
-    { 
-        std::cout << "Quad module analysis" << std::endl;
-        isQuad_=true ;
-    }
-    else if(module_type == 25)
-    {
-        std::cout << "FE-I4 with 500x25um arrangment analysis" << std::endl;
-        isDesign25_ = true;
-        cols_ /= 2;
-        rows_ *= 2;
-    }
-    else if(module_type == 50)
+    if(module_type == 50)
     {
         std::cout << "RD53A with 50x50um arrangment analysis" << std::endl;
         isRD53_ = true;
         cols_ = 400;
         rows_ = 192;
     }
-    else 
+    else
     {
         std::cout << "FE-I4 single chip analysis" << std::endl;
     }
+
+    if(module_type == 4) 
+    { 
+        std::cout << "Quad module analysis" << std::endl;
+        isQuad_=true ;
+    }
+
+    if(module_type == 25)
+    {
+        std::cout << "FE-I4 with 500x25um arrangment analysis" << std::endl;
+        isDesign25_ = true;
+        cols_ /= 2;
+        rows_ *= 2;
+    }
+}
+//==================================================================
+void Plotter::setNRowCols(const int num_rows, const int num_cols)
+{
+    cols_ = num_cols;
+    rows_ = num_rows;
 }
 //=========================FIT HISTOS=========================================
 void Plotter::fitPlots(double voltage, unsigned int dofit)
